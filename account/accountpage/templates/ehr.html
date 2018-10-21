@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block context %}
+
+
+<div class='main-area'>
+            <div class = 'container'>
+                <h2>Электронная медицинская карта</h2>
+                  <ul>
+                    <li>
+                    {% load static %}
+                      <a href="{% static 'biohim.htm' %}">Биохимический анализ крови</a>
+                    </li>
+                    <li>
+                    {% load static %}
+                      <a href="{% static 'oak.htm' %}">Общий анализ крови</a>
+                    </li>
+                    <li>
+                    {% load static %}
+                      <a href="{% static 'uzi.htm' %}">Узи брюшной полости</a>
+                    </li>
+                  </ul> 
+            </div>
+        </div>
+{% endblock %}        

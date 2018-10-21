@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block context %}
+	<div class="container">
+		<div id="container">
+			{% if form.errors %}
+				<p> {{form.errors}}</p>
+			{% endif %}	
+
+			{% if next %}
+			    {% if user.is_authenticated %}
+				    <p>Your account doesn't have access to this page. To proceed,
+				    please login with an account that has access.</p>
+			    {% else %}
+			    	<p>Please login to see this page.</p>
+			    {% endif %}
+			{% endif %}
+
+			<form method="post" action="{% url 'login' %}">
+				{% csrf_token %}
+				<span> Enter your login </span><br>
+				
+				<p>{{ form.username.label_tag }}</p>
+				<p>{{ form.username }}</p>
+
+				<p>{{ form.password.label_tag }}</p>
+				<p>{{ form.password }}</p>
+				<input type="Submit" value = "OK">
+				<input type="hidden" name="next" value = "{{ next }}">
+
+			</form>
+		</div>
+	</div>
+{% endblock %}
