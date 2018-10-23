@@ -9,5 +9,6 @@ urlpatterns = [
 	url('ehr', views.ehr, name='ehr'),
 	url('appointment', views.app, name='appointment'),
 	url('schedule', views.schedule, name='schedule'),
-	url('calendar', views.calendar, name='calendar'),	
+	url('calendar', views.calendar, name='calendar'),
+	url('message', views.get_message, name='message'),	
 ]
