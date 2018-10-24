@@ -1,49 +1,53 @@
 {% extends "base.html" %}
 {% block context %}
-	<style type="text/css">
-		.event{
-			position: relative;
-		}
-		.event:after{
-			position: absolute;
-			top: 20px;
-			left:39%;
-			content: '';
-			
-			content: '';
+  <style type="text/css">
+    .event{
+      position: relative;
+    }
+    .event:after{
+      position: absolute;
+      top: 20px;
+      left:39%;
+      content: '';
+      
+      content: '';
 
-		   
-		   width: 10px;
-		   height: 10px;
-		   -moz-border-radius: 7.5px;
-		   -webkit-border-radius: 7.5px;
-		   border-radius: 7.5px;
-		   background-color: #FB2368;
+       
+       width: 10px;
+       height: 10px;
+       -moz-border-radius: 7.5px;
+       -webkit-border-radius: 7.5px;
+       border-radius: 7.5px;
+       background-color: #FB2368;
 
-		}
-	</style>
-	<div class='data row'>
-            <div class="data cal" id="task">
-              <ul class="list-unstyled">
-                <li>12.10.2018 <br> Запись к терапевту</li>
-                <li>12.10.2018 <br> Запись к терапевту</li>
-                <li>12.10.2018 <br> Запись к терапевту</li>
-                <li>12.10.2018 <br> Запись к терапевту</li>
-                <li>12.10.2018 <br> Запись к терапевту</li>
-                <li>12.10.2018 <br> Запись к терапевту</li>
-                <li>12.10.2018 <br> Запись к терапевту</li>
-                <li>12.10.2018 <br> Запись к терапевту</li>
-                <li>12.10.2018 <br> Запись к терапевту</li>
-                <li>12.10.2018 <br> Запись к терапевту</li>
+    }
+
+    #task>li{
+      padding-left: 20px;
+    }
+    #task>li>span{
+    }
+    #task>li:hover{
+      
+    }
+    .grey-li{
+      color:#686868;
+    }
+  </style>
+  <div class='data row'>
+            <div class="data cal"  id="task-div">
+              <ul id="task">
               </ul>
             </div>
+
+
             <div class="data cal">
               <div id='calendar'>
                 <div class = 'row month'>
                   <div class='month col prev-month'><h4><</h4></div>
-	                  <div class ='month col' id='month-name'>
-	                  Месяц
-	                  </div>
+                    <div class ='month col' id='month-name'>
+                    Месяц
+                    </div>
                   <div class='month col next-month'><h4>></h4></div>
 
                 </div>
@@ -119,16 +123,19 @@ class Calendar
       return start;
     }
 
-    ifEvent(date){
-    	for(var i=0; i<this.events.length; i++)
-    	{
-    		
-    		if (date.getTime() == this.events[i].getTime()){
-    			return true;
 
-    		}
-    	}
-    	return false;
+
+    ifEvent(date){
+      for(var i=0; i<this.events.length; i++)
+      {
+        var b=this.events[i]['date'];
+        var a=date;
+        if (this.sameDay(a,b)){
+          return true;
+
+        }
+      }
+      return false;
 
     }
 
@@ -140,19 +147,19 @@ class Calendar
       var currentPosition=$('<div>', {'class': 'col'});
       $("#month-name").text(this.months[this.date.getMonth()]);
       for(var i =0; i< dates.length; i++){
-      	currentPosition=$('<div>', {'class': 'col'});
-      	if(i%7==5 || i%7==6){
-      		currentPosition.addClass('weekend');
-      	}
-      	if(Number.isInteger(dates[i]))
-      	{
-      		if (this.ifEvent(new Date(this.date.getFullYear(), this.date.getMonth(), dates[i])))
-      		{
-      			currentPosition.addClass('event');
-      		}
-      	}        
-		
-		currentPosition.html(dates[i])     ;   
+        currentPosition=$('<div>', {'class': 'col'});
+        if(i%7==5 || i%7==6){
+          currentPosition.addClass('weekend');
+        }
+        if(Number.isInteger(dates[i]))
+        {
+          if (this.ifEvent(new Date(this.date.getFullYear(), this.date.getMonth(), dates[i])))
+          {
+            currentPosition.addClass('event');
+          }
+        }        
+    
+        currentPosition.html(dates[i]);   
         currentRow.append(currentPosition);
         if(i%7==6)
         {
@@ -163,14 +170,53 @@ class Calendar
       }
     }
 
+
+    addZero(i) {
+        if (i < 10) {
+            i = "0" + i;
+        }
+        return i;
+    }
+
+    drawEvents(eventsList){
+      var eList = $('#task')
+      eList.empty();
+      for(var row in eventsList){
+        var l = this.eventLiCreator(eventsList[row]);
+        eList.append(l);
+      }
+    }
+
+    sameDay(d1, d2) {
+      return d1.getFullYear() === d2.getFullYear() &&
+        d1.getMonth() === d2.getMonth() &&
+        d1.getDate() === d2.getDate();
+    }
+
+    eventLiCreator(event){
+      var row="<li class='row'>";
+      row+="<div clas='col-2'><ul class='list-unstyled'><li class='grey-li'><i class='fas fa-exclamation-circle'></i></li></ul></div>";
+      row+="<div clas='col'>";
+        row+="<ul class='list-unstyled'>";
+          row+="<li>"+this.months[event['date'].getMonth()]+' '+event['date'].getDate()+"</li>";
+          row+="<li class='grey-li'>"+event['text']+"</li>";
+          row+="<li class='grey-li'>"+this.addZero(event['date'].getHours())+':'+this.addZero(event['date'].getMinutes())+"</li>";
+        row+="</ul>";
+      row+="</div>";
+
+      row+="</li>";
+      row+="<hr class='grey-li'>";
+      return row;
+    }
+
     getNextMonth(){
-    	var a = this.date.getMonth();
+      var a = this.date.getMonth();
       if(a==11){
         this.date = new Date(this.date.getFullYear()+1, 0, 1);
         
       }
       else{
-      	var m = this.date.getMonth()+1;
+        var m = this.date.getMonth()+1;
         this.date = new Date(this.date.getFullYear(), m, 1);
         var d = this.date;
       }
@@ -184,7 +230,7 @@ class Calendar
         this.date = new Date(this.date.getFullYear()-1, 11, 1);
       }
       else{
-       	this.date = new Date(this.date.getFullYear(), this.date.getMonth()-1, 1);
+        this.date = new Date(this.date.getFullYear(), this.date.getMonth()-1, 1);
       }
       $('.dates').remove();
       var a = this.getMonthCalendarString(this.date.getFullYear(), this.date.getMonth());
@@ -200,46 +246,47 @@ class Calendar
 
      
     window.onload = function(){
-	      $("#sidebar").mCustomScrollbar({
-	               theme: "dark"
-	          });
+        $("#sidebar").mCustomScrollbar({
+                 theme: "dark"
+            });
 
-	      $('#task').mCustomScrollbar({theme: "dark"});
+        $('#task-div').mCustomScrollbar({theme: "dark"});
 
-	      $('#sidebarCollapse').on('click', function () {
-	        // open or close navbar
-	        $('#sidebar').toggleClass('active');
-	        $('#content').toggleClass('active');
-	        // close dropdowns
-	        $('.collapse.in').toggleClass('in');
-	        // and also adjust aria-expanded attributes we use for the open/closed arrows
-	        // in our CSS
-	        $('a[aria-expanded=true]').attr('aria-expanded', 'false');
-	      });
-
-
-	      var events = [
-	      new Date(2018, 9, 15),
-	      new Date(2018, 9, 18),
-	      new Date(2018, 9, 20),
-	      new Date(2018, 9, 21),
-	    ] 
-
-	    var current = new Date();
-	    current.setHours(0,0,0,0)   
-	    var weekday = ['Пн', 'Вт','Ср','Чт','Пт','Сб','Вс'];
+        $('#sidebarCollapse').on('click', function () {
+          // open or close navbar
+          $('#sidebar').toggleClass('active');
+          $('#content').toggleClass('active');
+          // close dropdowns
+          $('.collapse.in').toggleClass('in');
+          // and also adjust aria-expanded attributes we use for the open/closed arrows
+          // in our CSS
+          $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+        });
 
 
-	    console.log('curYear'+current.getYear());
-	    console.log('curMonth'+current.getMonth());
-	    console.log('curDate'+current.getDate());
-	        
-	    cal = new Calendar(current, $('#calendar'), events);
-	    
-	    
-	    cal.drawCalendar();
-	    $('.prev-month').click(function(){cal.getPreviousMonth()});
-	    $('.next-month').click(function(){cal.getNextMonth()});
+      var events = [
+        {'date': new Date(2018, 9, 15, 13, 00), 'text': 'Прием у терапевта'},
+        {'date': new Date(2018, 9, 18, 11, 30), 'text': 'Прием у кардиолога'},
+        {'date': new Date(2018, 9, 20, 14, 15), 'text': 'Прием у стоматолога'},
+        {'date': new Date(2018, 9, 21, 10, 40), 'text': 'Прием у проктолога'},
+      ];
+
+      var current = new Date();
+      current.setHours(0,0,0,0)   
+      var weekday = ['Пн', 'Вт','Ср','Чт','Пт','Сб','Вс'];
+
+
+      console.log('curYear'+current.getYear());
+      console.log('curMonth'+current.getMonth());
+      console.log('curDate'+current.getDate());
+          
+      cal = new Calendar(current, $('#calendar'), events);
+      
+      
+      cal.drawCalendar();
+      cal.drawEvents(events);
+      $('.prev-month').click(function(){cal.getPreviousMonth()});
+      $('.next-month').click(function(){cal.getNextMonth()});
   
     }
     
