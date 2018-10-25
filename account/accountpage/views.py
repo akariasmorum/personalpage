@@ -11,7 +11,7 @@ def login(request):
 		request.session['user'] = request.POST['nick']
 		request.session.save()
 		user = {'nickname': request.session['user']}
-		#return render(request, 'rendered.html', context={'title':'welcome', 'user':user})
+		
 	else:
 		return render(request, 'login.html', context = {'title':'Аутентификация'})
 def schedule(request):	
