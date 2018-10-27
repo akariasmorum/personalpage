@@ -1,0 +1,103 @@
+{% extends "baselogin.html" %}
+{% block form %}
+
+	<style type="text/css">
+		.form{
+	      display: inline-block;
+	    }
+    	input{
+    		width:100%;
+    	}
+
+    	button:hover{
+    		background-color: #a2ed84; 
+    	}
+
+    	button{
+    		height: 40px;
+    		border-radius: 40px !important;
+    		border:1px solid #4b4b4b !important;
+    	}
+    	.line{
+    		margin-top: 20px;
+    	}
+
+	</style>
+	<div class='form'>
+		<h3>Регистрация в личном кабинете</h2>
+
+		{% if form.errors %}
+							{{form.errors}}
+						{% endif %}	
+
+						{% if next %}
+						    {% if user.is_authenticated %}
+							    Your account doesn't have access to this page. To proceed,
+							    please login with an account that has access.
+						    {% else %}
+						    	Please login to see this page.
+						    {% endif %}
+						{% endif %}
+		<form method="post" class="text-center">
+			{% csrf_token %}
+			  	
+			      
+			      <div class="line input-group mb-2">
+			        <div class="input-group-prepend">
+			          <div class="input-group-text"><i class="fas fa-user"></i></div>
+			        </div>
+			        {{ form.name }}
+			        
+			      </div>
+			    
+
+			      
+			      <div class="line input-group mb-2">
+			        <div class="input-group-prepend">
+			          <div class="input-group-text"><i class="fas fa-user"></i></div>
+			        </div>
+			        {{ form.surname }}
+			        
+			      </div>
+			    
+
+
+			<div class="line input-group mb-2">
+			        <div class="input-group-prepend">
+			          <div class="input-group-text"><i class="fas fa-id-card"></i></div>
+			        </div>
+			        {{ form.snils }}
+			        
+			</div>
+
+			
+
+			<div class="line input-group mb-2">
+			        <div class="input-group-prepend">
+			          <div class="input-group-text"><i class="fas fa-phone"></i></div>
+			        </div>
+			        {{ form.telephone }}
+			        
+			</div>
+
+			<div class = 'line row'>
+			  	<div class="form-group col">
+					
+						{{ form.password1 }}			    
+				</div>
+				
+				<div class="form-group col">
+					
+						{{ form.password2 }}			    
+				</div>		
+			</div>
+				
+
+
+
+
+
+		  <button type="submit">Зарегистрироваться</button>
+		</form>
+	</div>	
+{% endblock %}

@@ -90,10 +90,6 @@
       color: #fff;
       }
 
-
-      /* №№№№№№№№№№№№№№№№№№№   */
-
-
     #content{
        background-color:#f7f7f7;
       width: calc(100% - 250px);
@@ -182,7 +178,7 @@ box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
                 {% load static %}
                 <img class = 'align-self-center my-pic ' src='{% static "user.png" %}'></li>
               <li class='row d-flex justify-content-center'>
-                <a href='#user-submenu' data-toggle='collapse' aria-expanded='false' class='dropdown-toggle collapsed align-self-center'>ОГО</a>
+                <a href='#user-submenu' data-toggle='collapse' aria-expanded='false' class='dropdown-toggle collapsed align-self-center'>{{ name }}</a>
               </li>
               <li class='row d-flex justify-content-center'>
                 <ul class='collapse list-unstyled align-self-center' id='user-submenu'>

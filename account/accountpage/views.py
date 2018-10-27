@@ -4,18 +4,23 @@ from .forms import Message
 from datetime import datetime
 import http.client as hc
 import json
+from django.urls import reverse_lazy
+from django.views import generic
+
+from .forms import SignUpForm
 
 # Create your views here.
 def login(request):
-	if 'nick' in request.POST:		
-		request.session['user'] = request.POST['nick']
+	if 'name' in request.POST:		
+		request.session['name'] = request.POST['name']+ ' '+request.POST['surname']
 		request.session.save()
 		user = {'nickname': request.session['user']}
 		
 	else:
 		return render(request, 'login.html', context = {'title':'Аутентификация'})
+
 def schedule(request):	
-	return render(request, 'schedule.html', context={'title': 'Расписание', 'nbar': 'schedule'})		
+	return render(request, 'schedule.html', context={'title': 'Расписание', 'nbar': 'schedule', 'name': (request.user.surname + ' ' + request.user.name) })		
 
 def get_message(request):
 	if request.method =='POST':
@@ -99,3 +104,9 @@ def calendar(request):
 		
 
 	return render(request, 'calendar.html', context = {'title': 'Календарь пациента', 'nbar': 'calendar', 'data':  data})
+
+
+class SignUp(generic.CreateView):
+	form_class = SignUpForm
+	success_url = reverse_lazy('login')
+	template_name = 'signup.html'
