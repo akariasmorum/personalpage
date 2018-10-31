@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block context %}
+	<style type="text/css">
+		
+	</style>
+
+
+
+	<form method = "POST" class = 'message-form'>
+		{% csrf_token %}
+		{% for field in form.visible_fields %}
+		    <div class="form-group row">
+		        {{ field.errors }}
+		        <div class="col-sm-2 col-form-label">{{ field.label_tag }}</div> 
+		        <div class="col-sm-6"> {{ field }} </div>
+		    </div>
+		{% endfor %}
+
+		{% for hidden in form.hidden_fields %}
+		{{ hidden }}
+		{% endfor %}
+		<input type="submit" class="mbtn btn btn-primary" values="submit">
+	</form>
+
+
+
+{% endblock %}   

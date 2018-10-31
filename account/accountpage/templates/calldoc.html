@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block context %}
+
+<div class='main-area'>
+            <div class = 'container'>
+                <h2>Запись на прием</h2>
+                  <form>
+                      <div class="form-group row">
+                        <label class="col-sm-2 col-form-label" for="Date">Дата и время вызова</label>
+                        <div class="col-sm-4">
+                            <input type="text" name="">
+                        </div>    
+                      </div>
+
+                      <div class="form-group row">
+                        <label class="col-sm-2 col-form-label" for="Date">Пациент</label>
+                        <div class="col-sm-4">
+                            <select id="pacient" class="form-control">
+                                <option selected>Иванова Мария Петровна(12.12.1965)</option>
+                                <option >Иванов Алексей Михайлович(31.12.2014)</option>
+                                <option >Иванова Алена Михайлович(12.03.2017)</option>
+                            </select>
+                        </div>    
+                      </div>
+                      <div class="form-group row">
+                        <label class="col-sm-2 col-form-label" for="type-doctor">Температура</label>
+                        <div class="col-sm-4">
+                            <select id="type-doctor" class="form-control">
+                                <option >36.5</option>
+                                <option >36.6</option>
+                                <option >36.7</option>
+                                <option >36.8</option>
+                                <option >36.9</option>
+                                <option >37.0</option>
+                                <option >37.1</option>
+                                <option >37.2</option>
+                            </select>                            
+                        </div>    
+                      </div>
+
+                      <div class="form-group row">
+                        <label class="col-sm-2 col-form-label" for="Date">Жалобы</label>
+                        <div class="col-sm-4">
+                            <textarea></textarea>
+                        </div>    
+                      </div>
+                      
+                      <div class="form-group row">
+                        <div class="col-sm-10">
+                          <button type="submit" class="mbtn btn btn-primary" style='background-color: #9bc53d; border-color: #9bc53d'>Оформить вызов</button>
+                        </div>
+                      </div>  
+                    </form> 
+            </div>
+        </div>
+{% endblock %}

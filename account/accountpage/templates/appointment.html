@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block context %}
+<div class='main-area'>
+            <div class = 'container'>
+                <h2>Запись на прием</h2>
+                  <form >
+                      <div class="form-group row">
+                        <label class="col-sm-2 col-form-label" for="pacient">Пациент</label>
+                        <div class="col-sm-4">
+                            <select id="pacient" class="form-control">
+                                <option selected>Иванова Мария Петровна(12.12.1965)</option>
+                                <option >Иванов Алексей Михайлович(31.12.2014)</option>
+                                <option >Иванова Алена Михайлович(12.03.2017)</option>
+                            </select>
+                        </div>    
+                      </div>
+                      <div class="form-group row">
+                        <label class="col-sm-2 col-form-label" for="type-doctor">Врач</label>
+                        <div class="col-sm-4">
+                            <select id="type-doctor" class="form-control">
+                                <option >Хирург</option>
+                                <option >ЛОР</option>
+                                <option >Терапевт</option>
+                            </select>
+
+                            <select id="name-doctor" class="form-control">
+                                <option >Иванов Иван Иванович</option>
+                                <option >Петров Петр Родионович</option>                            
+                            </select>
+                        </div>    
+                      </div>
+                      
+                      <div class="form-group row">
+                        <div class="col-sm-10">
+                          <button type="submit" class="mbtn btn btn-primary" style='background-color: #9bc53d; border-color: #9bc53d'>Записаться</button>
+                        </div>
+                      </div>  
+                    </form> 
+            </div>
+        </div>
+{% endblock %}
