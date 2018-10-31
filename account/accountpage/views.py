@@ -65,14 +65,14 @@ def get_message(request):
 					
 	else:
 		form=Message()
-	return render(request, 'message.html', context={'title': 'Расписание', 'nbar': 'message', 'form': form})
+	return render(request, 'message.html', context={'title': 'Расписание', 'nbar': 'message', 'form': form, 'name': (request.user.surname + ' ' + request.user.name) })
 
 def calldoc(request):
-	return render(request, 'calldoc.html', context={'title': 'Вызов врача на дом', 'nbar': 'call-doc'})
+	return render(request, 'calldoc.html', context={'title': 'Вызов врача на дом', 'nbar': 'call-doc', 'name': (request.user.surname + ' ' + request.user.name) })
 def ehr(request):
-	return render(request, 'ehr.html', context={'title': 'Электронная медицинская карта', 'nbar': 'ehr'})
+	return render(request, 'ehr.html', context={'title': 'Электронная медицинская карта', 'nbar': 'ehr', 'name': (request.user.surname + ' ' + request.user.name) })
 def app(request):
-	return render(request, 'appointment.html', context={'title': 'Запись на прием', 'nbar': 'app'})			
+	return render(request, 'appointment.html', context={'title': 'Запись на прием', 'nbar': 'app', 'name': (request.user.surname + ' ' + request.user.name) })			
 def calendar(request):
 	con = hc.HTTPConnection('ibus.dgkb.lan', 80) 
 	headers = { 
