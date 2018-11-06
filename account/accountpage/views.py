@@ -7,7 +7,7 @@ import json
 from django.urls import reverse_lazy
 from django.views import generic
 
-from .forms import SignUpForm
+from .forms import SignUpForm, CallDocForm
 
 # Create your views here.
 def login(request):
@@ -68,7 +68,15 @@ def get_message(request):
 	return render(request, 'message.html', context={'title': 'Расписание', 'nbar': 'message', 'form': form, 'name': (request.user.surname + ' ' + request.user.name) })
 
 def calldoc(request):
-	return render(request, 'calldoc.html', context={'title': 'Вызов врача на дом', 'nbar': 'call-doc', 'name': (request.user.surname + ' ' + request.user.name) })
+	if request.method =='POST':
+		form = CallDocForm(request.user, request.POST)
+		if form.is_valid():
+			form.save()
+	else:
+		form = CallDocForm(request.user)
+		
+
+	return render(request, 'calldoc.html', context={'title': 'Вызов врача на дом', 'nbar': 'call-doc', 'form': form, 'name': (request.user.surname + ' ' + request.user.name) })
 def ehr(request):
 	return render(request, 'ehr.html', context={'title': 'Электронная медицинская карта', 'nbar': 'ehr', 'name': (request.user.surname + ' ' + request.user.name) })
 def app(request):
