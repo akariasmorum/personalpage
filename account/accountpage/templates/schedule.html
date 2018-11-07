@@ -20,13 +20,15 @@
       width: 300px;
 
     }
+
     .event{
       position: relative;
     }
     .event:after{
       position: absolute;
       top: 20px;
-      left:39%;
+      left:50%;
+      margin-left: -5px;
       content: '';
       
       content: '';
@@ -41,6 +43,9 @@
 
     }
 
+    #calendar>.row>.col{
+      text-align: center;
+    }
     #task>li{
       padding-left: 20px;
     }
@@ -52,17 +57,25 @@
     .grey-li{
       color:#686868;
     }
+    .task{
+      margin: 10px 0px;
+    }
+    @media (max-width: 768px){
+      .task{
+        width: 100%;
+      }
+    }
   </style>
   {% load static %}
   <div id='loader'><img class='loading-gif align-self-center' src='{% static 'loading.gif' %}'></div>
-  <div class='data row'>
-            <div class="data cal"  id="task-div">
+  <div class='data row d-flex justify-content-center '>
+            <div class="data cal task"  id="task-div">
               <ul id="task">
               </ul>
             </div>
 
 
-            <div class="data cal">
+            <div class="data cal  task">
               <div id='calendar'>
                 <div class = 'row month'>
                   <div class='month col prev-month'><h4><</h4></div>
@@ -105,11 +118,11 @@
 class Calendar 
   {
 
-    constructor(date, calendar, events){
+    constructor(date, calendar){
       this.date = date
       this.calendar = calendar;
       this.months = ['Январь', 'Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
-      this.events = events;
+      
     }
 
     daysInMonth(year, month){ //год соответствует и месяц соответствует с нашим
@@ -146,10 +159,10 @@ class Calendar
 
 
 
-    ifEvent(date){
-      for(var i=0; i<this.events.length; i++)
+    ifEvent(date, events){
+      for(var i=0; i<events.length; i++)
       {
-        var b=this.events[i]['date'];
+        var b=events[i]['date'];
         var a=date;
         if (this.sameDay(a,b)){
           return true;
@@ -160,7 +173,7 @@ class Calendar
 
     }
 
-    drawCalendar(){   
+    drawCalendar(events){   
       var dates = this.getMonthCalendarString(this.date.getFullYear(), this.date.getMonth()); 
       var currentRow = $('<div>', {'class': 'row dates'});
       
@@ -174,7 +187,7 @@ class Calendar
         }
         if(Number.isInteger(dates[i]))
         {
-          if (this.ifEvent(new Date(this.date.getFullYear(), this.date.getMonth(), dates[i])))
+          if (this.ifEvent(new Date(this.date.getFullYear(), this.date.getMonth(), dates[i]), events))
           {
             currentPosition.addClass('event');
           }
@@ -230,7 +243,7 @@ class Calendar
       return row;
     }
 
-    getNextMonth(){
+    getNextMonth(events){
       var a = this.date.getMonth();
       if(a==11){
         this.date = new Date(this.date.getFullYear()+1, 0, 1);
@@ -242,11 +255,12 @@ class Calendar
         var d = this.date;
       }
       $('.dates').remove();
-      var a = this.getMonthCalendarString(this.date.getFullYear(), this.date.getMonth());
-      this.drawCalendar(a);
+      
+      this.drawCalendar(events);
+      this.drawEvents(events);
     }
 
-    getPreviousMonth(){
+    getPreviousMonth(events){
       if(this.date.getMonth()==0){
         this.date = new Date(this.date.getFullYear()-1, 11, 1);
       }
@@ -254,8 +268,9 @@ class Calendar
         this.date = new Date(this.date.getFullYear(), this.date.getMonth()-1, 1);
       }
       $('.dates').remove();
-      var a = this.getMonthCalendarString(this.date.getFullYear(), this.date.getMonth());
-      this.drawCalendar(a);
+      
+      this.drawCalendar(events);
+      this.drawEvents(events);
     }
     
 
@@ -301,14 +316,52 @@ class Calendar
       console.log('curMonth'+current.getMonth());
       console.log('curDate'+current.getDate());
           
-      cal = new Calendar(current, $('#calendar'), events);
+      cal = new Calendar(current, $('#calendar'));
       
       
-      cal.drawCalendar();
+      cal.drawCalendar(events);
       cal.drawEvents(events);
-      $('.prev-month').click(function(){cal.getPreviousMonth()});
-      $('.next-month').click(function(){cal.getNextMonth()});
-      
+
+      $('.prev-month').click(function(){
+        $("#loader").fadeIn("slow", function(){
+
+
+            //нужно АСИНХРОННО получить events и передать их 
+            var events = [
+            {'date': new Date(2018, 9, 15, 13, 00), 'text': 'Прием у терапевта'},
+            {'date': new Date(2018, 9, 18, 11, 30), 'text': 'Прием у кардиолога'},
+            {'date': new Date(2018, 9, 20, 14, 15), 'text': 'Прием у стоматолога'},
+            {'date': new Date(2018, 9, 21, 10, 40), 'text': 'Прием у проктолога'},
+          ];
+
+
+            cal.getPreviousMonth(events);
+            $("#loader").fadeOut("slow", function() { });
+
+
+            }); //fadeIn 
+        }); //Click
+
+
+      $('.next-month').click(function(){
+        $("#loader").fadeIn("slow", function(){
+
+          
+            //нужно АСИНХРОННО получить events и передать их 
+            var events = [
+            {'date': new Date(2018, 11, 15, 13, 00), 'text': 'Прием у терапевта'},
+            {'date': new Date(2018, 11, 18, 11, 30), 'text': 'Прием у кардиолога'},
+            {'date': new Date(2018, 11, 20, 14, 15), 'text': 'Прием у стоматолога'},
+            {'date': new Date(2018, 11, 21, 10, 40), 'text': 'Прием у проктолога'},
+          ];
+
+
+            cal.getNextMonth(events);
+            $("#loader").fadeOut("slow", function() { });
+
+
+            }); //fadeIn 
+        }); //Click
       $("#loader").fadeOut("slow", function() { });
   
     };

@@ -20,13 +20,26 @@
       svg{
         margin-right: 20px;
       }
+      .green{
+        background-color:  #9BC53D;
+        border: 0px !important;
+      }
+      #top-button{
+        display: none;
+      }
       .wrapper {
           display: flex;
           width: 100%;
       }
 
 
+      nav{
+        border-bottom: 1px solid rgba(0,0,0,.1);
+      }
+
       /* полоса прокрутки */
+
+
 
       .mCSB_inside>.mCSB_container
       {
@@ -108,60 +121,73 @@
 
     @media (max-width: 768px)
     {
-    #sidebar {
-        margin-left: -250px;
-    }
-    #sidebar.active {
-        margin-left: 0;
-    }
-    #content{
-      width:100%;
+      #sidebar {
+          margin-left: -250px;
+      }
+      #sidebar.active {
+          margin-left: 0;
+      }
+      #content{
+        width:100%;
+      }
+
+      #content.active {
+          width: calc(100% - 250px);
+      }
+      #top-button{
+        display: inline-block;
+      }
     }
 
-    #content.active {
-        width: calc(100% - 250px);
-    }
-  }
-  .row{
-    margin:20px 0px;
-  }
-  .data{
-    margin: 10px 10px;
-  }
-  .cal{
-    background-color: #fff;
-    border-radius: 5px;
-    width: 350px;
-    height: 400px;
-    -webkit-box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
--moz-box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
-box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
-  }
-  #task{
-    padding: 10px 10px;
-  }
-
-  /* календарь */
-
-    .month.col, .month.switcher{
-    text-align: center;
-    }
-    .row.month{
-      margin: 30px 15px;
-    }
-    .row.week{
-      color: #919191
-    }
-    #calendar > .data.row{
-      margin: 10px 15px;
-    }
-    .col.weekend{
-      color: #ff9049;
+    .main-content{
+      padding-top: 40px;
     }
 
-    #task li{
+
+    .row{
       margin:20px 0px;
     }
+    .data{
+      margin: 10px 10px;
+    }
+    .cal{
+      background-color: #fff;
+      border-radius: 5px;
+      width: 350px;
+      height: 400px;
+      -webkit-box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
+  -moz-box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
+  box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
+    }
+    #task{
+      padding: 10px 10px;
+    }
+
+    /* календарь */
+
+      .month.col, .month.switcher{
+      text-align: center;
+      }
+      .row.month{
+        margin: 30px 15px;
+      }
+      .row.week{
+        color: #919191
+      }
+      #calendar > .data.row{
+        margin: 10px 15px;
+      }
+      .col.weekend{
+        color: #ff9049;
+      }
+
+      #task li{
+        margin:20px 0px;
+
+      }
+
+
+
   /* конец календаря */
 
 
@@ -209,8 +235,8 @@ box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
               <li {% if nbar == 'message'%} class='active' {% endif %}>
                   <a href="{% url 'message' %}"><i class="fas fa-envelope"></i>Обращение</a>
               </li>
-              <li>
-                  <a href="#"><i class="fas fa-user-circle"></i>Моя информация</a>
+              <li {% if nbar == 'mypage'%} class='active' {% endif %}>
+                  <a href="{% url 'my-page' %}"><i class="fas fa-user-circle"></i>Моя информация</a>
               </li>
 
 
@@ -220,22 +246,71 @@ box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
       <!-- Page Content -->
     <div id="content">
       <div class='container'>
-          <div class="row">
-            <button type="button" id="sidebarCollapse" class="btn navbar-toggle" data-target="#sidebar">
-                    <i class="fas fa-align-left"></i>
-                    <span>Toggle Sidebar</span>
-            </button>
-
-            <div class="md-form active-pink-2 mb-3">
+          <div class = 'input-group'>
+            
               <input class="form-control" type="text" placeholder="Search" aria-label="Search">
-            </div>
+              <span class='input-group-btn'>
+                <button class="btn btn-secondary green" id = 'top-button' type="button" data-toggle="collapse" aria-haspopup="true" aria-expanded="false" data-target = '#topbar' aria-controls='topbar'>
+                  <i class="fas fa-align-left"></i>
+                </button>  
+              </span>  
+            </form>  
+            
+          </button>          
+          </div>
+          
+          <nav id="topbar" class='collapse'>
+            <ul class="sidebar-header list-unstyled">
+              <li class='row d-flex justify-content-center' >
+                {% load static %}
+                <img class = 'align-self-center my-pic ' src='{% static "user.png" %}'></li>
+              <li class='row d-flex justify-content-center'>
+                <a href='#user-submenu-top' data-toggle='collapse' aria-expanded='false' class='dropdown-toggle collapsed align-self-center'>{{ name }}</a>
+              </li>
+              <li class='row d-flex justify-content-center'>
+                <ul class='collapse list-unstyled align-self-center' id='user-submenu-top'>
+                  <li>Сменить пароль</li>
+                  <li>Выход</li>
+                </ul>
+              </li>
+
+
+          </ul>
+
+          <ul class="list-unstyled components">
+
+              <li {% if nbar == 'call-doc'%} class='active' {% endif %}>
+                  <a href = "{% url 'call-doc' %}" > <i class="fas fa-user-md"> </i>Вызов врача на дом</a>
+              </li>
+
+              <li {% if nbar == 'app'%} class='active' {% endif %}>
+                  <a href="{% url 'appointment' %}"><i class="fas fa-book-open"></i>Запись на прием</a>
+              </li>
+
+              <li {% if nbar == 'schedule'%} class='active' {% endif %}>
+                  <a href="{% url 'schedule' %}"><i class="fas fa-calendar-alt"></i>Календарь пациента</a>
+              </li>
+              <li {% if nbar == 'ehr'%} class='active' {% endif %}>
+                  <a href="{% url 'ehr' %}"><i class="fas fa-book-open"></i>ЭМК</a>
+              </li>
+              <li {% if nbar == 'message'%} class='active' {% endif %}>
+                  <a href="{% url 'message' %}"><i class="fas fa-envelope"></i>Обращение</a>
+              </li>
+              <li>
+                  <a href="#"><i class="fas fa-user-circle"></i>Моя информация</a>
+              </li>
+
+
+          </ul>
+          </nav>
           </div>
 
-
+          <div class = 'main-content'>
           {% block context %}
 
 
           {% endblock %}
+          </div><!--main-content-->
 
        </div>
     </div>
