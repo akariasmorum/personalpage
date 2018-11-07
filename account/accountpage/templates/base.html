@@ -235,8 +235,8 @@
               <li {% if nbar == 'message'%} class='active' {% endif %}>
                   <a href="{% url 'message' %}"><i class="fas fa-envelope"></i>Обращение</a>
               </li>
-              <li>
-                  <a href="#"><i class="fas fa-user-circle"></i>Моя информация</a>
+              <li {% if nbar == 'mypage'%} class='active' {% endif %}>
+                  <a href="{% url 'my-page' %}"><i class="fas fa-user-circle"></i>Моя информация</a>
               </li>
 
 

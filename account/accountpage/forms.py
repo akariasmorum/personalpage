@@ -28,6 +28,25 @@ class SignUpForm(UserCreationForm):
 		model = PatientUser
 		fields = ('snils', 'name', 'surname', 'telephone')
 
+class AddChildForm(ModelForm):
+	name = forms.CharField(widget =forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Имя'}), max_length=50, help_text='Имя опекаемого')
+	surname= forms.CharField(widget =forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Фамилия'}), max_length=80, help_text='Фамилия опекаемого')
+	patronimic = forms.CharField(widget =forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Отчество'}), max_length=80, help_text='Отчество опекаемого')
+	snils = forms.CharField(widget =forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'СНИЛС'}), max_length=14, help_text='СНИЛС опекаемого')
+	date_born = forms.DateField()
+
+	class Meta:
+		model = Patient
+		fields = ['name', 'surname', 'patronimic', 'snils', 'date_born']
+
+	def save(self, user, commit=True):
+		instance = super(AddChildForm, self).save(commit=False)
+		instance.trustee = user
+		if commit:
+			instance.save()
+			self.save_m2m()
+		return instance		
+
 class CallDocForm(ModelForm):
 	temperature = forms.ChoiceField(widget = forms.Select(attrs={'class': 'form-control', 'placeholder': 'Температура'}), choices = ((str(x*0.1)[:4], str(x*0.1)[:4]) for x in range(360, 401)))
 	complaints = forms.CharField(widget =forms.Textarea(attrs={'class': 'form-control'}),label='Жалобы', max_length=1000)
@@ -40,7 +59,7 @@ class CallDocForm(ModelForm):
 
 	def save(self, commit=True):
 		instance = super(CallDocForm, self).save(commit=False)
-		inst.trustee = self._user
+		instance.trustee = self._user
 		if commit:
 			instance.save()
 			self.save_m2m()

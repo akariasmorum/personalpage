@@ -64,6 +64,10 @@ class Patient(models.Model):
 	date_born = models.DateField('Дата Рождения')
 	trustee = models.ForeignKey(PatientUser, models.CASCADE)
 
+	def __str__(self):
+		return "{0} {1}".format(self.surname, self.name)
+	
+
 
 class CallDoc(models.Model):	
 	date = models.DateTimeField('Время вызова', auto_now_add=True)

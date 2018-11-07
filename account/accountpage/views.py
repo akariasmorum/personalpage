@@ -7,7 +7,7 @@ import json
 from django.urls import reverse_lazy
 from django.views import generic
 
-from .forms import SignUpForm, CallDocForm
+from .forms import SignUpForm, CallDocForm, Patient, AddChildForm
 
 # Create your views here.
 def login(request):
@@ -21,6 +21,43 @@ def login(request):
 
 def schedule(request):	
 	return render(request, 'schedule.html', context={'title': 'Расписание', 'nbar': 'schedule', 'name': (request.user.surname + ' ' + request.user.name) })		
+
+
+class ChildrenView(generic.ListView):
+	model = Patient
+	context_object_name = 'children'
+	template_name = 'mypage.html'
+
+	'''def get_queryset(self):
+		return Patient.objects.filter(trustee = self.request.user)
+'''
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context['children'] = Patient.objects.filter(trustee = self.request.user)
+		return context
+
+		
+	'''def __init__(self, user, *args, **kwargs):
+		super(ChildrenView, self).__init__(*args, **kwargs)
+		self.queryset = Patient.objects.filter(trustee = user)'''
+
+
+def mypage(request):
+	children = Patient.objects.filter(trustee = request.user)
+	if request.method =='POST':
+		form = AddChildForm(request.POST)
+		if form.is_valid():
+			form.save(request.user)
+	else:
+		form = AddChildForm()	
+	return render(request, 'mypage.html', context= {'title': 'Моя информация', 'nbar': 'mypage','name': (request.user.surname + ' ' + request.user.name), 'children': children, 'form': form})
+
+
+
+
+
+
+
 
 def get_message(request):
 	if request.method =='POST':

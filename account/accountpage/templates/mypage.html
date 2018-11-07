@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block context %}
+	<h3>Мои дети:</h3>
+
+    {% if children %}
+    <ul>
+
+      {% for child in children %}
+      
+        	<p>Имя: {{ child.surname }} {{child.name}} СНИЛС: {{child.snils}} Дата Рождения: {{child.date_born}} </p>
+      
+      {% endfor %}
+
+    </ul>
+    {% else %}
+      <p>У Вас пока не указаны опекаемые</p>
+
+
+    {% endif %}   
+
+    <h3>Добавить Опекаемого</h3>
+    	<form method = "POST" class = 'add-child'>
+					{% csrf_token %}
+					{% for field in form.visible_fields %}
+					    <div class="form-group row">
+					        {{ field.errors }}
+					        <div class="col-sm-2 col-form-label">{{ field.label_tag }}</div> 
+					        <div class="col"> {{ field }} </div>
+					    </div>
+					{% endfor %}
+
+					{% for hidden in form.hidden_fields %}
+					{{ hidden }}
+					{% endfor %}
+					<input type="submit" class="mbtn btn btn-primary" values="submit">
+				</form>
+{% endblock %}

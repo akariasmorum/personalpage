@@ -13,4 +13,5 @@ urlpatterns = [
 	url('calendar', views.calendar, name='calendar'),
 	url('message', views.get_message, name='message'),
 	url('signup', views.SignUp.as_view(), name = 'signup'),
+	url('mypage', views.mypage, name = 'my-page')
 ]
