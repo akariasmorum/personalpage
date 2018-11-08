@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
 from django.views import generic
-from django.forms import ModelForm
+from django.forms import ModelForm, ModelChoiceField
 
 from .models import PatientUser, CallDoc, Patient
 
@@ -29,11 +29,11 @@ class SignUpForm(UserCreationForm):
 		fields = ('snils', 'name', 'surname', 'telephone')
 
 class AddChildForm(ModelForm):
-	name = forms.CharField(widget =forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Имя'}), max_length=50, help_text='Имя опекаемого')
-	surname= forms.CharField(widget =forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Фамилия'}), max_length=80, help_text='Фамилия опекаемого')
-	patronimic = forms.CharField(widget =forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Отчество'}), max_length=80, help_text='Отчество опекаемого')
-	snils = forms.CharField(widget =forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'СНИЛС'}), max_length=14, help_text='СНИЛС опекаемого')
-	date_born = forms.DateField()
+	name = forms.CharField(label='Имя', widget =forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Имя'}), max_length=50, help_text='Имя опекаемого')
+	surname= forms.CharField(label='Фамилия', widget =forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Фамилия'}), max_length=80, help_text='Фамилия опекаемого')
+	patronimic = forms.CharField(label='Отчество', widget =forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Отчество'}), max_length=80, help_text='Отчество опекаемого')
+	snils = forms.CharField(label='СНИЛС', widget =forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'СНИЛС'}), max_length=14, help_text='СНИЛС опекаемого')
+	date_born = forms.DateField(label='Дата Рождения', widget =forms.TextInput(attrs={'class': 'form-control'}))
 
 	class Meta:
 		model = Patient
@@ -48,13 +48,13 @@ class AddChildForm(ModelForm):
 		return instance		
 
 class CallDocForm(ModelForm):
-	temperature = forms.ChoiceField(widget = forms.Select(attrs={'class': 'form-control', 'placeholder': 'Температура'}), choices = ((str(x*0.1)[:4], str(x*0.1)[:4]) for x in range(360, 401)))
+	temperature = forms.ChoiceField(widget = forms.Select(attrs={'class': 'form-control'}),label='Температура', choices = ((str(x*0.1)[:4], str(x*0.1)[:4]) for x in range(360, 401)))
 	complaints = forms.CharField(widget =forms.Textarea(attrs={'class': 'form-control'}),label='Жалобы', max_length=1000)
 
 
 	def __init__(self, user, *args, **kwargs):
 		super(CallDocForm, self).__init__(*args, **kwargs)
-		self.fields['patient'] = forms.ModelChoiceField(queryset = Patient.objects.filter(trustee = user))
+		self.fields['patient'] = forms.ModelChoiceField(queryset = Patient.objects.filter(trustee = user), widget = forms.Select(attrs={'class': 'form-control'}),label='Пациент')
 		self._user = user
 
 	def save(self, commit=True):
@@ -68,4 +68,3 @@ class CallDocForm(ModelForm):
 	class Meta:
 		model = CallDoc
 		fields = ['patient','temperature','complaints']
-

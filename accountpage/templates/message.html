@@ -7,6 +7,7 @@
 
 
 	<form method = "POST" class = 'message-form'>
+		<div class='form-group row'><h2 class='col'>Обращение</h2></div>
 		{% csrf_token %}
 		{% for field in form.visible_fields %}
 		    <div class="form-group row">

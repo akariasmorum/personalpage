@@ -243,7 +243,7 @@ class Calendar
       return row;
     }
 
-    getNextMonth(events){
+    getNextMonth(){
       var a = this.date.getMonth();
       if(a==11){
         this.date = new Date(this.date.getFullYear()+1, 0, 1);
@@ -255,12 +255,9 @@ class Calendar
         var d = this.date;
       }
       $('.dates').remove();
-      
-      this.drawCalendar(events);
-      this.drawEvents(events);
-    }
+          }
 
-    getPreviousMonth(events){
+    getPreviousMonth(){
       if(this.date.getMonth()==0){
         this.date = new Date(this.date.getFullYear()-1, 11, 1);
       }
@@ -268,18 +265,100 @@ class Calendar
         this.date = new Date(this.date.getFullYear(), this.date.getMonth()-1, 1);
       }
       $('.dates').remove();
-      
-      this.drawCalendar(events);
-      this.drawEvents(events);
-    }
-    
+          }    
 
   }
-    
-    
-    
-    
 
+  
+  
+  
+function Query(my_method, for_request, callback)
+  {
+      // var for_request = {snils:"184-434-687 96",date_begin:"2017-08-10",
+      //    date_end:"2017-10-10"     };
+    
+    
+    var my_data = {
+      name:"CalendarList",
+      params:{
+        request:JSON.stringify(for_request)
+      }
+    };
+    
+    var responce = $.ajax({
+        async:false,
+        method:my_method,
+        url:"http://ibus.dgkb.lan/api/executescript/",
+        username: 'root',
+        password: 'root',
+        headers:{
+          'Authorization': 'Basic cm9vdDpyb290',          
+          'Content-Type': 'application/json'          
+          },  
+          // data: "login=leroy&password=password",
+        accepts: "application/json",
+        contentType:"application/json",
+        dataType:"json",
+        
+        data:JSON.stringify(my_data),       
+      
+                success: function(msg)
+        {        
+         callback(msg);
+       
+        },
+         error: function(jqXHR, textStatus, errorThrown) {
+            console.log(JSON.stringify(jqXHR));
+            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+         }         
+              }).responceText;    
+  }
+    
+  
+  function return_array(object){
+      result       = $.parseJSON(JSON.stringify(object));
+      lvl_output   = $.parseJSON(JSON.stringify(result.output));
+      lvl_calendar = $.parseJSON(lvl_output.CalendarList); 
+  
+      var ar = new Array()
+
+       lvl_calendar.forEach(function(item, i, lvl_calendar) {
+           ar.push({'date':new Date(item.datedoc), 'text':item.NRU_NAME});
+         });
+
+      return ar;
+     };
+ 
+
+function getFirstLast(date_search){
+    var value = date_search.getMonth() + 1;
+    if (value < 10) {
+      var month = "0"+ value;
+    }
+    else {
+      var month =  value;
+    }
+
+    return {
+      date_begin:date_search.getFullYear() + "-" + month + "-" + "01",
+        date_end:date_search.getFullYear() + "-" + month + "-" + 
+        new Date(date_search.getFullYear(), date_search.getMonth() +1, 0).getDate()
+    };
+  }
+
+  function eventsFromService(date_for_request){     
+    var dataFromRequest = getFirstLast(date_for_request);
+
+    var e = document.getElementById("snils");
+    dataFromRequest.snils = e.textContent || e.innerText;
+    
+     var ajax_info = "";
+     Query("POST", dataFromRequest, function (info){ 
+          ajax_info = info;
+     });
+
+     return return_array(ajax_info);
+  }
      
     window.onload = function(){
         $("#sidebar").mCustomScrollbar({
@@ -298,27 +377,15 @@ class Calendar
           // in our CSS
           $('a[aria-expanded=true]').attr('aria-expanded', 'false');
         });
-
-
-      var events = [
-        {'date': new Date(2018, 9, 15, 13, 00), 'text': 'Прием у терапевта'},
-        {'date': new Date(2018, 9, 18, 11, 30), 'text': 'Прием у кардиолога'},
-        {'date': new Date(2018, 9, 20, 14, 15), 'text': 'Прием у стоматолога'},
-        {'date': new Date(2018, 9, 21, 10, 40), 'text': 'Прием у проктолога'},
-      ];
-
+  
       var current = new Date();
       current.setHours(0,0,0,0)   
       var weekday = ['Пн', 'Вт','Ср','Чт','Пт','Сб','Вс'];
 
+         
+      cal = new Calendar(current, $('#calendar')); 
+      var events =  eventsFromService(cal.date);
 
-      console.log('curYear'+current.getYear());
-      console.log('curMonth'+current.getMonth());
-      console.log('curDate'+current.getDate());
-          
-      cal = new Calendar(current, $('#calendar'));
-      
-      
       cal.drawCalendar(events);
       cal.drawEvents(events);
 
@@ -326,16 +393,14 @@ class Calendar
         $("#loader").fadeIn("slow", function(){
 
 
-            //нужно АСИНХРОННО получить events и передать их 
-            var events = [
-            {'date': new Date(2018, 9, 15, 13, 00), 'text': 'Прием у терапевта'},
-            {'date': new Date(2018, 9, 18, 11, 30), 'text': 'Прием у кардиолога'},
-            {'date': new Date(2018, 9, 20, 14, 15), 'text': 'Прием у стоматолога'},
-            {'date': new Date(2018, 9, 21, 10, 40), 'text': 'Прием у проктолога'},
-          ];
+            //нужно АСИНХРОННО получить events и передать их           
 
+            cal.getPreviousMonth();
+            var events = eventsFromService(cal.date);
 
-            cal.getPreviousMonth(events);
+            cal.drawCalendar(events);
+            cal.drawEvents(events);
+             //console.log(getFirstLast(cal.date));
             $("#loader").fadeOut("slow", function() { });
 
 
@@ -348,15 +413,13 @@ class Calendar
 
           
             //нужно АСИНХРОННО получить events и передать их 
-            var events = [
-            {'date': new Date(2018, 11, 15, 13, 00), 'text': 'Прием у терапевта'},
-            {'date': new Date(2018, 11, 18, 11, 30), 'text': 'Прием у кардиолога'},
-            {'date': new Date(2018, 11, 20, 14, 15), 'text': 'Прием у стоматолога'},
-            {'date': new Date(2018, 11, 21, 10, 40), 'text': 'Прием у проктолога'},
-          ];
+           
+            cal.getNextMonth();
+            var events = eventsFromService(cal.date);
 
-
-            cal.getNextMonth(events);
+            cal.drawCalendar(events);
+            cal.drawEvents(events);
+             // console.log(getFirstLast(cal.date));
             $("#loader").fadeOut("slow", function() { });
 
 
