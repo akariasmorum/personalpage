@@ -2,9 +2,10 @@
 {% block context %}
 
 <div class='main-area'>
-            <div class = 'container'>
-                <h2>Запись на прием</h2>
+            
+                
                   <form method = "POST" class = 'call-doc'>
+                  <div class='form-group row'><h2 class ='col'>Вызов врача на дом</h2></div>
 					{% csrf_token %}
 					{% for field in form.visible_fields %}
 					    <div class="form-group row">
@@ -19,6 +20,6 @@
 					{% endfor %}
 					<input type="submit" class="mbtn btn btn-primary" values="submit">
 				</form>
-            </div>
+            
         </div>
 {% endblock %}
