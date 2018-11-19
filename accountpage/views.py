@@ -7,7 +7,7 @@ import json
 from django.urls import reverse_lazy
 from django.views import generic
 
-from .forms import SignUpForm, CallDocForm, Patient, AddChildForm
+from .forms import SignUpForm, CallDocForm, Patient, AddChildForm, MessageForm
 
 # Create your views here.
 def login(request):
@@ -50,17 +50,54 @@ def mypage(request):
 			form.save(request.user)
 	else:
 		form = AddChildForm()	
-	return render(request, 'mypage.html', context= {'title': 'Моя информация', 'nbar': 'mypage','name': (request.user.surname + ' ' + request.user.name), 'children': children, 'form': form})
-
-
-
-
+	return render(request, 'mypage.html', 
+		context= {'title': 'Моя информация', 'nbar': 'mypage',
+		           'name': (request.user.surname + ' ' + request.user.name), 
+		       'children': children, 'form': form})
 
 
 
 
 def get_message(request):
 	if request.method =='POST':
+		if request.POST["status_send"] == "false":
+			message_form = MessageForm(request.POST)
+			if message_form.is_valid():
+				#return HttpResponse("date type is{0}".format(message_form.return_type()))
+				message_form.save_data(request.user.snils, request.POST)
+				#return render(request, 'test.html', {'messages':message_form.return_all()})				
+				
+
+	form = MessageForm()
+	return render(request, 'message.html', 
+			   context={'title': 'Расписание', 'nbar': 'message', 
+			             'form': form, 
+			             'name': (request.user.surname + ' ' + request.user.name), 
+		             'my_email': 'email@email.ru',
+		             'my_phone': '+7(987)123-32-23',
+		               'hidden': ['status_send','date','id_doc_site']
+		             })
+	'''
+def return_message_page(request):
+	form = MessageForm()
+	return render(request, 'message.html', 
+			   context={'title': 'Расписание', 'nbar': 'message', 
+			             'form': form, 
+			             'name': (request.user.surname + ' ' + request.user.name), 
+		             'my_email': 'email@email.ru',
+		             'my_phone': '+7(987)123-32-23',
+		               'hidden': ['status_send','date','id_doc_site']
+		             })
+
+	if request.method =='POST':
+		
+	else:
+		return_message_page(request)
+		if request.POST["status_send"] == "false":
+			
+		
+		#return HttpResponse("{0}".format(json.dumps(request.POST)))
+		
 		form = Message(request.POST)
 		if form.is_valid():
 			try:
@@ -99,10 +136,8 @@ def get_message(request):
 			except Exception as ex:
 				return HttpResponse(str(ex))	
 
-					
-	else:
-		form=Message()
-	return render(request, 'message.html', context={'title': 'Расписание', 'nbar': 'message', 'form': form, 'name': (request.user.surname + ' ' + request.user.name) })
+					'''			
+	
 
 def calldoc(request):
 	if request.method =='POST':

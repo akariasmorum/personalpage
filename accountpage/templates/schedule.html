@@ -272,14 +272,13 @@ class Calendar
   
   
   
-function Query(my_method, for_request, callback)
+function Query(my_method, for_request, name_service, callback)
   {
       // var for_request = {snils:"184-434-687 96",date_begin:"2017-08-10",
       //    date_end:"2017-10-10"     };
-    
-    
+      
     var my_data = {
-      name:"CalendarList",
+      name:name_service,
       params:{
         request:JSON.stringify(for_request)
       }
@@ -307,17 +306,22 @@ function Query(my_method, for_request, callback)
          callback(msg);
        
         },
-         error: function(jqXHR, textStatus, errorThrown) {
-            console.log(JSON.stringify(jqXHR));
-            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-         }         
+        error:function(msg)
+        {
+          //error in msg
+          callback("error");          
+        }
+        // error: function(jqXHR, textStatus, errorThrown) {
+       //     alert(JSON.stringify(jqXHR));
+        //   alert("AJAX error: " + textStatus + ' : ' + errorThrown);
+        // }         
               }).responceText;    
   }
     
   
   function return_array(object){
       result       = $.parseJSON(JSON.stringify(object));
-      lvl_output   = $.parseJSON(JSON.stringify(result.output));
+      lvl_output   = $.parseJSON(JSON.stringify(result.output));      
       lvl_calendar = $.parseJSON(lvl_output.CalendarList); 
   
       var ar = new Array()
@@ -353,11 +357,18 @@ function getFirstLast(date_search){
     dataFromRequest.snils = e.textContent || e.innerText;
     
      var ajax_info = "";
-     Query("POST", dataFromRequest, function (info){ 
+     Query("POST", dataFromRequest, "CalendarList", function (info){ 
           ajax_info = info;
+          
      });
-
-     return return_array(ajax_info);
+     if(ajax_info == "error"){
+        alert("Сервис временно недоступен.Приносим извенения за предоставленные неудобства.");
+        return [];
+     }
+     else{
+        return return_array(ajax_info);
+     }
+     
   }
      
     window.onload = function(){

@@ -1,28 +1,199 @@
 {% extends "base.html" %}
 {% block context %}
 	<style type="text/css">
-		
+		.hidden_fields{
+			display:none;
+		}
 	</style>
 
+	<script type="text/javascript">
+		function Query(my_method, for_request, name_service, callback)
+  {    
+    var my_data = {
+      name:name_service,
+      params:{
+        request:JSON.stringify(for_request)
+      }
+    };
+    
+    var responce = $.ajax({
+        async:false,
+        method:my_method,
+        url:"http://ibus.dgkb.lan/api/executescript/",
+        username: 'root',
+        password: 'root',
+        headers:{
+          'Authorization': 'Basic cm9vdDpyb290',          
+          'Content-Type': 'application/json'          
+          },  
+          // data: "login=leroy&password=password",
+        accepts: "application/json",
+        contentType:"application/json",
+        dataType:"json",
+        
+        data:JSON.stringify(my_data),       
+      
+                success: function(msg)
+        {        
+         callback(msg);
+       
+        },
+        error:function(msg)
+        {
+          //error in msg
+          callback("error");          
+        }
+        // error: function(jqXHR, textStatus, errorThrown) {
+        //    console.log(JSON.stringify(jqXHR));
+        //    console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        // }         
+              }).responceText;    
+       }
 
+
+
+		function generate_id(str) {
+  			return str.replace(/[xy]/g, function(c) {
+    				var r = Math.random() * 16 | 0;
+   					 return (c == 'x' ? r : (r & 0x3 | 0x8 )).toString(16);
+ 					 });
+  			
+				}
+
+		function min_ten(value){
+			return (value < 10) ? "0" + value: value;
+		}
+
+		function return_date(){
+			 var now = new Date();
+			   		
+			 var str_time =   now.getFullYear()  + "-"
+			 		+  min_ten(now.getMonth  ()  + 1)  + "-" 
+			 		+  min_ten(now.getDate   ()) + " "
+			 		+  min_ten(now.getHours  ()) + ":"
+			 		+  min_ten(now.getMinutes());
+   			 	
+    		 return str_time;
+	    }
+
+		function generate_data(){
+			var generate_object = {};
+
+			generate_object.datedoc
+				=	document.getElementById('date_doc').value 
+				=	return_date();
+
+			generate_object.id_doc_site
+				=	document.getElementById('id_doc_site').value 
+				=   generate_id('xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx');
+
+			//generate_object.ajax_status
+			//	=	document.getElementById('ajax_status').value  = "True";
+
+			return generate_object;
+		}
+		
+
+		function check_fields(){			
+			return (!document.getElementById('phone'    )       || 
+					!document.getElementById('subject'  ).value || 
+				    !document.getElementById('message'  ).value) ? false:true;		
+		}
+
+		function collection_data(){
+			var collection_object = {};
+
+			var snils = document.getElementById("snils");
+			collection_object.snils = snils.textContent || snils.innerText;
+
+			var recipient = document.getElementById('recipient').value;
+			if (recipient){
+				collection_object.recipient = recipient;}
+
+			collection_object.subject = document.getElementById('subject').value;
+			collection_object.message = document.getElementById('message').value;
+
+			var phone = document.getElementById("phone");
+			collection_object.phone = phone.textContent || phone.innerText;
+
+			var email = document.getElementById("email");			
+			email = email.textContent || email.innerText;
+			if (email){
+				collection_object.email = email;}
+						
+			return collection_object;
+		}
+
+		function read_result(object){
+			 result       = $.parseJSON(JSON.stringify(object));
+    	     lvl_output   = $.parseJSON(JSON.stringify(result.output));
+
+    	     for (key in lvl_output){
+    	     	return lvl_output[key];
+    	     }
+		}
+
+		function send_message(){
+			if (!check_fields()){
+				 alert("Одно из следующих полей не заполнено:телефон, тема, текст сообщения");
+			}
+			else{
+				var gen    = generate_data();
+				var collec = collection_data();
+				var send_object = Object.assign(gen, collec);
+				//alert(JSON.stringify(send_object));
+
+				var ajax_info = "";
+    			Query("POST", send_object, "MessagePacientNew", function (info){ 
+         		 ajax_info = info;
+    		    });
+
+    			if (ajax_info == "error"){
+    				document.getElementById('ajax_status').value = false;
+    				alert("Мы сохранили ваше сообщение и отправим его кода будет востановленна связь с сервисом");
+    			}
+    			else{
+    				document.getElementById('ajax_status').value = true;
+    				alert("Сообщене отправленно");
+    			}
+
+    		}
+			//var object_for_send = generate_data();
+		}
+				
+	</script>
+
+	
+	
 
 	<form method = "POST" class = 'message-form'>
 		<div class='form-group row'><h2 class='col'>Обращение</h2></div>
+		
+		<div id="email" class="hidden_fields">{{ my_email }}</div>
+		<div id="phone" class="hidden_fields">{{ my_phone }}</div>
+
 		{% csrf_token %}
-		{% for field in form.visible_fields %}
+		{% for field in form.visible_fields %}	
+		 <!-- убрать одну d in hiddden что скрыть поля  -->
+		    {% if field.name  in hidden %} 
+		    	<div class="hidden_fields">
+		    	{{ field.label_tag }}{{ field }}
+		    	</div>
+		    {% else %}
 		    <div class="form-group row">
 		        {{ field.errors }}
 		        <div class="col-sm-2 col-form-label">{{ field.label_tag }}</div> 
 		        <div class="col"> {{ field }} </div>
 		    </div>
+		    {% endif %}
 		{% endfor %}
 
 		{% for hidden in form.hidden_fields %}
 		{{ hidden }}
 		{% endfor %}
-		<input type="submit" class="mbtn btn btn-primary" values="submit">
+		<input type="submit" class="mbtn btn btn-primary" values="submit" onclick="send_message()">
 	</form>
-
-
+	<!--<input type="button" class="mbtn btn btn-primary" values="my_buttom" 
+			onclick="send_message()"	> -->
 
 {% endblock %}   

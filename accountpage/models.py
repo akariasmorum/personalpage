@@ -76,7 +76,30 @@ class CallDoc(models.Model):
 	temperature = models.CharField('Температура', max_length=4)
 	complaints = models.CharField('Жалобы', max_length=1000)
 
-	
+
+
+
+class Message(models.Model):	 
+	sender      = models.ForeignKey   (PatientUser, models.CASCADE)
+	date        = models.DateTimeField('Дата обращения' )#, auto_now_add=True)
+	id_doc_site = models.CharField    ('ID сайта'       , max_length=50)
+	recipient   = models.CharField    ('Кому обращение' , max_length=50, blank=True)
+	subject     = models.CharField    ('Тема сообщения' , max_length=50)
+	message     = models.CharField    ('Сообщение'      , max_length=100)
+	status_send = models.CharField    ('Статус отправки', max_length=10)	
 	
 
+	
+
+"""	
+    snils = forms.CharField(,label='СНИЛС', max_length=14)
+	id_doc_site = forms.CharField(label='ID вставки', max_length=5)
+	recipient = label='Кому обращение', max_length=20)
+	subject = label='Тема сообщения', max_length=20)
+	message = label='Сообщение', max_length=200)
+	phone = label='Телефон', max_length=16)
+	email = label='E-Mail', max_length=20)
+
+	
+"""
 

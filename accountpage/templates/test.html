@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Модели в Django</title>
+</head>
+<body class="container">
+    
+    {% if messages.count > 0 %}
+    <h2>Список сообщений</h2>
+    <table>        
+        {% for message in messages %}
+        <tr><td>id:{{ message.id }}</td><td>sender:{{ message.sender }}</td>
+        <td>status:{{ message.status_send }}</td>
+        <td>test message:{{ message.message }}</td></tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+</body>
+</html>
