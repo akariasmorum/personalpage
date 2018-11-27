@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 {% block context %}
 
+<style type="text/css">
+	.hidden_fields{
+		display:none;
+	}
+</style>
+
 <script type="text/javascript">
 		function Query(my_method, for_request, name_service, callback)
   {    
@@ -36,15 +42,12 @@
     	}).responceText;    
     }
 
-
-
 		function generate_id(str) {
   			return str.replace(/[xy]/g, function(c) {
     				var r = Math.random() * 16 | 0;
    					 return (c == 'x' ? r : (r & 0x3 | 0x8 )).toString(16);
  					 });
-  			
-				}
+  		}
 
 		function min_ten(value){
 			return (value < 10) ? "0" + value: value;
@@ -79,25 +82,25 @@
 			return generate_object;
 		}
 		
-
-		function check_fields(){			
-			return (!document.getElementById('phone'    )       || 
-					!document.getElementById('subject'  ).value || 
-				    !document.getElementById('message'  ).value) ? false:true;	
+		function check_fields_call(){	
+			return (!document.getElementById('phone'         )       || 
+					!document.getElementById('id_complaints' ).value ||
+					!document.getElementById('select_address').value || 
+				    !document.getElementById('pacient'       ).value) ? false:true;	
 		}
 
-		function collection_data(){
+		function collection_data_call(){
 			var collection_object = {};
+					
+			collection_object.snils       = document.getElementById("pacient").value;
+			collection_object.temperature = document.getElementById("id_temperature").value;
+			collection_object.complaint   = document.getElementById("id_complaints").value;
+			collection_object.kladr       = document.getElementById("kladr").value;
+			collection_object.house       = document.getElementById("house").value;
 
-			var snils = document.getElementById("snils");
-			collection_object.snils = snils.textContent || snils.innerText;
-
-			var recipient = document.getElementById('recipient').value;
-			if (recipient){
-				collection_object.recipient = recipient;}
-
-			collection_object.subject = document.getElementById('subject').value;
-			collection_object.message = document.getElementById('message').value;
+			var room = document.getElementById("room").value;
+			if (room){
+				collection_object.room = room;}
 
 			var phone = document.getElementById("phone");
 			collection_object.phone = phone.textContent || phone.innerText;
@@ -106,8 +109,17 @@
 			email = email.textContent || email.innerText;
 			if (email){
 				collection_object.email = email;}
+
+			var addit_inform = document.getElementById("add_inform").value;
+			if (addit_inform){
+				collection_object.addit_inform = addit_inform;}
 						
 			return collection_object;
+		}
+
+		function get_snils(){
+			var objSel = document.getElementById("pacient").value;
+			alert(objSel);
 		}
 
 		function read_result(object){
@@ -119,35 +131,35 @@
     	     }
 		}
 
-	  function return_array(object){
-      result       = $.parseJSON(JSON.stringify(object));
-      lvl_output   = $.parseJSON(JSON.stringify(result.output));  
+	    function return_array_call(object){
+    	  result       = $.parseJSON(JSON.stringify(object));
+     	  lvl_output   = $.parseJSON(JSON.stringify(result.output));  
          
-      lvl_calendar = $.parseJSON(lvl_output.AddressList); 
+          lvl_calendar = $.parseJSON(lvl_output.AddressList); 
   
-      var ar = new Array()
+          var ar = new Array()
 
-       lvl_calendar.forEach(function(item, i, lvl_calendar) {
+      	  lvl_calendar.forEach(function(item, i, lvl_calendar) {
            ar.push({'adress':item.adress, 'KLADR':item.KLADR,
                        'dom':item.dom   , 'kvstr':item.kvstr});
             //alert(JSON.stringify(ar));
-         });
+            });
 
-        return ar;
-       };
+          return ar;
+        }
 
 		function send_message(){
-			if (!check_fields()){
-				 alert("Одно из следующих полей не заполнено:телефон, тема, текст сообщения");
+			if (!check_fields_call()){
+				 alert("Одно из следующих полей не заполнено:телефон, пациент, жалоба");
 			}
 			else{
-				var gen    = generate_data();
-				var collec = collection_data();
+				var gen         = generate_data();
+				var collec      = collection_data_call();
 				var send_object = Object.assign(gen, collec);
-				//alert(JSON.stringify(send_object));
+				alert(JSON.stringify(send_object));
 
-				var ajax_info = "";
-    			Query("POST", send_object, "MessagePacientNew", function (info){ 
+				var ajax_info = ""; 
+    			Query("POST", send_object, "CallDoctorNew", function (info){ 
          		 ajax_info = info;
     		    });
 
@@ -156,9 +168,9 @@
     				alert("Мы сохранили ваше сообщение и отправим его кода будет востановленна связь с сервисом");
     			}
     			else{
-    				document.getElementById('ajax_status').value = true;
+    				document.getElementById('ajax_status').value = true;//не забыть поменять
     				alert("Сообщене отправленно");
-    			}
+    			}			   
     		}			
 		}
 
@@ -167,9 +179,11 @@
 		function obj_snils(){
 			var obj = document.getElementById("snils");
 			var snils = obj.textContent || obj.innerText;
+			//тут перекоментировать две последнии строки чтобы использовать реально указанный SNILS
 			//return {"snils":snils};
 			return {"snils":"179-474-337 23"}
 		}
+
 
 		function request_addresses(){		
 			var send_object = obj_snils();
@@ -183,9 +197,28 @@
     			}
     			else{    				
     				//alert("Получение данных");
-    				return return_array(ajax_info);
+    				return return_array_call(ajax_info);
     			}
 		}
+
+
+		function request_pacients(){		
+			var send_object = obj_snils();
+			var ajax_info = "";
+    	    Query("POST", send_object, "PacientList", function (info){ 
+         		  ajax_info = info;
+    		    });
+
+    	    if (ajax_info == "error"){    				
+    				alert("Сервис временно недоступен.Попробуйте позже");
+    			}
+    			else{    				
+    				//alert("Получение данных");
+    				// sdelat chtenie dannh
+    				return return_array_call(ajax_info);
+    			}
+		}
+
 
 		function add_in_select(){
 			var objSel = document.getElementById("select_address");
@@ -193,16 +226,30 @@
 			for (var index = 0; index < address_data.length; ++index) {
    				objSel.options[objSel.options.length] = 
    				new Option(address_data[index].adress, index);
-			}
-			
+			}			
+		}
+		
+		function choose_address(index){
+			document.getElementById('kladr').value = address_data[index].KLADR;
+			document.getElementById('house').value = address_data[index].dom  ;
+			document.getElementById('room' ).value = address_data[index].kvstr;
+			//JSON.stringify(address_data[index]);		
 		}
 
 		window.onload = function(){
 			address_data = request_addresses();
+			if (address_data.length > 0){
+				add_in_select();
+				choose_address(0);
+			}
+			else{
+				alert("Ваш список адреов пуст. Пожалуйста ормити вызов через диспечерскую службу");
+			}
 			//alert(JSON.stringify(address_data));
 			//alert(typeof address_data);
-			add_in_select();
+			
 		}
+		
 				
 	</script>
 
@@ -214,29 +261,38 @@
 		
         <div class='form-group row'><h2 class ='col'>Вызов врача на дом</h2></div>
 
+        <div id="email" class="hidden_fields">{{ my_email }}</div>
+		<div id="phone" class="hidden_fields">{{ my_phone }}</div>
+
         <div class="form-group row">
             <div class="col-sm-2 col-form-label">
             Выберите адрес:</div>
 
             <div class="col"> 
-            	<select class = "form-control" id="select_address">		
+            	<select class = "form-control" id="select_address" onchange="choose_address(this.value)">		
 				</select>
 			</div>
 		</div>
+		{% csrf_token %}
+		{% for field in form.visible_fields %}	
+		 <!-- убрать одну d in hiddden что скрыть поля  -->
+		    {% if field.name  in hidden %} 
+		    	<div class="hidden_fields">
+		    	{{ field.label_tag }}{{ field }}
+		    	</div>
+		    {% else %}
+		    <div class="form-group row">
+		        {{ field.errors }}
+		        <div class="col-sm-2 col-form-label">{{ field.label_tag }}</div> 
+		        <div class="col"> {{ field }} </div>
+		    </div>
+		    {% endif %}
+		{% endfor %}
 
-					{% csrf_token %}
-					{% for field in form.visible_fields %}
-					    <div class="form-group row">
-					        {{ field.errors }}
-					        <div class="col-sm-2 col-form-label">{{ field.label_tag }}</div> 
-					        <div class="col"> {{ field }} </div>
-					    </div>
-					{% endfor %}
-
-					{% for hidden in form.hidden_fields %}
-					{{ hidden }}
-					{% endfor %}
-					<input type="submit" class="mbtn btn btn-primary" values="submit" onclick="request_addresses()">
+		{% for hidden in form.hidden_fields %}
+		{{ hidden }}
+		{% endfor %}
+					<input type="submit" class="mbtn btn btn-primary" values="submit" onclick="send_message()">
 				</form>
             
         </div>

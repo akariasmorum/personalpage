@@ -13,11 +13,7 @@
     		background-color: #a2ed84; 
     	}
 
-    	button{
-    		height: 40px;
-    		border-radius: 40px !important;
-    		border:1px solid #4b4b4b !important;
-    	}
+    	
     	.line{
     		margin-top: 20px;
     	}
@@ -26,10 +22,7 @@
 	<div class='form'>
 		<h3>Регистрация в личном кабинете</h2>
 
-		{% if form.errors %}
-							{{form.errors}}
-						{% endif %}	
-
+		
 						{% if next %}
 						    {% if user.is_authenticated %}
 							    Your account doesn't have access to this page. To proceed,
@@ -43,53 +36,60 @@
 			  	
 			      
 			      <div class="line input-group mb-2">
-			        <div class="input-group-prepend">
-			          <div class="input-group-text"><i class="fas fa-user"></i></div>
-			        </div>
+			        
+			          
+			        
 			        {{ form.name }}
 			        
+			    	<small class = 'red'> {{form.name.errors}} </small>
 			      </div>
-			    
 
 			      
 			      <div class="line input-group mb-2">
-			        <div class="input-group-prepend">
-			          <div class="input-group-text"><i class="fas fa-user"></i></div>
-			        </div>
+			        
 			        {{ form.surname }}
 			        
+			      	<small class = 'red'> {{form.surname.errors}} </small>
 			      </div>
 			    
 
 
 			<div class="line input-group mb-2">
-			        <div class="input-group-prepend">
-			          <div class="input-group-text"><i class="fas fa-id-card"></i></div>
-			        </div>
+			        
 			        {{ form.snils }}
 			        
+					
 			</div>
-
+			<small class = 'red'> {{form.snils.errors}} </small>
 			
 
 			<div class="line input-group mb-2">
-			        <div class="input-group-prepend">
-			          <div class="input-group-text"><i class="fas fa-phone"></i></div>
-			        </div>
-			        {{ form.telephone }}
 			        
+			        {{ form.telephone }}
+			    
+				<small class = 'red'> {{form.telephone.errors}} </small>    
 			</div>
 
 			<div class = 'line row'>
 			  	<div class="form-group col">
 					
-						{{ form.password1 }}			    
+					{{ form.password1 }}
+
+								    
 				</div>
 				
 				<div class="form-group col">
 					
-						{{ form.password2 }}			    
+					{{ form.password2 }}
+
+								    
 				</div>		
+			</div>
+			<div class='line row'>
+				<div class="form-group col">
+					<small class = 'red'> {{form.password1.errors}} </small>
+					<small class = 'red'> {{form.password2.errors}} </small>
+				</div>	
 			</div>
 				
 

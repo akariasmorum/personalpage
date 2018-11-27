@@ -22,11 +22,34 @@
     }
     body{
       height: 100%;
-       background-image: url('{% static "grass.jpg" %}') ; 
+       background-image: url('{% static "1726.jpg" %}') ; 
        background-position: center;
       background-repeat: no-repeat;
       background-size: cover;
     }
+    button{
+      padding: 8px;
+      background-color: #fff;
+        border-radius: 5px !important;
+        background: rgba(157,80,187,1);
+      background: -moz-linear-gradient(left, rgba(157,80,187,1) 0%, rgba(110,72,170,1) 100%);
+      background: -webkit-gradient(left top, right top, color-stop(0%, rgba(157,80,187,1)), color-stop(100%, rgba(110,72,170,1)));
+      background: -webkit-linear-gradient(left, rgba(157,80,187,1) 0%, rgba(110,72,170,1) 100%);
+      background: -o-linear-gradient(left, rgba(157,80,187,1) 0%, rgba(110,72,170,1) 100%);
+      background: -ms-linear-gradient(left, rgba(157,80,187,1) 0%, rgba(110,72,170,1) 100%);
+      background: linear-gradient(to right, rgba(157,80,187,1) 0%, rgba(110,72,170,1) 100%);
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9d50bb', endColorstr='#6e48aa', GradientType=1 );
+            color:white;
+            width: 100%;
+            color:white;
+    }
+    li{
+      list-style: none;
+    }
+    ul{
+      padding: 0px;
+    }
+
     .container-fluid{
       height: 100%;
     }
@@ -41,10 +64,44 @@
     -moz-box-shadow: 0px 0px 8px -3px rgba(0,0,0,0.75);
     box-shadow: 0px 0px 8px -3px rgba(0,0,0,0.75);
     }
+
+
+
+    /* Автозаполнение ;) */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active  {
+        -webkit-box-shadow: 0 0 0 30px white inset;
+    }
+
+    /* стиль input плоский */
+    input[type='text'], input[type='password']{
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #000000;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+      border-radius: 0;
+    }   
+
+    input[type='text']:focus, input[type='password']:focus{
+      -webkit-box-shadow: none;
+      box-shadow: none;
+      border-bottom: 1px solid #9D50BB;
+    }
+
+
+
+
+    /*  ################## */
     @media (max-width: 992px) { 
       .mobile{
         margin: 0px auto;
       }
+    }
+    .red{
+      color: #f45f42;
     }
     
   </style>

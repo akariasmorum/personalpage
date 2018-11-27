@@ -21,6 +21,23 @@
 
     }
 
+
+
+    .cal{
+      height:400px;
+      background-color: #fff;
+      border-radius: 5px;
+      -webkit-box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
+      -moz-box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
+      box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
+      margin: 10px;
+    }
+    #task{
+      padding: 10px 10px;
+    }
+
+
+
     .event{
       position: relative;
     }
@@ -43,8 +60,19 @@
 
     }
 
+    .cal-container{
+      float:left;
+      min-width: 350px;
+    }
+
     #calendar>.row>.col{
       text-align: center;
+    }
+
+
+    .tasks{
+      overflow: hidden;
+      min-width: 273;
     }
     #task>li{
       padding-left: 20px;
@@ -57,25 +85,42 @@
     .grey-li{
       color:#686868;
     }
-    .task{
-      margin: 10px 0px;
+    
+    @media(max-width: 992px){
+      #sidebar {
+          margin-left: -250px;
+      }
+      #sidebar.active {
+          margin-left: 0;
+      }
+      #content{
+        width:100%;
+      }
+
+      #content.active {
+          width: calc(100% - 250px);
+      }
+      #top-button{
+        display: inline-block;
+      }
     }
+    
+
     @media (max-width: 768px){
-      .task{
+      .tasks{
+        width: 100%;
+        min-width: 350px;
+      }
+      .cal-container{
         width: 100%;
       }
     }
   </style>
   {% load static %}
   <div id='loader'><img class='loading-gif align-self-center' src='{% static 'loading.gif' %}'></div>
-  <div class='data row d-flex justify-content-center '>
-            <div class="data cal task"  id="task-div">
-              <ul id="task">
-              </ul>
-            </div>
 
-
-            <div class="data cal  task">
+            
+            <div class="cal cal-container">
               <div id='calendar'>
                 <div class = 'row month'>
                   <div class='month col prev-month'><h4><</h4></div>
@@ -111,7 +156,24 @@
                 <div id = 'dates-calendar' class = 'row'></div>
               </div>
             </div>
-          </div>
+
+            <div class="cal tasks"  id="task-div">
+              <ul id="task">
+              </ul>
+            </div>
+
+  
+
+
+
+
+
+
+
+
+
+
+
 
           <script type="text/javascript">
 
@@ -372,10 +434,7 @@ function getFirstLast(date_search){
   }
      
     window.onload = function(){
-        $("#sidebar").mCustomScrollbar({
-                 theme: "dark"
-            });
-
+        
         $('#task-div').mCustomScrollbar({theme: "dark"});
 
         $('#sidebarCollapse').on('click', function () {

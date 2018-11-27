@@ -1,0 +1,93 @@
+{% extends "baselogin.html" %}
+{% block form %}
+	<style type="text/css">
+		.form{
+	      display: inline-block;
+	    }
+	    	input{
+	    		width:100%;
+	    	}
+	    	input:-webkit-autofill,
+		    input:-webkit-autofill:hover, 
+		    input:-webkit-autofill:focus, 
+		    input:-webkit-autofill:active  {
+		        -webkit-box-shadow: 0 0 0 30px white inset;
+	    }
+    	.enter{
+
+    	}
+    	.float-right:hover{
+    		background-color: #fdffea; 
+    	}
+    	button{
+    		width:100%;
+    	}
+    	.form-group{
+    		overflow: hidden;
+    	}
+    	.errors{
+    		width:350px;
+    	}
+	</style>
+
+	 
+	    <div class='form'>
+	    			<div class='errors'>
+						
+						{% if next %}
+						    {% if user.is_authenticated %}
+							    Your account doesn't have access to this page. To proceed,
+							    please login with an account that has access.
+						    {% else %}
+						    	Please login to see this page.
+						    {% endif %}
+						{% endif %}
+					</div>
+
+						<form method="post" action="{% url 'login' %}">
+							{% csrf_token %}
+
+							<div class="form-group">
+								<h3>Личный Кабинет Пациента</h3><br>
+							</div>	
+
+							<div class="form-group">
+								<p class='form-text text-muted'>Здравствуйте, пожалуйста, <br>войдите с помощью Вашего логина и пароля</p>
+							</div>	
+
+							<div class="form-group">
+							    <label for="snils">СНИЛС</label><br>
+							    	{{ form.username }}
+							    
+							    <small class = 'red'> {{form.username.errors}} </small>
+							</div>
+
+							<div class="form-group">
+							    <label for="inputPassword">Пароль</label><br>
+							    	{{ form.password }}							    
+							    	<small class = 'red'> {{form.password.errors}} </small>
+							</div>
+							
+
+							<div class="form-group ">
+								<button name='enter' type="submit" class="btn btn-primary-outline enter ">Войти</button>							
+								
+								<input type="hidden" name="next" value = "{{ next }}">
+
+							</div>
+
+								<p style='text-align: center'>Или</p>
+
+							<div class="form-group">
+								<a href="https://www.gosuslugi.ru/"><button type="submit" class="btn btn-primary-outline gos">Войти через <span class='text-primary'>ГОС</span><span class='text-danger'>УСЛУГИ</span></button></a>
+							</div>
+							<p> Или вы можете <a href="{% url 'signup' %}">Зарегистрироваться</a></p>
+
+						</form>
+					</div>
+
+
+	  
+		
+	
+{% endblock %}	

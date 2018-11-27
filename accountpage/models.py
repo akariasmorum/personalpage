@@ -66,6 +66,9 @@ class Patient(models.Model):
 
 	def __str__(self):
 		return "{0} {1}".format(self.surname, self.name)
+
+	def return_snils(self):
+		return "{0}".format(self.snils)
 	
 
 
@@ -77,6 +80,20 @@ class CallDoc(models.Model):
 	complaints = models.CharField('Жалобы', max_length=1000)
 
 
+class CallDoctor(models.Model):
+	trustee     = models.ForeignKey   (PatientUser, models.CASCADE)
+	patient     = models.CharField    ('СНИЛС', max_length= 14, unique=True)
+
+	id_doc_site = models.CharField    ('ID сайта'       , max_length=50  )
+	date        = models.DateTimeField('Дата обращения' )
+	temperature = models.CharField    ('Температура'    , max_length=4   )
+	complaints  = models.CharField    ('Жалобы'         , max_length=1000)
+
+	kladr       = models.CharField    ('КЛАДР'          , max_length=17  )
+	house       = models.CharField    ('Дом'            , max_length=10  )
+	room        = models.CharField    ('Квартира'       , max_length=10  , blank=True)
+	add_inform  = models.CharField    ('Доп.Информация' , max_length=1000, blank=True)
+	status_send = models.CharField    ('Статус отправки', max_length=10  )
 
 
 class Message(models.Model):	 

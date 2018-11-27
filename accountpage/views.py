@@ -1,27 +1,53 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect, HttpResponse
+from django.urls import reverse_lazy
+from django.views import generic
+from django.contrib.auth import authenticate, login, logout
+
 from .forms import Message
 from datetime import datetime
 import http.client as hc
 import json
-from django.urls import reverse_lazy
-from django.views import generic
 
-from .forms import SignUpForm, CallDocForm, Patient, AddChildForm, MessageForm
 
-# Create your views here.
-def login(request):
-	if 'name' in request.POST:		
-		request.session['name'] = request.POST['name']+ ' '+request.POST['surname']
-		request.session.save()
-		user = {'nickname': request.session['user']}
+from .forms import SignUpForm, CallDocForm, Patient, AddChildForm, MessageForm, LoginForm, CallDoctorForm
+
+#
+#ЛОГИН
+#
+
+def loginView(request):
+	if request.method == 'POST':		
+		form = LoginForm(request.POST)
+
+		if form.is_valid():
+			username = form.cleaned_data['username']
+			password = form.cleaned_data['password']
+			login_user = authenticate(username = username, password = password)
+			if login_user:
+				login(request, login_user)
+				return redirect('/schedule')
 		
 	else:
-		return render(request, 'login.html', context = {'title':'Аутентификация'})
+		form = LoginForm()
+
+	return render(request, 'login.html', context = {'title':'Аутентификация', 'form': form})
+
+#########################
+
+
+
+###Расписание#########
 
 def schedule(request):	
 	return render(request, 'schedule.html', context={'title': 'Расписание', 'nbar': 'schedule', 'name': (request.user.surname + ' ' + request.user.name) })		
 
+######################
+
+
+
+
+#просмотр детей
 
 class ChildrenView(generic.ListView):
 	model = Patient
@@ -42,6 +68,13 @@ class ChildrenView(generic.ListView):
 		self.queryset = Patient.objects.filter(trustee = user)'''
 
 
+#######################
+
+
+
+
+#моя страница #####################
+
 def mypage(request):
 	children = Patient.objects.filter(trustee = request.user)
 	if request.method =='POST':
@@ -56,7 +89,11 @@ def mypage(request):
 		       'children': children, 'form': form})
 
 
+############################
 
+
+
+#
 
 def get_message(request):
 	if request.method =='POST':
@@ -77,6 +114,31 @@ def get_message(request):
 		             'my_phone': '+7(987)123-32-23',
 		               'hidden': ['status_send','date','id_doc_site']
 		             })
+
+
+
+def calldoc(request):
+	if request.method =='POST':
+		if request.POST["status_send"] == "false":
+			form = CallDoctorForm(request.POST)
+	else:
+		form = CallDoctorForm()
+		'''form = CallDocForm(request.user, request.POST)
+		if form.is_valid():
+			form.save()
+	else:
+		form = CallDocForm(request.user)'''
+		
+
+	return render(request, 'calldoc.html', 
+		 context={'title': 'Вызов врача на дом', 'nbar': 'call-doc',
+		           'form': form, 
+		           'name': (request.user.surname + ' ' + request.user.name),
+		       'my_email': 'email@email.ru',
+		       'my_phone': '+7(987)123-32-23',
+				 'hidden': []
+		         })
+
 	'''
 def return_message_page(request):
 	form = MessageForm()
@@ -139,16 +201,9 @@ def return_message_page(request):
 					'''			
 	
 
-def calldoc(request):
-	if request.method =='POST':
-		form = CallDocForm(request.user, request.POST)
-		if form.is_valid():
-			form.save()
-	else:
-		form = CallDocForm(request.user)
-		
 
-	return render(request, 'calldoc.html', context={'title': 'Вызов врача на дом', 'nbar': 'call-doc', 'form': form, 'name': (request.user.surname + ' ' + request.user.name) })
+
+
 def ehr(request):
 	return render(request, 'ehr.html', context={'title': 'Электронная медицинская карта', 'nbar': 'ehr', 'name': (request.user.surname + ' ' + request.user.name) })
 def app(request):
@@ -185,8 +240,14 @@ def calendar(request):
 
 	return render(request, 'calendar.html', context = {'title': 'Календарь пациента', 'nbar': 'calendar', 'data':  data})
 
+#выход из системы	
+def user_logout(request):
+	logout(request)
+	return redirect('login')
+
 
 class SignUp(generic.CreateView):
 	form_class = SignUpForm
 	success_url = reverse_lazy('login')
 	template_name = 'signup.html'
+
