@@ -121,22 +121,28 @@ def calldoc(request):
 	if request.method =='POST':
 		if request.POST["status_send"] == "false":
 			form = CallDoctorForm(request.POST)
-	else:
-		form = CallDoctorForm()
-		'''form = CallDocForm(request.user, request.POST)
-		if form.is_valid():
-			form.save()
-	else:
-		form = CallDocForm(request.user)'''
-		
-
+			if form.is_valid():
+				form.save_data(request.user.snils, request.POST)
+				#return render(request, 'test.html', {'answer':form.all()})
+			#form.save_data(request.user.snils, request.POST)
+			
+			'''if form.is_valid():
+				
+				return HttpResponse("OK")
+			else:
+				return HttpResponse("NE OK")'''
+				
+			
+	form = CallDoctorForm()
 	return render(request, 'calldoc.html', 
 		 context={'title': 'Вызов врача на дом', 'nbar': 'call-doc',
 		           'form': form, 
 		           'name': (request.user.surname + ' ' + request.user.name),
 		       'my_email': 'email@email.ru',
 		       'my_phone': '+7(987)123-32-23',
-				 'hidden': []
+				 'hidden': ['status_send', 'date', 
+				            'id_doc_site', 'kladr' ,
+				                 'house' , 'room']
 		         })
 
 	'''

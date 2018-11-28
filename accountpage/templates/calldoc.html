@@ -27,7 +27,7 @@
           'Authorization': 'Basic cm9vdDpyb290',          
           'Content-Type': 'application/json'          
           },  
-          // data: "login=leroy&password=password",
+          
         accepts: "application/json",
         contentType:"application/json",
         dataType:"json",
@@ -65,7 +65,7 @@
     		 return str_time;
 	    }
 
-		function generate_data(){
+		function generate_data_call(){
 			var generate_object = {};
 
 			generate_object.datedoc
@@ -76,6 +76,7 @@
 				=	document.getElementById('id_doc_site').value 
 				=   generate_id('xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx');
 
+			//choose_pacient();
 			//generate_object.ajax_status
 			//	=	document.getElementById('ajax_status').value  = "True";
 
@@ -86,7 +87,8 @@
 			return (!document.getElementById('phone'         )       || 
 					!document.getElementById('id_complaints' ).value ||
 					!document.getElementById('select_address').value || 
-				    !document.getElementById('pacient'       ).value) ? false:true;	
+				    !document.getElementById('pacient'       ).value) 
+			        ? false:true;	
 		}
 
 		function collection_data_call(){
@@ -122,7 +124,7 @@
 			alert(objSel);
 		}
 
-		function read_result(object){
+		function read_result_call(object){
 			 result       = $.parseJSON(JSON.stringify(object));
     	     lvl_output   = $.parseJSON(JSON.stringify(result.output));
 
@@ -148,15 +150,33 @@
           return ar;
         }
 
+        function return_array_call_pacient(object){
+    	  result       = $.parseJSON(JSON.stringify(object));
+     	  lvl_output   = $.parseJSON(JSON.stringify(result.output));  
+         
+          lvl_pacients = $.parseJSON(lvl_output.PacientList); 
+  
+          var ar = new Array()
+
+      	  lvl_pacients.forEach(function(item, i, lvl_pacients) {
+           ar.push({'SNILS':item.SNILS, 
+           	    'Full_Name':item.FAM  + ' ' +
+           	    			item.NAME + ' ' +
+           	    			item.OTH  });
+            //alert(JSON.stringify(ar));
+            });
+          return ar;
+        }
+
 		function send_message(){
 			if (!check_fields_call()){
 				 alert("Одно из следующих полей не заполнено:телефон, пациент, жалоба");
 			}
 			else{
-				var gen         = generate_data();
+				var gen         =   generate_data_call();
 				var collec      = collection_data_call();
 				var send_object = Object.assign(gen, collec);
-				alert(JSON.stringify(send_object));
+				//alert(JSON.stringify(send_object));
 
 				var ajax_info = ""; 
     			Query("POST", send_object, "CallDoctorNew", function (info){ 
@@ -167,7 +187,8 @@
     				document.getElementById('ajax_status').value = false;
     				alert("Мы сохранили ваше сообщение и отправим его кода будет востановленна связь с сервисом");
     			}
-    			else{
+    			else {
+    				
     				document.getElementById('ajax_status').value = true;//не забыть поменять
     				alert("Сообщене отправленно");
     			}			   
@@ -215,7 +236,7 @@
     			else{    				
     				//alert("Получение данных");
     				// sdelat chtenie dannh
-    				return return_array_call(ajax_info);
+    				return return_array_call_pacient(ajax_info);
     			}
 		}
 
@@ -228,6 +249,16 @@
    				new Option(address_data[index].adress, index);
 			}			
 		}
+
+		function add_pacients(pacients){
+			var objSel = document.getElementById("pacient");
+
+			for (var index = 0; index < pacients.length; ++index) {
+   				objSel.options[objSel.options.length] = 
+   				new Option(pacients[index].Full_Name, 
+   					       pacients[index].SNILS    );
+			}			
+		}
 		
 		function choose_address(index){
 			document.getElementById('kladr').value = address_data[index].KLADR;
@@ -236,11 +267,30 @@
 			//JSON.stringify(address_data[index]);		
 		}
 
+		function choose_pacient(){		    
+			document.getElementById('pacient').value = 
+			document.getElementById('select_pacient').value
+			//JSON.stringify(address_data[index]);		
+		}
+
 		window.onload = function(){
+		alert('ВНИМАНИЕ ПРИ ЗАПРОСАХ ИСПОЛЬЗУЮТСЯ ТЕСТОВЫЕ СНИЛСЫ !!!');
 			address_data = request_addresses();
 			if (address_data.length > 0){
 				add_in_select();
 				choose_address(0);
+				
+
+				var pacient_list = request_pacients();
+				if(pacient_list.length > 0){
+					add_pacients(pacient_list);
+
+					//alert(document.getElementById('pacient').value);
+				}
+				else{
+					alert("Ваш список пациентов пуст!");
+				}
+				
 			}
 			else{
 				alert("Ваш список адреов пуст. Пожалуйста ормити вызов через диспечерскую службу");
@@ -264,6 +314,7 @@
         <div id="email" class="hidden_fields">{{ my_email }}</div>
 		<div id="phone" class="hidden_fields">{{ my_phone }}</div>
 
+
         <div class="form-group row">
             <div class="col-sm-2 col-form-label">
             Выберите адрес:</div>
@@ -272,14 +323,29 @@
             	<select class = "form-control" id="select_address" onchange="choose_address(this.value)">		
 				</select>
 			</div>
+
+			
 		</div>
+
+		<!--<div class="form-group row">
+            <div class="col-sm-2 col-form-label">
+            Выберите пациента:</div>
+           
+		<div class="col"> 
+            	<select class = "form-control" id="select_pacient" onchange="choose_pacient()">		
+				</select>
+			</div>
+
+			
+		</div> -->
+
 		{% csrf_token %}
 		{% for field in form.visible_fields %}	
 		 <!-- убрать одну d in hiddden что скрыть поля  -->
 		    {% if field.name  in hidden %} 
 		    	<div class="hidden_fields">
 		    	{{ field.label_tag }}{{ field }}
-		    	</div>
+		    	</div>		    	
 		    {% else %}
 		    <div class="form-group row">
 		        {{ field.errors }}
@@ -289,11 +355,11 @@
 		    {% endif %}
 		{% endfor %}
 
-		{% for hidden in form.hidden_fields %}
-		{{ hidden }}
-		{% endfor %}
-					<input type="submit" class="mbtn btn btn-primary" values="submit" onclick="send_message()">
+		
+				<input type="submit" class="mbtn btn btn-primary" values="submit" onclick="send_message()">
+
 				</form>
-            
+           
+					
         </div>
 {% endblock %}

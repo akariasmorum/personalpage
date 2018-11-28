@@ -5,9 +5,14 @@
     <title>Модели в Django</title>
 </head>
 <body class="container">
-    {{ answer }}
+    <!--{{answer}}-->
+    
+    {% for an in answer %}
+    {{an.id}}  {{an.complaints}} {{an.patient}}
+    </br>    
 
-
+    {% endfor %}
+	
 
 </body>
 </html>

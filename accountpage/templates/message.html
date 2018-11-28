@@ -140,7 +140,9 @@
 			else{
 				var gen    = generate_data();
 				var collec = collection_data();
+
 				var send_object = Object.assign(gen, collec);
+				//console.log(JSON.stringify(send_object));
 				//alert(JSON.stringify(send_object));
 
 				var ajax_info = "";
@@ -152,13 +154,22 @@
     				document.getElementById('ajax_status').value = false;
     				alert("Мы сохранили ваше сообщение и отправим его кода будет востановленна связь с сервисом");
     			}
-    			else{
+    			else if(ajax_info.output.MessagePacientNew == "success"){
+    				
     				document.getElementById('ajax_status').value = true;
     				alert("Сообщене отправленно");
+    			}
+    			else{
+    				alert("Ошибка отправки данных" + ajax_info.output);
+    				//alert();
     			}
 
     		}
 			//var object_for_send = generate_data();
+		}
+
+		window.onload = function(){
+		alert('ВНИМАНИЕ ПРИ ЗАПРОСАХ ИСПОЛЬЗУЮТСЯ ТЕСТОВЫЕ СНИЛСЫ !!!');
 		}
 				
 	</script>

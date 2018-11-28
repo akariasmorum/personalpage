@@ -82,7 +82,7 @@ class CallDoc(models.Model):
 
 class CallDoctor(models.Model):
 	trustee     = models.ForeignKey   (PatientUser, models.CASCADE)
-	patient     = models.CharField    ('СНИЛС', max_length= 14, unique=True)
+	patient     = models.CharField    ('СНИЛС'          , max_length= 14)
 
 	id_doc_site = models.CharField    ('ID сайта'       , max_length=50  )
 	date        = models.DateTimeField('Дата обращения' )

@@ -84,7 +84,7 @@ class CallDoctorForm(ModelForm):
 	room         = forms.CharField    (widget = forms.TextInput(attrs={'class': 'form-control','id':'room'      }),label='Квартира', max_length=10, required = False)
 
 	add_inform   = forms.CharField    (widget = forms.Textarea (attrs={'class': 'form-control','id':'add_inform'}),label='Дополнительная информация', max_length=1000, required = False)
-	patient      = forms.ChoiceField  (widget = forms.Select   (attrs={'class': 'form-control','id':'pacient'   }),label='Пациент')
+	patient      = forms.CharField    (widget = forms.Select   (attrs={'class': 'form-control','id':'pacient'   }),label='Пациент')
 
 	'''def __init__(self, *args, **kwargs):
 		user = kwargs.pop('user', None)
