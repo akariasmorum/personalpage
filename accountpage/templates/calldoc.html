@@ -187,11 +187,14 @@
     				document.getElementById('ajax_status').value = false;
     				alert("Мы сохранили ваше сообщение и отправим его кода будет востановленна связь с сервисом");
     			}
-    			else {
+    			else if(ajax_info.output.CallDoctorNew == "success"){
     				
     				document.getElementById('ajax_status').value = true;//не забыть поменять
     				alert("Сообщене отправленно");
-    			}			   
+    			}
+    			else{
+    				alert("Ошибка отправки данных" + JSON.stringify(ajax_info));
+    			}		   
     		}			
 		}
 
@@ -201,8 +204,8 @@
 			var obj = document.getElementById("snils");
 			var snils = obj.textContent || obj.innerText;
 			//тут перекоментировать две последнии строки чтобы использовать реально указанный SNILS
-			//return {"snils":snils};
-			return {"snils":"179-474-337 23"}
+			return {"snils":snils};
+			//return {"snils":"179-474-337 23"}
 		}
 
 

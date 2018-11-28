@@ -14,5 +14,6 @@ urlpatterns = [
 	url('schedule', views.schedule, name='schedule'),
 	url('calendar', views.calendar, name='calendar'),
 	url('message', views.get_message, name='message'),
-	url('mypage', views.mypage, name = 'my-page')
+	url('mypage', views.mypage, name = 'my-page'),
+	
 ]

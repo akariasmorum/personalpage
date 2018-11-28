@@ -29,20 +29,19 @@
           // data: "login=leroy&password=password",
         accepts: "application/json",
         contentType:"application/json",
-        dataType:"json",
+        datatype:"json",
         
         data:JSON.stringify(my_data),       
       
-                success: function(msg)
+        success: function(msg)
         {        
          callback(msg);
        
         },
-        error:function(msg)
-        {
-          //error in msg
+        error:function(msg){         
           callback("error");          
-        }
+        }       
+        
         // error: function(jqXHR, textStatus, errorThrown) {
         //    console.log(JSON.stringify(jqXHR));
         //    console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
@@ -160,7 +159,7 @@
     				alert("Сообщене отправленно");
     			}
     			else{
-    				alert("Ошибка отправки данных" + ajax_info.output);
+    				alert("Ошибка отправки данных" +JSON.stringify(ajax_info));
     				//alert();
     			}
 
