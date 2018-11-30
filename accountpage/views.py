@@ -93,15 +93,31 @@ def mypage(request):
 
 
 
-#
+#Обращение пациента
 
 def get_message(request):
 	if request.method =='POST':
 		if request.POST["status_send"] == "false":
 			message_form = MessageForm(request.POST)
 			if message_form.is_valid():
-				#return HttpResponse("date type is{0}".format(message_form.return_type()))
+				
 				message_form.save_data(request.user.snils, request.POST)
+
+				'''
+				IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message('MessagePacientNew',
+					{
+						"snils": form.cleaned_data['snils'],
+						"id_doc_site": form.cleaned_data['snils'],						
+						"datedoc": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+						"recipient": form.cleaned_data['recipient'],
+						"subject": form.cleaned_data['subject'],
+						"message": form.cleaned_data['message'],
+						"phone":   form.cleaned_data['phone'],
+						"email":   form.cleaned_data['email'],
+					}) 
+
+				'''
+
 				#return render(request, 'test.html', {'messages':message_form.return_all()})				
 				
 
@@ -115,7 +131,11 @@ def get_message(request):
 		               'hidden': ['status_send','date','id_doc_site']
 		             })
 
+################################
 
+
+
+#вызов врача на дом
 
 def calldoc(request):
 	if request.method =='POST':
@@ -144,6 +164,10 @@ def calldoc(request):
 				            'id_doc_site', 'kladr' ,
 				                 'house' , 'room']
 		         })
+###############################
+
+
+
 
 	'''
 def return_message_page(request):
@@ -209,11 +233,21 @@ def return_message_page(request):
 
 
 
-
+##########ЭМК
 def ehr(request):
 	return render(request, 'ehr.html', context={'title': 'Электронная медицинская карта', 'nbar': 'ehr', 'name': (request.user.surname + ' ' + request.user.name) })
+################
+
+#Запись на прием
 def app(request):
 	return render(request, 'appointment.html', context={'title': 'Запись на прием', 'nbar': 'app', 'name': (request.user.surname + ' ' + request.user.name) })			
+
+#####################
+
+
+
+
+####Календарь пациента	
 def calendar(request):
 	con = hc.HTTPConnection('ibus.dgkb.lan', 80) 
 	headers = { 
@@ -246,6 +280,10 @@ def calendar(request):
 
 	return render(request, 'calendar.html', context = {'title': 'Календарь пациента', 'nbar': 'calendar', 'data':  data})
 
+#####
+
+
+
 #выход из системы	
 def user_logout(request):
 	logout(request)
@@ -256,4 +294,57 @@ class SignUp(generic.CreateView):
 	form_class = SignUpForm
 	success_url = reverse_lazy('login')
 	template_name = 'signup.html'
+
+
+##если есть intance, То вернет существующее, если нет, то создаст новое
+class Singleton:
+	__instance = None
+	def __new__(cls, *args, **kwargs):
+		if not cls.__instance:
+			cls.__instance = super(Singleton, cls).__new__(cls, *args, **kwargs)
+		return cls.__instance	
+
+
+#параметры для IbusScriptExecutor.__init__() на время разработки
+DEVELOPING_INIT_ARGUMENTS = ['localhost', '5000', 'ibus.dgkb.lan', '80']
+## всегда одно соединение с ИШ
+class IbusScriptExcecutor(Singleton):
+
+    def __init__(self, host, host_port, bus_adress, bus_port):
+    	try:
+	    	self.con = hc.HTTPConnection(bus_adress, bus_port) 
+			self.headers = { 
+			'Authorization': 'Basic cm9vdDpyb290', 
+			'Host': host+':'+ host_port, 
+			'Content-Type': 'application/json' 
+			}
+		except Exception as connectionEx:
+			raise Exception('Не удалось подключиться к серверу! Попробуйте позже')
+
+	
+	#Отправить сообщение в Шину
+	#input:
+	#method - str / какой использует метод API
+	#body_dic - dic / словарь параметров body
+	#output: js  - str / ответ сервера в формате json 
+	def post_message(method,   body_dic):
+		parameter = str(json.dumps(body_dic))
+
+		body = json.dumps({ 
+		'name': method, 
+		'params': {'request': parameter} 
+		}) 
+
+		con.request('POST', '/api/executescript', body=body, headers=headers) 
+
+		decoded_response = self.con.getresponse().read().decode() 
+		js = json.loads(c)
+
+		return js
+
+
+
+
+
+
 
