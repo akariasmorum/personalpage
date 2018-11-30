@@ -5,6 +5,9 @@
 	.hidden_fields{
 		display:none;
 	}
+	.addition{
+		height: 65px !important;
+	}
 </style>
 
 <script type="text/javascript">
@@ -277,7 +280,7 @@
 		}
 
 		window.onload = function(){
-		alert('ВНИМАНИЕ ПРИ ЗАПРОСАХ ИСПОЛЬЗУЮТСЯ ТЕСТОВЫЕ СНИЛСЫ !!!');
+		//alert('ВНИМАНИЕ ПРИ ЗАПРОСАХ ИСПОЛЬЗУЮТСЯ ТЕСТОВЫЕ СНИЛСЫ !!!');
 			address_data = request_addresses();
 			if (address_data.length > 0){
 				add_in_select();

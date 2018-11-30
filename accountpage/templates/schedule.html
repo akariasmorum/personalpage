@@ -291,12 +291,15 @@ class Calendar
 
     eventLiCreator(event){
       var row="<li class='row'>";
-      row+="<div clas='col-2'><ul class='list-unstyled'><li class='grey-li'><i class='fas fa-exclamation-circle'></i></li></ul></div>";
+      row+="<div clas='col-2'><ul class='list-unstyled'><li class='grey-li'></li></ul></div>";
       row+="<div clas='col'>";
         row+="<ul class='list-unstyled'>";
-          row+="<li>"+this.months[event['date'].getMonth()]+' '+event['date'].getDate()+"</li>";
+          row+="<li>"+event['date'].getDate()+" "
+                +this.months[event['date'].getMonth()]+' '
+                +event['date'].getFullYear()+' '
+                 +this.addZero(event['date'].getHours())+':'
+                  +this.addZero(event['date'].getMinutes())+ "</li>";
           row+="<li class='grey-li'>"+event['text']+"</li>";
-          row+="<li class='grey-li'>"+this.addZero(event['date'].getHours())+':'+this.addZero(event['date'].getMinutes())+"</li>";
         row+="</ul>";
       row+="</div>";
 
@@ -434,7 +437,7 @@ function getFirstLast(date_search){
   }
      
     window.onload = function(){
-      alert('ВНИМАНИЕ ПРИ ЗАПРОСАХ ИСПОЛЬЗУЮТСЯ ТЕСТОВЫЕ СНИЛСЫ !!!');
+      //alert('ВНИМАНИЕ ПРИ ЗАПРОСАХ ИСПОЛЬЗУЮТСЯ ТЕСТОВЫЕ СНИЛСЫ !!!');
         
         $('#task-div').mCustomScrollbar({theme: "dark"});
 
