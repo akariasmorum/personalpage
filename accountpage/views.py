@@ -85,8 +85,8 @@ def mypage(request):
 		form = AddChildForm()	
 	return render(request, 'mypage.html', 
 		context= {'title': 'Моя информация', 'nbar': 'mypage',
-		           'name': (request.user.surname + ' ' + request.user.name), 
-		       'children': children, 'form': form})
+				   'name': (request.user.surname + ' ' + request.user.name), 
+			   'children': children, 'form': form})
 
 
 ############################
@@ -124,12 +124,12 @@ def get_message(request):
 	form = MessageForm()
 	return render(request, 'message.html', 
 			   context={'title': 'Расписание', 'nbar': 'message', 
-			             'form': form, 
-			             'name': (request.user.surname + ' ' + request.user.name), 
-		             'my_email': 'email@email.ru',
-		             'my_phone': '+7(987)123-32-23',
-		               'hidden': ['status_send','date','id_doc_site']
-		             })
+						 'form': form, 
+						 'name': (request.user.surname + ' ' + request.user.name), 
+					 'my_email': 'email@email.ru',
+					 'my_phone': '+7(987)123-32-23',
+					   'hidden': ['status_send','date','id_doc_site']
+					 })
 
 ################################
 
@@ -156,14 +156,14 @@ def calldoc(request):
 	form = CallDoctorForm()
 	return render(request, 'calldoc.html', 
 		 context={'title': 'Вызов врача на дом', 'nbar': 'call-doc',
-		           'form': form, 
-		           'name': (request.user.surname + ' ' + request.user.name),
-		       'my_email': 'email@email.ru',
-		       'my_phone': '+7(987)123-32-23',
+				   'form': form, 
+				   'name': (request.user.surname + ' ' + request.user.name),
+			   'my_email': 'email@email.ru',
+			   'my_phone': '+7(987)123-32-23',
 				 'hidden': ['status_send', 'date', 
-				            'id_doc_site', 'kladr' ,
-				                 'house' , 'room']
-		         })
+							'id_doc_site', 'kladr' ,
+								 'house' , 'room']
+				 })
 ###############################
 
 
@@ -174,12 +174,12 @@ def return_message_page(request):
 	form = MessageForm()
 	return render(request, 'message.html', 
 			   context={'title': 'Расписание', 'nbar': 'message', 
-			             'form': form, 
-			             'name': (request.user.surname + ' ' + request.user.name), 
-		             'my_email': 'email@email.ru',
-		             'my_phone': '+7(987)123-32-23',
-		               'hidden': ['status_send','date','id_doc_site']
-		             })
+						 'form': form, 
+						 'name': (request.user.surname + ' ' + request.user.name), 
+					 'my_email': 'email@email.ru',
+					 'my_phone': '+7(987)123-32-23',
+					   'hidden': ['status_send','date','id_doc_site']
+					 })
 
 	if request.method =='POST':
 		
@@ -310,9 +310,9 @@ DEVELOPING_INIT_ARGUMENTS = ['localhost', '5000', 'ibus.dgkb.lan', '80']
 ## всегда одно соединение с ИШ
 class IbusScriptExcecutor(Singleton):
 
-    def __init__(self, host, host_port, bus_adress, bus_port):
-    	try:
-	    	self.con = hc.HTTPConnection(bus_adress, bus_port) 
+	def __init__(self, host, host_port, bus_adress, bus_port):
+		try:
+			self.con = hc.HTTPConnection(bus_adress, bus_port) 
 			self.headers = { 
 			'Authorization': 'Basic cm9vdDpyb290', 
 			'Host': host+':'+ host_port, 
