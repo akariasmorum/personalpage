@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth import authenticate, login, logout
-
+import traceback
 from .forms import Message
 from datetime import datetime
 import http.client as hc
@@ -95,31 +95,7 @@ def mypage(request):
 
 #Обращение пациента
 
-def get_message(request):
-	if request.method =='POST':
-		if request.POST["status_send"] == "false":
-			message_form = MessageForm(request.POST)
-			if message_form.is_valid():
-				
-				message_form.save_data(request.user.snils, request.POST)
-
-				'''
-				IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message('MessagePacientNew',
-					{
-						"snils": form.cleaned_data['snils'],
-						"id_doc_site": form.cleaned_data['snils'],						
-						"datedoc": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-						"recipient": form.cleaned_data['recipient'],
-						"subject": form.cleaned_data['subject'],
-						"message": form.cleaned_data['message'],
-						"phone":   form.cleaned_data['phone'],
-						"email":   form.cleaned_data['email'],
-					}) 
-
-				'''
-
-				#return render(request, 'test.html', {'messages':message_form.return_all()})				
-				
+def get_message(request):				
 
 	form = MessageForm()
 	return render(request, 'message.html', 
@@ -244,8 +220,39 @@ def app(request):
 
 #####################
 
+def send_message(request):
+	if request.method =='POST':
+		
+		responce = ""
+		try:	
+			responce = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message('MessagePacientNew',
+				{
+							"snils": request.user.snils,
+							"id_doc_site": request.POST.get('id_doc_site'),						
+							"datedoc": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+							"recipient": request.POST.get('recipient'),
+							"subject": request.POST.get('subject'),
+							"message": request.POST.get('message'),
+							"phone":   request.user.telephone,
+							"email":   request.user.email
+				})
 
+		except Exception as Ex:
+			print(str(traceback.format_exc()))
+			responce = str(Ex)
 
+		return HttpResponse(str(responce['message']))	
+		
+		'''
+		if request.POST["status_send"] == "false":
+			
+				
+				print('готово!')
+				return render(request, 'test.html', {'messages':message_form.return_all()})	
+				'''
+
+	else:
+		return HttpResponse('Нет данных для отправки!')
 
 ####Календарь пациента	
 def calendar(request):
@@ -308,7 +315,7 @@ class Singleton:
 #параметры для IbusScriptExecutor.__init__() на время разработки
 DEVELOPING_INIT_ARGUMENTS = ['localhost', '5000', 'ibus.dgkb.lan', '80']
 ## всегда одно соединение с ИШ
-class IbusScriptExcecutor(Singleton):
+class IbusScriptExcecutor():
 
 	def __init__(self, host, host_port, bus_adress, bus_port):
 		try:
@@ -327,7 +334,7 @@ class IbusScriptExcecutor(Singleton):
 	#method - str / какой использует метод API
 	#body_dic - dic / словарь параметров body
 	#output: js  - str / ответ сервера в формате json 
-	def post_message(method,   body_dic):
+	def post_message(self, method,   body_dic):
 		parameter = str(json.dumps(body_dic))
 
 		body = json.dumps({ 
@@ -335,10 +342,10 @@ class IbusScriptExcecutor(Singleton):
 		'params': {'request': parameter} 
 		}) 
 
-		con.request('POST', '/api/executescript', body=body, headers=headers) 
+		self.con.request('POST', '/api/executescript', body=body, headers=self.headers) 
 
 		decoded_response = self.con.getresponse().read().decode() 
-		js = json.loads(c)
+		js = json.loads(decoded_response)
 
 		return js
 

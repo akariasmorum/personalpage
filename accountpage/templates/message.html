@@ -6,49 +6,43 @@
 		}
 	</style>
 
-	<script type="text/javascript">
-		function Query(my_method, for_request, name_service, callback)
-  {    
-    var my_data = {
-      name:name_service,
-      params:{
-        request:JSON.stringify(for_request)
-      }
-    };
-    
-    var responce = $.ajax({
-        async:false,
-        method:my_method,
-        url:"http://ibus.dgkb.lan/api/executescript/",
-        username: 'root',
-        password: 'root',
-        headers:{
-          'Authorization': 'Basic cm9vdDpyb290',          
-          'Content-Type': 'application/json'          
-          },  
-          // data: "login=leroy&password=password",
-        accepts: "application/json",
-        contentType:"application/json",
-        datatype:"json",
-        
-        data:JSON.stringify(my_data),       
-      
-        success: function(msg)
-        {        
-         callback(msg);
-       
-        },
-        error:function(msg){         
-          callback("error");          
-        }       
-        
-        // error: function(jqXHR, textStatus, errorThrown) {
-        //    console.log(JSON.stringify(jqXHR));
-        //    console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-        // }         
-              }).responceText;    
-       }
+	
 
+	
+	
+
+	<form id = "message-form" method = "POST" class = 'message-form'>
+		<div class='form-group row'><h2 class='col'>Обращение</h2></div>
+		
+		<div id="email" class="hidden_fields">{{ my_email }}</div>
+		<div id="phone" class="hidden_fields">{{ my_phone }}</div>
+
+		{% csrf_token %}
+		{% for field in form.visible_fields %}	
+		 <!-- убрать одну d in hiddden что скрыть поля  -->
+		    {% if field.name  in hidden %} 
+		    	<div class="hidden_fields">
+		    	{{ field.label_tag }}{{ field }}
+		    	</div>
+		    {% else %}
+		    <div class="form-group row">
+		        {{ field.errors }}
+		        <div class="col-sm-2 col-form-label">{{ field.label_tag }}</div> 
+		        <div class="col"> {{ field }} </div>
+		    </div>
+		    {% endif %}
+		{% endfor %}
+
+		{% for hidden in form.hidden_fields %}
+		{{ hidden }}
+		{% endfor %}
+		<button type="submit" class="btn btn-primary" onclick ="form_submit()">Отправить</button>
+	</form>
+	<!--<input type="button" class="mbtn btn btn-primary" values="my_buttom" 
+			onclick="send_message()"	> -->
+
+	<script type="text/javascript">
+		
 
 
 		function generate_id(str) {
@@ -75,135 +69,88 @@
     		 return str_time;
 	    }
 
-		function generate_data(){
-			var generate_object = {};
+				
+		function form_submit(){
+				
+				console.log("submitting form!");
+				if(check_form()){
+					data = collect_data();
+					send_messages(data);
+				}
 
-			generate_object.datedoc
-				=	document.getElementById('date_doc').value 
-				=	return_date();
-
-			generate_object.id_doc_site
-				=	document.getElementById('id_doc_site').value 
-				=   generate_id('xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx');
-
-			//generate_object.ajax_status
-			//	=	document.getElementById('ajax_status').value  = "True";
-
-			return generate_object;
-		}
+			}
 		
 
-		function check_fields(){			
-			return (!document.getElementById('phone'    )       || 
-					!document.getElementById('subject'  ).value || 
-				    !document.getElementById('message'  ).value) ? false:true;		
-		}
+		function check_form(){
+			if (!document.getElementById('recipient').value){
+				alert('Не указан получатель сообщения!');
+				return false;
+			}
 
-		function collection_data(){
-			var collection_object = {};
-
-			var snils = document.getElementById("snils");
-			collection_object.snils = snils.textContent || snils.innerText;
-
-			var recipient = document.getElementById('recipient').value;
-			if (recipient){
-				collection_object.recipient = recipient;}
-
-			collection_object.subject = document.getElementById('subject').value;
-			collection_object.message = document.getElementById('message').value;
-
-			var phone = document.getElementById("phone");
-			collection_object.phone = phone.textContent || phone.innerText;
-
-			var email = document.getElementById("email");			
-			email = email.textContent || email.innerText;
-			if (email){
-				collection_object.email = email;}
-						
-			return collection_object;
-		}
-
-		function read_result(object){
-			 result       = $.parseJSON(JSON.stringify(object));
-    	     lvl_output   = $.parseJSON(JSON.stringify(result.output));
-
-    	     for (key in lvl_output){
-    	     	return lvl_output[key];
-    	     }
-		}
-
-		function send_message(){
-			if (!check_fields()){
-				 alert("Одно из следующих полей не заполнено:телефон, тема, текст сообщения");
+			else if (!document.getElementById('subject').value){
+				alert('Не указана тема сообщения!');
+				return false;
+			}
+			else if (!document.getElementById('recipient').value){
+				alert('Не указано сообщение!');
+				return false;
 			}
 			else{
-				var gen    = generate_data();
-				var collec = collection_data();
-
-				var send_object = Object.assign(gen, collec);
-				//console.log(JSON.stringify(send_object));
-				//alert(JSON.stringify(send_object));
-
-				var ajax_info = "";
-    			Query("POST", send_object, "MessagePacientNew", function (info){ 
-         		 ajax_info = info;
-    		    });
-
-    			if (ajax_info == "error"){
-    				document.getElementById('ajax_status').value = false;
-    				alert("Мы сохранили ваше сообщение и отправим его кода будет востановленна связь с сервисом");
-    			}
-    			else if(ajax_info.output.MessagePacientNew == "success"){
-    				
-    				document.getElementById('ajax_status').value = true;
-    				alert("Сообщене отправленно");
-    			}
-    			else{
-    				alert("Ошибка отправки данных" +JSON.stringify(ajax_info));
-    				//alert();
-    			}
-
-    		}
-			//var object_for_send = generate_data();
-		}
-
-		window.onload = function(){
-		alert('ВНИМАНИЕ ПРИ ЗАПРОСАХ ИСПОЛЬЗУЮТСЯ ТЕСТОВЫЕ СНИЛСЫ !!!');
-		}
 				
-	</script>
+				return true;
+			}
 
-	
-	
 
-	<form method = "POST" class = 'message-form'>
-		<div class='form-group row'><h2 class='col'>Обращение</h2></div>
+		}
+
+		function collect_data(){
+			var collection_object = {};
+
+			
+			collection_object.recipient = document.getElementById('recipient').value;			
+			collection_object.subject = document.getElementById('subject').value;
+			collection_object.message = document.getElementById('message').value;
+			collection_object.date = return_date();
+			collection_object.id_doc_site	=   generate_id('xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx');						
+			console.log(collection_object);
+			return collection_object;
+
+
+		}
+
+		function send_messages(my_data){
+
+			var token = '{{ csrf_token }}';
+
+
+			console.log("sending via send_message!") // sanity check
+		    $.ajax({
+		        url : "send-message", // the endpoint
+		        type : "POST", // http method
+		        headers: { "X-CSRFToken": token },
+		        data:my_data, // data sent with the post request
+
+		        // handle a successful response
+		        success : function(msg) {
+		        	
+		        	alert(msg);   
+		        },
+
+		        // handle a non-successful response
+		        error : function(xhr,errmsg,err) {
+		        	
+		            alert("Ошибка");
+		            
+		        }
+		    });
+		}
+
+
 		
-		<div id="email" class="hidden_fields">{{ my_email }}</div>
-		<div id="phone" class="hidden_fields">{{ my_phone }}</div>
 
-		{% csrf_token %}
-		{% for field in form.visible_fields %}	
-		 <!-- убрать одну d in hiddden что скрыть поля  -->
-		    {% if field.name  in hidden %} 
-		    	<div class="hidden_fields">
-		    	{{ field.label_tag }}{{ field }}
-		    	</div>
-		    {% else %}
-		    <div class="form-group row">
-		        {{ field.errors }}
-		        <div class="col-sm-2 col-form-label">{{ field.label_tag }}</div> 
-		        <div class="col"> {{ field }} </div>
-		    </div>
-		    {% endif %}
-		{% endfor %}
 
-		{% for hidden in form.hidden_fields %}
-		{{ hidden }}
-		{% endfor %}
-		<input type="submit" class="mbtn btn btn-primary" values="submit" onclick="send_message()">
-	</form>
-	<!--<input type="button" class="mbtn btn btn-primary" values="my_buttom" 
-			onclick="send_message()"	> -->
+
+				
+	</script>		
 
 {% endblock %}   

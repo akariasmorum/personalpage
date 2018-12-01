@@ -98,7 +98,7 @@ class CallDoctor(models.Model):
 
 class Message(models.Model):	 
 	sender      = models.ForeignKey   (PatientUser, models.CASCADE)
-	date        = models.DateTimeField('Дата обращения' )#, auto_now_add=True)
+	date       = models.DateTimeField('Дата обращения' )#, auto_now_add=True)
 	id_doc_site = models.CharField    ('ID сайта'       , max_length=50)
 	recipient   = models.CharField    ('Кому обращение' , max_length=50, blank=True)
 	subject     = models.CharField    ('Тема сообщения' , max_length=50)
