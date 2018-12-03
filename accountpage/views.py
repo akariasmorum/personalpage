@@ -130,6 +130,7 @@ def calldoc(request):
 				
 			
 	form = CallDoctorForm()
+	pacients = request_user_adress(request.user.snils)
 	return render(request, 'calldoc.html', 
 		 context={'title': 'Вызов врача на дом', 'nbar': 'call-doc',
 				   'form': form, 
@@ -138,7 +139,8 @@ def calldoc(request):
 			   'my_phone': '+7(987)123-32-23',
 				 'hidden': ['status_send', 'date', 
 							'id_doc_site', 'kladr' ,
-								 'house' , 'room']
+								 'house' , 'room'],
+				'pacients': str(pacients) 
 				 })
 ###############################
 
@@ -219,14 +221,43 @@ def app(request):
 	return render(request, 'appointment.html', context={'title': 'Запись на прием', 'nbar': 'app', 'name': (request.user.surname + ' ' + request.user.name) })			
 
 #####################
+def send_call_doctor(request):
+	if request.method =='POST':
+		try:	
+			responce = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message('CallDoctorNew',
+				{
+							"snils":       request.user.snils,
+							"id_doc_site": request.POST.get('id_doc_site'),						
+							"datedoc":     datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+							"temperature": request.POST.get('temperature'),
+							"complaint":   request.POST.get('complaint'),
+							"kladr": 	   request.POST.get('kladr'),
+							"house":       request.POST.get('house'),
+							"room":        request.POST.get('room'),
+							"phone":       request.POST.get('phone'),
+							"email":       request.user.email,
+							"addit_inform":request.POST.get('addit_inform'),
+				})
+
+		except Exception as Ex:
+			print(str(traceback.format_exc()))
+			responce = str(Ex)
+
+		return HttpResponse(str(responce))
 
 def send_message(request):
 	if request.method =='POST':
-		
-		responce = ""
-		try:	
-			responce = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message('MessagePacientNew',
-				{
+		message_form = MessageForm(request.POST)
+
+		if message_form.is_valid():
+			print('сработало!')
+			message = message_form.save(commit=False)                 
+			message.sender = request.user
+			message.save()
+			responce = ""
+			try:	
+				responce = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message('MessagePacientNew',
+					{
 							"snils": request.user.snils,
 							"id_doc_site": request.POST.get('id_doc_site'),						
 							"datedoc": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
@@ -235,13 +266,15 @@ def send_message(request):
 							"message": request.POST.get('message'),
 							"phone":   request.user.telephone,
 							"email":   request.user.email
-				})
+					})
 
-		except Exception as Ex:
-			print(str(traceback.format_exc()))
-			responce = str(Ex)
+			except Exception as Ex:
+				print(str(traceback.format_exc()))
+				responce = str(Ex)
 
-		return HttpResponse(str(responce['message']))	
+			return HttpResponse(str(responce['message']))	
+		else:
+			print(message_form.errors)	
 		
 		'''
 		if request.POST["status_send"] == "false":
@@ -296,6 +329,38 @@ def user_logout(request):
 	logout(request)
 	return redirect('login')
 
+#запросить опекаемых данным польователем
+#output: list [] опекаемых 
+def request_user_children(snils):
+	children = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message('PacientList', 
+		 {'snils':snils})	
+	pacient_list_json = json.loads(children['output']['PacientList'])
+
+	
+	
+	return pacient_list_json
+
+#запросить адреса данного пациента
+#output: list[ { адрес }, { адрес } ]
+def request_adress(snils):
+	adress = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message('AddressList', 
+		 {'snils': snils})
+	adress_list_json = json.loads(adress['output']['AddressList'])
+	
+
+	return adress_list_json
+
+
+#запрашивает опекаемых и их адреса, и упаковывает эту информацию в dict
+#output: list [{пациент, адреса пациента:[]}, {пациент, адреса пациента:[]}]
+def request_user_adress(snils):
+	pacients = request_user_children(snils)
+
+	for pacient in pacients:
+		adresses = request_adress(pacient['SNILS'])
+		pacient['adresses'] = adresses
+	print(pacients)
+	return pacients	
 
 class SignUp(generic.CreateView):
 	form_class = SignUpForm

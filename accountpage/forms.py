@@ -74,20 +74,21 @@ class MessageForm(ModelForm):
 		fields = ['date', 'id_doc_site', 'recipient', 'subject', 'message']
 
 
-class CallDoctorForm(ModelForm):
-	status_send  = forms.CharField    (widget = forms.TextInput(attrs={'class': 'form-control','id':'ajax_status'}),label='Статус выполнения Ajax', max_length=10)
+class CallDoctorForm(forms.Form):
+	
 	date         = forms.DateTimeField(widget = forms.TextInput(attrs={'class': 'form-control','id':'date_doc'   }),label='Дата')
 	id_doc_site  = forms.CharField    (widget = forms.TextInput(attrs={'class': 'form-control','id':'id_doc_site'}),label='ID вставки', max_length=50)
-	
+	patient      = forms.CharField    (widget = forms.Select   (attrs={'class': 'form-control','id':'pacient'   }),label='Пациент')
+	adress       = forms.CharField    (widget = forms.Select   (attrs={'class': 'form-control', 'id': 'select_address'}), label='Адрес пациента')
 	temperature  = forms.ChoiceField  (widget = forms.Select   (attrs={'class': 'form-control'}),label='Температура', choices = ((str(x*0.1)[:4], str(x*0.1)[:4]) for x in range(360, 401)))
-	complaints   = forms.CharField    (widget = forms.Textarea (attrs={'class': 'form-control'}),label='Жалобы', max_length=1000)
-
-	kladr        = forms.CharField    (widget = forms.TextInput(attrs={'class': 'form-control','id':'kladr'     }),label='КЛАДР', max_length=17)
-	house        = forms.CharField    (widget = forms.TextInput(attrs={'class': 'form-control','id':'house'     }),label='Дом', max_length=10)
-	room         = forms.CharField    (widget = forms.TextInput(attrs={'class': 'form-control','id':'room'      }),label='Квартира', max_length=10, required = False)
+	complaints   = forms.CharField    (widget = forms.Textarea (attrs={'class': 'form-control'}),label='Жалобы', max_length=1000, required = True)
 
 	add_inform   = forms.CharField    (widget = forms.Textarea (attrs={'class': 'form-control addition','id':'add_inform'}),label='Дополнительная информация', max_length=1000, required = False)
-	patient      = forms.CharField    (widget = forms.Select   (attrs={'class': 'form-control','id':'pacient'   }),label='Пациент')
+	#kladr 		 = forms.CharField	  (widget = forms.TextInput(attrs={'class': 'form-control d-none', 'id': 'kladr'}))
+	#home 		 = forms.CharField	  (widget = forms.TextInput(attrs={'class': 'form-control d-none', 'id': 'kladr'}))
+	#kv  		 = forms.CharField	  (widget = forms.TextInput(attrs={'class': 'form-control d-none', 'id': 'kladr'}))
+
+	
 
 	'''def __init__(self, *args, **kwargs):
 		user = kwargs.pop('user', None)
@@ -125,11 +126,7 @@ class CallDoctorForm(ModelForm):
 		patients = Patient.objects.filter(trustee = user)
 		pl       = [ ( patient.return_snils(), patient ) for patient in patients ]
 		return pl
-
-	class Meta:
-		model  = CallDoctor
-		fields = ['status_send', 'date', 'id_doc_site', 'kladr' , 'house', 'room', 'patient', 'temperature', 'complaints',  'add_inform']
-
+	
 
 class SignUpForm(UserCreationForm):
 	error_messages = {

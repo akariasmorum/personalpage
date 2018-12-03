@@ -15,6 +15,7 @@ urlpatterns = [
 	url(r'^calendar', views.calendar, name='calendar'),
 	url(r'^message', views.get_message, name='message'),
 	url(r'^mypage', views.mypage, name = 'my-page'),
-	url(r'^send-message', views.send_message, name='send-message')
+	url(r'^send-message', views.send_message, name='send-message'),
+	url(r'^send-calldoc', views.send_call_doctor, name ='send-calldoc')
 	
 ]

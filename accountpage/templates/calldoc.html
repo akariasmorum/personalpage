@@ -11,39 +11,7 @@
 </style>
 
 <script type="text/javascript">
-		function Query(my_method, for_request, name_service, callback)
-  {    
-    var my_data = {
-      name:name_service,
-      params:{
-        request:JSON.stringify(for_request)
-        }
-      };
-    
-      var responce = $.ajax({
-        async:false,
-        method:my_method,
-        url:"http://ibus.dgkb.lan/api/executescript/",
-        username: 'root',
-        password: 'root',
-        headers:{
-          'Authorization': 'Basic cm9vdDpyb290',          
-          'Content-Type': 'application/json'          
-          },  
-          
-        accepts: "application/json",
-        contentType:"application/json",
-        dataType:"json",
-        
-        data:JSON.stringify(my_data),  
-        success: function(msg){        
-         callback(msg);       
-        },
-        error:function(msg){         
-          callback("error");          
-        }
-    	}).responceText;    
-    }
+		
 
 		function generate_id(str) {
   			return str.replace(/[xy]/g, function(c) {
@@ -52,236 +20,95 @@
  					 });
   		}
 
-		function min_ten(value){
-			return (value < 10) ? "0" + value: value;
+
+		function collect_data(){
+			var data_dict = {};
+
+			data_dict.id_doc_site = generate_id('xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx');
+
+			data_dict.temperature = document.getElementById('id_temperature').value;
+			data_dict.complaint  = document.getElementById('id_complaints').value;
+			data_dict.kladr = pacients[currentUser]['adresses'][currentAdress]['KLADR'];
+			data_dict.house = pacients[currentUser]['adresses'][currentAdress]['dom'];
+			data_dict.room = pacients[currentUser]['adresses'][currentAdress]['kvstr'];
+			data_dict.phone = '+7(919)854-35-59';
+			data_dict.addit_inform = document.getElementById('add_inform').value;
+
+			return data_dict;
 		}
 
-		function return_date(){
-			 var now = new Date();
-			   		
-			 var str_time =   now.getFullYear()  + "-"
-			 		+  min_ten(now.getMonth  ()  + 1)  + "-" 
-			 		+  min_ten(now.getDate   ()) + " "
-			 		+  min_ten(now.getHours  ()) + ":"
-			 		+  min_ten(now.getMinutes());
-   			 	
-    		 return str_time;
-	    }
 
-		function generate_data_call(){
-			var generate_object = {};
+		function send_data(){
+			var data = collect_data();
+			console.log(data);
+			send_messages('send-calldoc', data);
 
-			generate_object.datedoc
-				=	document.getElementById('date_doc').value 
-				=	return_date();
-
-			generate_object.id_doc_site
-				=	document.getElementById('id_doc_site').value 
-				=   generate_id('xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx');
-
-			//choose_pacient();
-			//generate_object.ajax_status
-			//	=	document.getElementById('ajax_status').value  = "True";
-
-			return generate_object;
-		}
-		
-		function check_fields_call(){	
-			return (!document.getElementById('phone'         )       || 
-					!document.getElementById('id_complaints' ).value ||
-					!document.getElementById('select_address').value || 
-				    !document.getElementById('pacient'       ).value) 
-			        ? false:true;	
 		}
 
-		function collection_data_call(){
-			var collection_object = {};
-					
-			collection_object.snils       = document.getElementById("pacient").value;
-			collection_object.temperature = document.getElementById("id_temperature").value;
-			collection_object.complaint   = document.getElementById("id_complaints").value;
-			collection_object.kladr       = document.getElementById("kladr").value;
-			collection_object.house       = document.getElementById("house").value;
+		function send_messages(url, my_data){
 
-			var room = document.getElementById("room").value;
-			if (room){
-				collection_object.room = room;}
+			var token = '{{ csrf_token }}';
 
-			var phone = document.getElementById("phone");
-			collection_object.phone = phone.textContent || phone.innerText;
 
-			var email = document.getElementById("email");			
-			email = email.textContent || email.innerText;
-			if (email){
-				collection_object.email = email;}
+			console.log("sending via send_message!") // sanity check
+		    $.ajax({
+		        url : url, // the endpoint
+		        type : "POST", // http method
+		        headers: { "X-CSRFToken": token },
+		        data:my_data, // data sent with the post request
 
-			var addit_inform = document.getElementById("add_inform").value;
-			if (addit_inform){
-				collection_object.addit_inform = addit_inform;}
-						
-			return collection_object;
+		        // handle a successful response
+		        success : function(msg) {
+		        	
+		        	alert(msg);   
+		        },
+
+		        // handle a non-successful response
+		        error : function(xhr,errmsg,err) {
+		        	
+		            alert("Ошибка");
+		            
+		        }
+		    });
 		}
 
-		function get_snils(){
-			var objSel = document.getElementById("pacient").value;
-			alert(objSel);
-		}
-
-		function read_result_call(object){
-			 result       = $.parseJSON(JSON.stringify(object));
-    	     lvl_output   = $.parseJSON(JSON.stringify(result.output));
-
-    	     for (key in lvl_output){
-    	     	return lvl_output[key];
-    	     }
-		}
-
-	    function return_array_call(object){
-    	  result       = $.parseJSON(JSON.stringify(object));
-     	  lvl_output   = $.parseJSON(JSON.stringify(result.output));  
-         
-          lvl_calendar = $.parseJSON(lvl_output.AddressList); 
-  
-          var ar = new Array()
-
-      	  lvl_calendar.forEach(function(item, i, lvl_calendar) {
-           ar.push({'adress':item.adress, 'KLADR':item.KLADR,
-                       'dom':item.dom   , 'kvstr':item.kvstr});
-            //alert(JSON.stringify(ar));
-            });
-
-          return ar;
-        }
-
-        function return_array_call_pacient(object){
-    	  result       = $.parseJSON(JSON.stringify(object));
-     	  lvl_output   = $.parseJSON(JSON.stringify(result.output));  
-         
-          lvl_pacients = $.parseJSON(lvl_output.PacientList); 
-  
-          var ar = new Array()
-
-      	  lvl_pacients.forEach(function(item, i, lvl_pacients) {
-           ar.push({'SNILS':item.SNILS, 
-           	    'Full_Name':item.FAM  + ' ' +
-           	    			item.NAME + ' ' +
-           	    			item.OTH  });
-            //alert(JSON.stringify(ar));
-            });
-          return ar;
-        }
-
-		function send_message(){
-			if (!check_fields_call()){
-				 alert("Одно из следующих полей не заполнено:телефон, пациент, жалоба");
+		function assign_patients(pacients){
+			for (var i=0; i<pacients.length; i++)
+			{
+				var pacient = pacients[i]['FAM']+" " + pacients[i]['NAME']+" " + pacients[i]['OTH']+", Дата Рождения: " + pacients[i]['dater'];
+				$('#pacient').append($("<option></option>").text(pacient));
 			}
-			else{
-				var gen         =   generate_data_call();
-				var collec      = collection_data_call();
-				var send_object = Object.assign(gen, collec);
-				//alert(JSON.stringify(send_object));
-
-				var ajax_info = ""; 
-    			Query("POST", send_object, "CallDoctorNew", function (info){ 
-         		 ajax_info = info;
-    		    });
-
-    			if (ajax_info == "error"){
-    				document.getElementById('ajax_status').value = false;
-    				alert("Мы сохранили ваше сообщение и отправим его кода будет востановленна связь с сервисом");
-    			}
-    			else if(ajax_info.output.CallDoctorNew == "success"){
-    				
-    				document.getElementById('ajax_status').value = true;//не забыть поменять
-    				alert("Сообщене отправленно");
-    			}
-    			else{
-    				alert("Ошибка отправки данных" + JSON.stringify(ajax_info));
-    			}		   
-    		}			
 		}
 
-		var address_data = [];
-
-		function obj_snils(){
-			var obj = document.getElementById("snils");
-			var snils = obj.textContent || obj.innerText;
-			//тут перекоментировать две последнии строки чтобы использовать реально указанный SNILS
-			return {"snils":snils};
-			//return {"snils":"179-474-337 23"}
+		function assign_adresses(index){
+			for(var i = 0; i < pacients[index]['adresses'].length; i++){
+				var adress = pacients[index]['adresses'][i]['adress'];
+				$('#select_address').append($("<option></option>").text(adress));
+			}
 		}
 
-
-		function request_addresses(){		
-			var send_object = obj_snils();
-			var ajax_info = "";
-    	    Query("POST", send_object, "AddressList", function (info){ 
-         		  ajax_info = info;
-    		    });
-
-    	    if (ajax_info == "error"){    				
-    				alert("Сервис временно недоступен.Попробуйте позже");
-    			}
-    			else{    				
-    				//alert("Получение данных");
-    				return return_array_call(ajax_info);
-    			}
+		function remove_adresses(){
+			$('#select_address')
+			    .find('option')
+			    .remove();
 		}
 
-
-		function request_pacients(){		
-			var send_object = obj_snils();
-			var ajax_info = "";
-    	    Query("POST", send_object, "PacientList", function (info){ 
-         		  ajax_info = info;
-    		    });
-
-    	    if (ajax_info == "error"){    				
-    				alert("Сервис временно недоступен.Попробуйте позже");
-    			}
-    			else{    				
-    				//alert("Получение данных");
-    				// sdelat chtenie dannh
-    				return return_array_call_pacient(ajax_info);
-    			}
+		function get_select_index(select){
+			return ($(select).prop('selectedIndex'));
 		}
 
-
-		function add_in_select(){
-			var objSel = document.getElementById("select_address");
-
-			for (var index = 0; index < address_data.length; ++index) {
-   				objSel.options[objSel.options.length] = 
-   				new Option(address_data[index].adress, index);
-			}			
+		function adressFacade(){
+			currentUser = get_select_index('#pacient');
+			   remove_adresses();
+			   assign_adresses(currentUser);
 		}
 
-		function add_pacients(pacients){
-			var objSel = document.getElementById("pacient");
-
-			for (var index = 0; index < pacients.length; ++index) {
-   				objSel.options[objSel.options.length] = 
-   				new Option(pacients[index].Full_Name, 
-   					       pacients[index].SNILS    );
-			}			
-		}
-		
-		function choose_address(index){
-			document.getElementById('kladr').value = address_data[index].KLADR;
-			document.getElementById('house').value = address_data[index].dom  ;
-			document.getElementById('room' ).value = address_data[index].kvstr;
-			//JSON.stringify(address_data[index]);		
-		}
-
-		function choose_pacient(){		    
-			document.getElementById('pacient').value = 
-			document.getElementById('select_pacient').value
-			//JSON.stringify(address_data[index]);		
-		}
-
+		var pacients = {{ pacients|safe }};
+		var currentUser=0;
+		var currentAdress=0;
 		window.onload = function(){
 		//alert('ВНИМАНИЕ ПРИ ЗАПРОСАХ ИСПОЛЬЗУЮТСЯ ТЕСТОВЫЕ СНИЛСЫ !!!');
-			address_data = request_addresses();
+			/*address_data = request_addresses();
 			if (address_data.length > 0){
 				add_in_select();
 				choose_address(0);
@@ -302,8 +129,17 @@
 				alert("Ваш список адреов пуст. Пожалуйста ормити вызов через диспечерскую службу");
 			}
 			//alert(JSON.stringify(address_data));
-			//alert(typeof address_data);
+			//alert(typeof address_data);*/
+
 			
+			assign_patients(pacients);
+			adressFacade();	
+			$( "#pacient" ).change(function() {
+			   adressFacade();
+			});
+			$( "#select_adress" ).change(function() {
+			   currentAdress = get_select_index('#select_adress');
+			});
 		}
 		
 				
@@ -321,18 +157,7 @@
 		<div id="phone" class="hidden_fields">{{ my_phone }}</div>
 
 
-        <div class="form-group row">
-            <div class="col-sm-2 col-form-label">
-            Выберите адрес:</div>
-
-            <div class="col"> 
-            	<select class = "form-control" id="select_address" onchange="choose_address(this.value)">		
-				</select>
-			</div>
-
-			
-		</div>
-
+        
 		<!--<div class="form-group row">
             <div class="col-sm-2 col-form-label">
             Выберите пациента:</div>
@@ -362,7 +187,7 @@
 		{% endfor %}
 
 		
-				<input type="submit" class="mbtn btn btn-primary" values="submit" onclick="send_message()">
+				<button type="submit" class="mbtn btn btn-primary" values="submit" onclick="send_data()">Отправить</button>
 
 				</form>
            
