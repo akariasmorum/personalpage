@@ -24,6 +24,7 @@
 		function collect_data(){
 			var data_dict = {};
 
+			data_dict.snils = pacients[currentUser]['SNILS'];
 			data_dict.id_doc_site = generate_id('xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx');
 
 			data_dict.temperature = document.getElementById('id_temperature').value;

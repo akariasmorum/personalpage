@@ -226,7 +226,7 @@ def send_call_doctor(request):
 		try:	
 			responce = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message('CallDoctorNew',
 				{
-							"snils":       request.user.snils,
+							"snils":       request.POST.get('snils'),
 							"id_doc_site": request.POST.get('id_doc_site'),						
 							"datedoc":     datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
 							"temperature": request.POST.get('temperature'),
