@@ -245,6 +245,21 @@ def send_call_doctor(request):
 
 		return HttpResponse(str(responce))
 
+#проверяет, есть ли у этого пользователя такой опекаемый, и есть ли у опекаемого такой адрес
+#возвращает true, если у текущего пользователя есть опекаемый с таким снилс у и этого опекаемого есть указанный адрес
+def safe_calldoc_check(request, snils, kladr, house, room):
+	children = request_user_adress(request.user.snils)
+	for child in children:
+		if child['SNILS'] == snils:
+			for adress in child['adresses']:
+				if (adress['KLADR'] == kladr and
+					adress['dom'] == house and
+					adress['kvstr'] == room):
+					return true
+	return false				
+
+
+
 def send_message(request):
 	if request.method =='POST':
 		message_form = MessageForm(request.POST)
