@@ -8,10 +8,11 @@ from .forms import Message
 from datetime import datetime
 import http.client as hc
 import json
-
+import logging
 
 from .forms import SignUpForm, CallDocForm, Patient, AddChildForm, MessageForm, LoginForm, CallDoctorForm
 
+logger = logging.getLogger('django')
 #
 #ЛОГИН
 #
@@ -76,6 +77,7 @@ class ChildrenView(generic.ListView):
 #моя страница #####################
 
 def mypage(request):
+
 	children = Patient.objects.filter(trustee = request.user)
 	if request.method =='POST':
 		form = AddChildForm(request.POST)
@@ -119,15 +121,7 @@ def calldoc(request):
 			form = CallDoctorForm(request.POST)
 			if form.is_valid():
 				form.save_data(request.user.snils, request.POST)
-				#return render(request, 'test.html', {'answer':form.all()})
-			#form.save_data(request.user.snils, request.POST)
-			
-			'''if form.is_valid():
-				
-				return HttpResponse("OK")
-			else:
-				return HttpResponse("NE OK")'''
-				
+								
 			
 	form = CallDoctorForm()
 	pacients = request_user_adress(request.user.snils)
@@ -143,72 +137,6 @@ def calldoc(request):
 				'pacients': str(pacients) 
 				 })
 ###############################
-
-
-
-
-	'''
-def return_message_page(request):
-	form = MessageForm()
-	return render(request, 'message.html', 
-			   context={'title': 'Расписание', 'nbar': 'message', 
-						 'form': form, 
-						 'name': (request.user.surname + ' ' + request.user.name), 
-					 'my_email': 'email@email.ru',
-					 'my_phone': '+7(987)123-32-23',
-					   'hidden': ['status_send','date','id_doc_site']
-					 })
-
-	if request.method =='POST':
-		
-	else:
-		return_message_page(request)
-		if request.POST["status_send"] == "false":
-			
-		
-		#return HttpResponse("{0}".format(json.dumps(request.POST)))
-		
-		form = Message(request.POST)
-		if form.is_valid():
-			try:
-				con = hc.HTTPConnection('ibus.dgkb.lan', 80) 
-				headers = { 
-				'Authorization': 'Basic cm9vdDpyb290', 
-				'Host': 'localhost:5000', 
-				'Content-Type': 'application/json' 
-				} 
-				
-				dic = {
-						"snils": form.cleaned_data['snils'],
-						"id_doc_site": form.cleaned_data['snils'],
-						#"datedoc": datetime.now().strftime('%Y-%m-%d %H:%M'),
-						"datedoc": datetime.now().strftime('%Y-%m-%d %H:%M'),
-						"recipient": form.cleaned_data['recipient'],
-						"subject": form.cleaned_data['subject'],
-						"message": form.cleaned_data['message'],
-						"phone":   form.cleaned_data['phone'],
-						"email":   form.cleaned_data['email'],
-					}
-				parametr = str(json.dumps(dic)) 
-
-				
-
-				body = json.dumps({ 
-				'name': 'MessagePacientNew', 
-				'params': {'request': parametr} 
-				}) 
-
-				con.request('POST', '/api/executescript', body=body, headers=headers) 
-
-				c = con.getresponse().read().decode() 
-				
-				return HttpResponse(dic['datedoc'] + " " + str(c))
-			except Exception as ex:
-				return HttpResponse(str(ex))	
-
-					'''			
-	
-
 
 
 ##########ЭМК
@@ -291,13 +219,7 @@ def send_message(request):
 		else:
 			print(message_form.errors)	
 		
-		'''
-		if request.POST["status_send"] == "false":
-			
-				
-				print('готово!')
-				return render(request, 'test.html', {'messages':message_form.return_all()})	
-				'''
+		
 
 	else:
 		return HttpResponse('Нет данных для отправки!')

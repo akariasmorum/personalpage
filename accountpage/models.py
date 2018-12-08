@@ -22,6 +22,9 @@ class PatientUserManager(BaseUserManager):
 		user.set_password(password)
 		user.save(using=self._db)
 
+	def create_superuser:
+
+
 	
 
 
@@ -35,7 +38,7 @@ class PatientUser(AbstractBaseUser):
 	
 	date_joined = models.DateTimeField('Дата Регистрации', auto_now_add=True)
 	telephone = models.CharField('Номер телефона', max_length= 18, blank=True)
-
+	
 	USERNAME_FIELD = 'snils'
 	EMAIL_FIELD = 'email'
 
