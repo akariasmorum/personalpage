@@ -66,7 +66,7 @@
 
 		        // handle a non-successful response
 		        error : function(xhr,errmsg,err) {
-		        	
+		        	console.log(JSON.stringify(xhr));
 		            alert("Ошибка");
 		            
 		        }
@@ -108,31 +108,7 @@
 		var currentUser=0;
 		var currentAdress=0;
 		window.onload = function(){
-		//alert('ВНИМАНИЕ ПРИ ЗАПРОСАХ ИСПОЛЬЗУЮТСЯ ТЕСТОВЫЕ СНИЛСЫ !!!');
-			/*address_data = request_addresses();
-			if (address_data.length > 0){
-				add_in_select();
-				choose_address(0);
 				
-
-				var pacient_list = request_pacients();
-				if(pacient_list.length > 0){
-					add_pacients(pacient_list);
-
-					//alert(document.getElementById('pacient').value);
-				}
-				else{
-					alert("Ваш список пациентов пуст!");
-				}
-				
-			}
-			else{
-				alert("Ваш список адреов пуст. Пожалуйста ормити вызов через диспечерскую службу");
-			}
-			//alert(JSON.stringify(address_data));
-			//alert(typeof address_data);*/
-
-			
 			assign_patients(pacients);
 			adressFacade();	
 			$( "#pacient" ).change(function() {

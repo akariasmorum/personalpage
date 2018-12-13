@@ -150,10 +150,14 @@ def app(request):
 
 #####################
 def send_call_doctor(request):
-	if request.method =='POST':
-		try:	
-			responce = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message('CallDoctorNew',
-				{
+	'''
+	послать вызов врача на дом в ИШ
+	'''
+
+	return busExchangeMethod(
+		request,
+		'CallDoctorNew',
+		{
 							"snils":       request.POST.get('snils'),
 							"id_doc_site": request.POST.get('id_doc_site'),						
 							"datedoc":     datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
@@ -165,17 +169,15 @@ def send_call_doctor(request):
 							"phone":       request.POST.get('phone'),
 							"email":       request.user.email,
 							"addit_inform":request.POST.get('addit_inform'),
-				})
-
-		except Exception as Ex:
-			print(str(traceback.format_exc()))
-			responce = str(Ex)
-
-		return HttpResponse(str(responce))
+		},
+		['message'])	
 
 
 def get_schedule_month(request):
-	
+	'''
+	запрос расписания на указанный месяц для указанного пациента
+	'''
+
 	return busExchangeMethod(
 		request,
 		'CalendarList', 
@@ -184,9 +186,10 @@ def get_schedule_month(request):
 			"date_begin": request.POST.get('date_begin'),
 			"date_end": request.POST.get('date_end'),
 		},
-		'CalendarList')	
+		['output', 'CalendarList'])	
+
 		
-def busExchangeMethod(request, method, params_dict, returnableParam):
+def busExchangeMethod(request, method, params_dict, nestedKeys):
 	'''
 	Общий метод для работы с IBUS:
 	Arguments:
@@ -194,6 +197,10 @@ def busExchangeMethod(request, method, params_dict, returnableParam):
 		method  - string, название метода, который вызываем у IBUS
 		params_dict - dict, параметры метода
 		returnableParam - string, название возвращаемого узла
+
+	Output:
+		HttpResponce строка либо с данными, либо с сообщением ошибки, либо с сообщением, что 
+		get- методам  тут делать нечего	
 	'''
 
 
@@ -204,16 +211,37 @@ def busExchangeMethod(request, method, params_dict, returnableParam):
 		except Exception as Ex:
 			print(traceback.format_exc())
 			responce = str(Ex)
-		return HttpResponse(responce['output'][returnableParam])
+
+		if len(nestedKeys) == 1:	
+			return HttpResponse(responce[nestedKeys[0]])
+		if len(nestedKeys) == 2:	
+			return HttpResponse(responce[nestedKeys[0]][nestedKeys[1]])
+					
 	else:
 		return HttpResponse('Nothing to do here!')
 
 
 
 
-#проверяет, есть ли у этого пользователя такой опекаемый, и есть ли у опекаемого такой адрес
+#проверяет, 
 #возвращает true, если у текущего пользователя есть опекаемый с таким снилс у и этого опекаемого есть указанный адрес
 def safe_calldoc_check(request, snils, kladr, house, room):
+
+	'''
+	Проверить, есть ли у этого пользователя такой опекаемый, и есть ли у опекаемого такой адрес
+
+	Args:
+		request ....,
+		snils   - string, снилс указанного пациента,
+		kladr   - string, кладр указанного адреса,
+		house   - string, номер дома указанного адреса,
+		room    - string, номер квартиры указанного адреса
+
+	Output: 
+		true - если у данного пользователя есть такой опекаемый, и у этого опекаемого есть такой адрес
+		false в иных случаях.(когда какая сволочь post не через форму пытается просунуть)	
+	'''
+
 	children = request_user_adress(request.user.snils)
 	for child in children:
 		if child['SNILS'] == snils:
@@ -234,7 +262,9 @@ def send_message(request):
 			message = message_form.save(commit=False)                 
 			message.sender = request.user
 			message.save()
-			responce = ""
+
+
+			responce = None
 			try:	
 				responce = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message('MessagePacientNew',
 					{
@@ -253,9 +283,11 @@ def send_message(request):
 				responce = str(Ex)
 
 			return HttpResponse(str(responce['message']))	
+
+
+
 		else:
 			print(message_form.errors)	
-		
 		
 
 	else:
