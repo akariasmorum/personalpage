@@ -5,6 +5,7 @@ from . import views
 from . import forms
 
 urlpatterns = [
+	url(r'^$', views.loginView, name='login'),
 	url(r'^login', views.loginView, name='login'),
 	url(r'^signup', views.SignUp.as_view(), name = 'signup'),
 	url(r'^logout', views.user_logout, name = 'logout'),
@@ -16,6 +17,6 @@ urlpatterns = [
 	url(r'^message', views.get_message, name='message'),
 	url(r'^mypage', views.mypage, name = 'my-page'),
 	url(r'^send-message', views.send_message, name='send-message'),
-	url(r'^send-calldoc', views.send_call_doctor, name ='send-calldoc')
-	
+	url(r'^send-calldoc', views.send_call_doctor, name ='send-calldoc'),
+	url(r'^get-month-schedule', views.get_schedule_month, name = 'get-month-schedule'),
 ]

@@ -173,6 +173,30 @@ def send_call_doctor(request):
 
 		return HttpResponse(str(responce))
 
+
+def get_schedule_month(request):
+
+	if request.method == 'POST':
+
+		try:
+			responce = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message('CalendarList', 
+				{
+					"snils": request.POST.get('snils'),
+					"date_begin": request.POST.get('date_begin'),
+					"date_end": request.POST.get('date_end'),
+				})
+		except Exception as Ex:
+				print(str(traceback.format_exc()))
+				responce = str(Ex)
+
+		
+		return HttpResponse(responce['output']['CalendarList'])
+
+
+	else:
+		return HttpResponse('<h3>Нет параметров для запроса</h3>')	
+						
+
 #проверяет, есть ли у этого пользователя такой опекаемый, и есть ли у опекаемого такой адрес
 #возвращает true, если у текущего пользователя есть опекаемый с таким снилс у и этого опекаемого есть указанный адрес
 def safe_calldoc_check(request, snils, kladr, house, room):
@@ -185,7 +209,6 @@ def safe_calldoc_check(request, snils, kladr, house, room):
 					adress['kvstr'] == room):
 					return true
 	return false				
-
 
 
 def send_message(request):

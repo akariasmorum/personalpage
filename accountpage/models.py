@@ -22,11 +22,7 @@ class PatientUserManager(BaseUserManager):
 		user.set_password(password)
 		user.save(using=self._db)
 
-	def create_superuser:
-
-
 	
-
 
 class PatientUser(AbstractBaseUser):
 	snils = models.CharField('СНИЛС', max_length= 14, unique=True)
