@@ -138,3 +138,116 @@ Not Found: /favicon.ico
                 AND n.nspname NOT IN ('pg_catalog', 'pg_toast')
                 AND pg_catalog.pg_table_is_visible(c.oid); args=None
 (0.001) SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"; args=()
+(0.002) 
+            SELECT c.relname, c.relkind
+            FROM pg_catalog.pg_class c
+            LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+            WHERE c.relkind IN ('r', 'v')
+                AND n.nspname NOT IN ('pg_catalog', 'pg_toast')
+                AND pg_catalog.pg_table_is_visible(c.oid); args=None
+(0.001) SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"; args=()
+(0.002) 
+            SELECT c.relname, c.relkind
+            FROM pg_catalog.pg_class c
+            LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+            WHERE c.relkind IN ('r', 'v')
+                AND n.nspname NOT IN ('pg_catalog', 'pg_toast')
+                AND pg_catalog.pg_table_is_visible(c.oid); args=None
+(0.001) SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"; args=()
+Exception while resolving variable 'next' in template 'login.html'.
+Traceback (most recent call last):
+  File "/home/matumba/helloDjango/helloVenv/lib/python3.6/site-packages/django/template/base.py", line 835, in _resolve_lookup
+    current = current[bit]
+  File "/home/matumba/helloDjango/helloVenv/lib/python3.6/site-packages/django/template/context.py", line 83, in __getitem__
+    raise KeyError(key)
+KeyError: 'next'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/matumba/helloDjango/helloVenv/lib/python3.6/site-packages/django/template/base.py", line 841, in _resolve_lookup
+    if isinstance(current, BaseContext) and getattr(type(current), bit):
+AttributeError: type object 'RequestContext' has no attribute 'next'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/matumba/helloDjango/helloVenv/lib/python3.6/site-packages/django/template/base.py", line 849, in _resolve_lookup
+    current = current[int(bit)]
+ValueError: invalid literal for int() with base 10: 'next'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/matumba/helloDjango/helloVenv/lib/python3.6/site-packages/django/template/base.py", line 856, in _resolve_lookup
+    (bit, current))  # missing attribute
+django.template.base.VariableDoesNotExist: Failed lookup for key [next] in [{'True': True, 'False': False, 'None': None}, {'csrf_token': <SimpleLazyObject: <function csrf.<locals>._get_val at 0xb5048104>>, 'request': <WSGIRequest: GET '/'>, 'user': <SimpleLazyObject: <function AuthenticationMiddleware.process_request.<locals>.<lambda> at 0xb5a49df4>>, 'perms': <django.contrib.auth.context_processors.PermWrapper object at 0xb503fe6c>, 'messages': <django.contrib.messages.storage.fallback.FallbackStorage object at 0xb5a725ac>, 'DEFAULT_MESSAGE_LEVELS': {'DEBUG': 10, 'INFO': 20, 'SUCCESS': 25, 'WARNING': 30, 'ERROR': 40}}, {}, {'title': 'Аутентификация', 'form': <LoginForm bound=False, valid=Unknown, fields=(username;password)>}, {'block': <Block Node: form. Contents: [<TextNode: '\n\t<style type="text/css">'>, <IfNode>, <TextNode: '\n\t\t\t\t\t</div>\n\n\t\t\t\t\t\t<form'>, <django.template.defaulttags.URLNode object at 0xb503f18c>, <TextNode: '">\n\t\t\t\t\t\t\t'>, <django.template.defaulttags.CsrfTokenNode object at 0xb58b9a8c>, <TextNode: '\n\n\t\t\t\t\t\t\t<div class="form'>, <Variable Node: form.username>, <TextNode: '\n\t\t\t\t\t\t\t    \n\t\t\t\t\t\t\t    <'>, <Variable Node: form.username.errors>, <TextNode: ' </small>\n\t\t\t\t\t\t\t</div>\n\n'>, <Variable Node: form.password>, <TextNode: '\t\t\t\t\t\t\t    \n\t\t\t\t\t\t\t    \t<'>, <Variable Node: form.password.errors>, <TextNode: ' </small>\n\t\t\t\t\t\t\t</div>\n\t'>, <Variable Node: next>, <TextNode: '">\n\n\t\t\t\t\t\t\t</div>\n\n\t\t\t\t\t\t'>, <django.template.defaulttags.URLNode object at 0xb503f9ec>, <TextNode: '">Зарегистрироваться</a><'>]>}]
+Exception while resolving variable 'next' in template 'login.html'.
+Traceback (most recent call last):
+  File "/home/matumba/helloDjango/helloVenv/lib/python3.6/site-packages/django/template/base.py", line 835, in _resolve_lookup
+    current = current[bit]
+  File "/home/matumba/helloDjango/helloVenv/lib/python3.6/site-packages/django/template/context.py", line 83, in __getitem__
+    raise KeyError(key)
+KeyError: 'next'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/matumba/helloDjango/helloVenv/lib/python3.6/site-packages/django/template/base.py", line 841, in _resolve_lookup
+    if isinstance(current, BaseContext) and getattr(type(current), bit):
+AttributeError: type object 'RequestContext' has no attribute 'next'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/matumba/helloDjango/helloVenv/lib/python3.6/site-packages/django/template/base.py", line 849, in _resolve_lookup
+    current = current[int(bit)]
+ValueError: invalid literal for int() with base 10: 'next'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/matumba/helloDjango/helloVenv/lib/python3.6/site-packages/django/template/base.py", line 856, in _resolve_lookup
+    (bit, current))  # missing attribute
+django.template.base.VariableDoesNotExist: Failed lookup for key [next] in [{'True': True, 'False': False, 'None': None}, {'csrf_token': <SimpleLazyObject: '8ileeDzX0ZUrYhq8zjXz24P2ShhpAti2mwkC97fTy6yVg1vf3GkW4xx1E2GKQpSN'>, 'request': <WSGIRequest: GET '/'>, 'user': <SimpleLazyObject: <function AuthenticationMiddleware.process_request.<locals>.<lambda> at 0xb5a49df4>>, 'perms': <django.contrib.auth.context_processors.PermWrapper object at 0xb503fe6c>, 'messages': <django.contrib.messages.storage.fallback.FallbackStorage object at 0xb5a725ac>, 'DEFAULT_MESSAGE_LEVELS': {'DEBUG': 10, 'INFO': 20, 'SUCCESS': 25, 'WARNING': 30, 'ERROR': 40}}, {}, {'title': 'Аутентификация', 'form': <LoginForm bound=False, valid=False, fields=(username;password)>}, {'block': <Block Node: form. Contents: [<TextNode: '\n\t<style type="text/css">'>, <IfNode>, <TextNode: '\n\t\t\t\t\t</div>\n\n\t\t\t\t\t\t<form'>, <django.template.defaulttags.URLNode object at 0xb503f18c>, <TextNode: '">\n\t\t\t\t\t\t\t'>, <django.template.defaulttags.CsrfTokenNode object at 0xb58b9a8c>, <TextNode: '\n\n\t\t\t\t\t\t\t<div class="form'>, <Variable Node: form.username>, <TextNode: '\n\t\t\t\t\t\t\t    \n\t\t\t\t\t\t\t    <'>, <Variable Node: form.username.errors>, <TextNode: ' </small>\n\t\t\t\t\t\t\t</div>\n\n'>, <Variable Node: form.password>, <TextNode: '\t\t\t\t\t\t\t    \n\t\t\t\t\t\t\t    \t<'>, <Variable Node: form.password.errors>, <TextNode: ' </small>\n\t\t\t\t\t\t\t</div>\n\t'>, <Variable Node: next>, <TextNode: '">\n\n\t\t\t\t\t\t\t</div>\n\n\t\t\t\t\t\t'>, <django.template.defaulttags.URLNode object at 0xb503f9ec>, <TextNode: '">Зарегистрироваться</a><'>]>}]
+"GET / HTTP/1.1" 200 7163
+"GET /static/1726.jpg HTTP/1.1" 200 8998914
+Exception while resolving variable 'name' in template 'unknown'.
+Traceback (most recent call last):
+  File "/home/matumba/helloDjango/helloVenv/lib/python3.6/site-packages/django/core/handlers/exception.py", line 35, in inner
+    response = get_response(request)
+  File "/home/matumba/helloDjango/helloVenv/lib/python3.6/site-packages/django/core/handlers/base.py", line 113, in _get_response
+    resolver_match = resolver.resolve(request.path_info)
+  File "/home/matumba/helloDjango/helloVenv/lib/python3.6/site-packages/django/urls/resolvers.py", line 523, in resolve
+    raise Resolver404({'tried': tried, 'path': new_path})
+django.urls.exceptions.Resolver404: {'tried': [[<URLResolver <URLPattern list> (admin:admin) 'admin/'>], [<URLResolver <module 'django.contrib.auth.urls' from '/home/matumba/helloDjango/helloVenv/lib/python3.6/site-packages/django/contrib/auth/urls.py'> (None:None) ''>, <URLPattern 'login/' [name='login']>], [<URLResolver <module 'django.contrib.auth.urls' from '/home/matumba/helloDjango/helloVenv/lib/python3.6/site-packages/django/contrib/auth/urls.py'> (None:None) ''>, <URLPattern 'logout/' [name='logout']>], [<URLResolver <module 'django.contrib.auth.urls' from '/home/matumba/helloDjango/helloVenv/lib/python3.6/site-packages/django/contrib/auth/urls.py'> (None:None) ''>, <URLPattern 'password_change/' [name='password_change']>], [<URLResolver <module 'django.contrib.auth.urls' from '/home/matumba/helloDjango/helloVenv/lib/python3.6/site-packages/django/contrib/auth/urls.py'> (None:None) ''>, <URLPattern 'password_change/done/' [name='password_change_done']>], [<URLResolver <module 'django.contrib.auth.urls' from '/home/matumba/helloDjango/helloVenv/lib/python3.6/site-packages/django/contrib/auth/urls.py'> (None:None) ''>, <URLPattern 'password_reset/' [name='password_reset']>], [<URLResolver <module 'django.contrib.auth.urls' from '/home/matumba/helloDjango/helloVenv/lib/python3.6/site-packages/django/contrib/auth/urls.py'> (None:None) ''>, <URLPattern 'password_reset/done/' [name='password_reset_done']>], [<URLResolver <module 'django.contrib.auth.urls' from '/home/matumba/helloDjango/helloVenv/lib/python3.6/site-packages/django/contrib/auth/urls.py'> (None:None) ''>, <URLPattern 'reset/<uidb64>/<token>/' [name='password_reset_confirm']>], [<URLResolver <module 'django.contrib.auth.urls' from '/home/matumba/helloDjango/helloVenv/lib/python3.6/site-packages/django/contrib/auth/urls.py'> (None:None) ''>, <URLPattern 'reset/done/' [name='password_reset_complete']>], [<URLResolver <module 'accountpage.urls' from '/home/matumba/git/personalpage/accountpage/urls.py'> (None:None) ''>, <URLPattern '^$' [name='login']>], [<URLResolver <module 'accountpage.urls' from '/home/matumba/git/personalpage/accountpage/urls.py'> (None:None) ''>, <URLPattern '^login' [name='login']>], [<URLResolver <module 'accountpage.urls' from '/home/matumba/git/personalpage/accountpage/urls.py'> (None:None) ''>, <URLPattern '^signup' [name='signup']>], [<URLResolver <module 'accountpage.urls' from '/home/matumba/git/personalpage/accountpage/urls.py'> (None:None) ''>, <URLPattern '^logout' [name='logout']>], [<URLResolver <module 'accountpage.urls' from '/home/matumba/git/personalpage/accountpage/urls.py'> (None:None) ''>, <URLPattern '^call' [name='call-doc']>], [<URLResolver <module 'accountpage.urls' from '/home/matumba/git/personalpage/accountpage/urls.py'> (None:None) ''>, <URLPattern '^ehr' [name='ehr']>], [<URLResolver <module 'accountpage.urls' from '/home/matumba/git/personalpage/accountpage/urls.py'> (None:None) ''>, <URLPattern '^appointment' [name='appointment']>], [<URLResolver <module 'accountpage.urls' from '/home/matumba/git/personalpage/accountpage/urls.py'> (None:None) ''>, <URLPattern '^schedule' [name='schedule']>], [<URLResolver <module 'accountpage.urls' from '/home/matumba/git/personalpage/accountpage/urls.py'> (None:None) ''>, <URLPattern '^calendar' [name='calendar']>], [<URLResolver <module 'accountpage.urls' from '/home/matumba/git/personalpage/accountpage/urls.py'> (None:None) ''>, <URLPattern '^message' [name='message']>], [<URLResolver <module 'accountpage.urls' from '/home/matumba/git/personalpage/accountpage/urls.py'> (None:None) ''>, <URLPattern '^mypage' [name='my-page']>], [<URLResolver <module 'accountpage.urls' from '/home/matumba/git/personalpage/accountpage/urls.py'> (None:None) ''>, <URLPattern '^send-message' [name='send-message']>], [<URLResolver <module 'accountpage.urls' from '/home/matumba/git/personalpage/accountpage/urls.py'> (None:None) ''>, <URLPattern '^send-calldoc' [name='send-calldoc']>], [<URLResolver <module 'accountpage.urls' from '/home/matumba/git/personalpage/accountpage/urls.py'> (None:None) ''>, <URLPattern '^get-month-schedule' [name='get-month-schedule']>]], 'path': 'favicon.ico'}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/matumba/helloDjango/helloVenv/lib/python3.6/site-packages/django/template/base.py", line 835, in _resolve_lookup
+    current = current[bit]
+TypeError: 'URLResolver' object is not subscriptable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/matumba/helloDjango/helloVenv/lib/python3.6/site-packages/django/template/base.py", line 843, in _resolve_lookup
+    current = getattr(current, bit)
+AttributeError: 'URLResolver' object has no attribute 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/matumba/helloDjango/helloVenv/lib/python3.6/site-packages/django/template/base.py", line 849, in _resolve_lookup
+    current = current[int(bit)]
+ValueError: invalid literal for int() with base 10: 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/matumba/helloDjango/helloVenv/lib/python3.6/site-packages/django/template/base.py", line 856, in _resolve_lookup
+    (bit, current))  # missing attribute
+django.template.base.VariableDoesNotExist: Failed lookup for key [name] in <URLResolver <URLPattern list> (admin:admin) 'admin/'>
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 5895
