@@ -342,37 +342,27 @@ function Query(my_method, for_request, name_service, callback)
       // var for_request = {snils:"184-434-687 96",date_begin:"2017-08-10",
       //    date_end:"2017-10-10"     };
       
-    var my_data = {
-      name:name_service,
-      params:{
-        request:JSON.stringify(for_request)
-      }
-    };
+    
+
+    var token = '{{ csrf_token }}';
     
     var responce = $.ajax({
         async:false,
         method:my_method,
-        url:"http://ibus.dgkb.lan/api/executescript/",
-        username: 'root',
-        password: 'root',
-        headers:{
-          'Authorization': 'Basic cm9vdDpyb290',          
-          'Content-Type': 'application/json'          
-          },  
-          // data: "login=leroy&password=password",
-        accepts: "application/json",
-        contentType:"application/json",
-        dataType:"json",
+        url:"get-month-schedule",        
         
-        data:JSON.stringify(my_data),       
+        headers: { "X-CSRFToken": token },
+              
+        data:for_request,       
       
                 success: function(msg)
         {        
          callback(msg);
        
         },
-        error:function(msg)
+        error: function(jqXHR, textStatus, errorThrown)
         {
+          console.log(JSON.stringify(jqXHR));
           //error in msg
           callback("error");          
         }
@@ -385,15 +375,12 @@ function Query(my_method, for_request, name_service, callback)
     
   
   function return_array(object){
-      result       = $.parseJSON(JSON.stringify(object));
-      lvl_output   = $.parseJSON(JSON.stringify(result.output));      
-      lvl_calendar = $.parseJSON(lvl_output.CalendarList); 
-  
+      
+      var events = $.parseJSON(object);
       var ar = new Array()
-
-       lvl_calendar.forEach(function(item, i, lvl_calendar) {
-           ar.push({'date':new Date(item.datedoc), 'text':item.NRU_NAME});
-         });
+      for (var event in events) {
+          ar.push({'date':new Date(events[event].datedoc), 'text':events[event].NRU_NAME});
+      };     
 
       return ar;
      };
@@ -435,6 +422,55 @@ function getFirstLast(date_search){
      }
      
   }
+
+    function assignValue(to, from){
+      to = from;
+    }
+    function eventsFromService2(date_for_request){
+     var dataFromRequest = getFirstLast(date_for_request);
+
+      var e = document.getElementById("snils");
+      dataFromRequest.snils = e.textContent || e.innerText;
+      
+       var ajax_info;
+       
+       send_messages('get-month-schedule', dataFromRequest, function(data){
+        alert(data);
+        ajax_info = data;
+        if(ajax_info == "error")
+         {
+            alert("Сервис временно недоступен.Приносим извенения за предоставленные неудобства.");
+            return [];
+         }
+         else
+         {
+            return return_array(ajax_info);
+         }
+       });       
+    }
+
+    function send_messages(url, my_data, callback){
+
+      var token = '{{ csrf_token }}';
+
+
+      console.log("sending via send_message!") // sanity check
+        $.ajax({
+            url : url, // the endpoint
+            type : "POST", // http method
+            headers: { "X-CSRFToken": token },
+            data:my_data, // data sent with the post request
+
+            // handle a successful response
+            success: function(msg){callback(msg);},
+            
+
+            // handle a non-successful response
+            error : function(xhr,errmsg,err) {
+              callback(errmsg);                
+            }
+        });
+    }
      
     window.onload = function(){
       //alert('ВНИМАНИЕ ПРИ ЗАПРОСАХ ИСПОЛЬЗУЮТСЯ ТЕСТОВЫЕ СНИЛСЫ !!!');

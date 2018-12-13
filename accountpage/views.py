@@ -175,27 +175,41 @@ def send_call_doctor(request):
 
 
 def get_schedule_month(request):
+	
+	return busExchangeMethod(
+		request,
+		'CalendarList', 
+		{
+			"snils": request.POST.get('snils'),
+			"date_begin": request.POST.get('date_begin'),
+			"date_end": request.POST.get('date_end'),
+		},
+		'CalendarList')	
+		
+def busExchangeMethod(request, method, params_dict, returnableParam):
+	'''
+	Общий метод для работы с IBUS:
+	Arguments:
+		request - стандартный request для всех методов view 
+		method  - string, название метода, который вызываем у IBUS
+		params_dict - dict, параметры метода
+		returnableParam - string, название возвращаемого узла
+	'''
+
 
 	if request.method == 'POST':
-
 		try:
-			responce = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message('CalendarList', 
-				{
-					"snils": request.POST.get('snils'),
-					"date_begin": request.POST.get('date_begin'),
-					"date_end": request.POST.get('date_end'),
-				})
+			responce = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message(method, params_dict)
+			print(responce)
 		except Exception as Ex:
-				print(str(traceback.format_exc()))
-				responce = str(Ex)
-
-		
-		return HttpResponse(responce['output']['CalendarList'])
-
-
+			print(traceback.format_exc())
+			responce = str(Ex)
+		return HttpResponse(responce['output'][returnableParam])
 	else:
-		return HttpResponse('<h3>Нет параметров для запроса</h3>')	
-						
+		return HttpResponse('Nothing to do here!')
+
+
+
 
 #проверяет, есть ли у этого пользователя такой опекаемый, и есть ли у опекаемого такой адрес
 #возвращает true, если у текущего пользователя есть опекаемый с таким снилс у и этого опекаемого есть указанный адрес
