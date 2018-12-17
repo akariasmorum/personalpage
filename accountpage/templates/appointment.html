@@ -1,41 +1,661 @@
 {% extends "base.html" %}
 {% block context %}
+<style type="text/css">
+
+  .date-text:hover{
+    background-color: #9D50BB;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+  }
+
+  .col{
+    text-align: center;
+  }
+
+  .date-text{
+    width: 24px;
+    height: 24px;
+  }
+
+  .cal{
+    margin: 10px;
+    width: 450px;
+    background-color: white;
+    border-radius: 10px;
+    -webkit-box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
+      -moz-box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
+      box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
+    padding: 10px;
+  }
+
+  #timepicker{
+    
+    height: 400px;
+    background-color: white;
+    border-radius: 10px;
+    -webkit-box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
+      -moz-box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
+      box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
+    padding: 10px;
+  }
+  #timepicker li{
+    padding: 20px;
+  }
+  #timepicker table{
+
+  }
+
+
+  #timepicker td{
+    color: #444444;
+    padding: 0px 15px; 
+  }
+  .timepicker-date{
+    color: #9D50BB !important;
+    font-size: 40px; 
+    font-family: "Source Code Pro", Courier, monospace !important;
+  }
+  .date-line{    
+    line-height: 20px;
+    
+  }
+  .fa-clock{
+    color:#9D50BB;
+  }
+
+  #timepicker li:hover{
+    cursor: pointer;
+    background: -moz-linear-gradient(left, rgba(157,80,187,1) 0%, rgba(110,72,170,1) 100%);
+      background: -webkit-gradient(left top, right top, color-stop(0%, rgba(157,80,187,1)), color-stop(100%, rgba(110,72,170,1)));
+      background: -webkit-linear-gradient(left, rgba(157,80,187,1) 0%, rgba(110,72,170,1) 100%);
+      background: -o-linear-gradient(left, rgba(157,80,187,1) 0%, rgba(110,72,170,1) 100%);
+      background: -ms-linear-gradient(left, rgba(157,80,187,1) 0%, rgba(110,72,170,1) 100%);
+      background: linear-gradient(to right, rgba(157,80,187,1) 0%, rgba(110,72,170,1) 100%);
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9d50bb', endColorstr='#6e48aa', GradientType=1 );
+      border-radius: 5px;
+      
+  }  
+  #timepicker li:hover td{
+    color: white;
+  }
+  #timepicker li:hover .timepicker-date{
+    color: white !important;
+  }
+  #timepicker li:hover .fa-clock{
+    color: white;
+  }
+
+  .choosen-date{
+    background-color: #8360c3;
+    color: white;
+  }
+  .choosen-time{
+    background: -moz-linear-gradient(left, rgba(157,80,187,1) 0%, rgba(110,72,170,1) 100%);
+      background: -webkit-gradient(left top, right top, color-stop(0%, rgba(157,80,187,1)), color-stop(100%, rgba(110,72,170,1)));
+      background: -webkit-linear-gradient(left, rgba(157,80,187,1) 0%, rgba(110,72,170,1) 100%);
+      background: -o-linear-gradient(left, rgba(157,80,187,1) 0%, rgba(110,72,170,1) 100%);
+      background: -ms-linear-gradient(left, rgba(157,80,187,1) 0%, rgba(110,72,170,1) 100%);
+      background: linear-gradient(to right, rgba(157,80,187,1) 0%, rgba(110,72,170,1) 100%);
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9d50bb', endColorstr='#6e48aa', GradientType=1 );
+      border-radius: 5px;
+  }
+
+  .choosen-time td{
+    color: white !important;
+  }
+  .choosen-time .timepicker-date{
+    color: white !important;
+  }
+  .choosen-time .fa-clock{
+    color: white;
+  }
+
+  .check-appointment-window{
+   
+    -webkit-transition: top 1s ease-out 0.5s;
+     -moz-transition: top 1s ease-out 0.5s;
+     -o-transition: top 1s ease-out 0.5s;
+     transition: top 1s ease-out 0.5s;
+     display: none;
+     
+    position: fixed;
+    width: 450px;
+    height: 400px;
+    left: 50%;
+    margin-left: -225px;    
+    top:50%;
+    margin-top: -200px;
+    overflow: auto;
+    z-index: 4;
+    background-color: white;
+    border-radius: 10px;
+    -webkit-box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
+      -moz-box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
+      box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
+    padding: 10px;
+  }
+
+  .doctor-png{
+    height: 150px;
+  }
+
+  .overlay{
+    -webkit-transition: top 1s ease-out 0.5s;
+     -moz-transition: top 1s ease-out 0.5s;
+     -o-transition: top 1s ease-out 0.5s;
+     transition: top 1s ease-out 0.5s;
+    display: none;
+     opacity: 0;
+    z-index: 3;
+    position: fixed;
+    background-color: black;
+    opacity: ;
+    top:0;
+    left: 0;
+    right:0;
+    bottom: 0;
+  }
+  
+</style>
+
 <div class='main-area'>
             <div class = 'container'>
                 <h2>Запись на прием</h2>
                   <form >
                       <div class="form-group row">
-                        <label class="col-sm-2 col-form-label" for="pacient">Пациент</label>
+                        <label class="col-sm-2 col-form-label" >Поликлиника</label>
                         <div class="col">
-                            <select id="pacient" class="form-control">
-                                <option selected>Иванова Мария Петровна(12.12.1965)</option>
-                                <option >Иванов Алексей Михайлович(31.12.2014)</option>
-                                <option >Иванова Алена Михайлович(12.03.2017)</option>
+                            <select id='clinic' class="form-control">
+                              <option>Поликлиника № 1 ул. Терешковой, 5</option>
+                              <option>Поликлиника № 2 ул. Пойменная, 23</option>
+                              <option>Поликлиника № 3 ул. Алтайская, 2</option>
+                              <option>Поликлиника № 4 ул. Туркестанская, 43</option>
+                              <option>Консультативно-диагностический центр ул. Кобозева, 25</option>
+                            </select>                            
+                        </div>    
+                      </div>
+
+                      <div class="form-group row">
+                        <label class="col-sm-2 col-form-label" >Врач</label>
+                        <div class="col">
+                            <select id="type-doctor" class="form-control">
+                                <option >Невролог</option>
+                                <option >Кардиолог</option>
+                                <option >ЛОР</option>
+                                <option >Функциональный диагност</option>
+                                <option >Пульмонолог</option>                                
                             </select>
                         </div>    
                       </div>
-                      <div class="form-group row">
-                        <label class="col-sm-2 col-form-label" for="type-doctor">Врач</label>
-                        <div class="col">
-                            <select id="type-doctor" class="form-control">
-                                <option >Хирург</option>
-                                <option >ЛОР</option>
-                                <option >Терапевт</option>
-                            </select>
 
-                            <select id="name-doctor" class="form-control">
-                                <option >Иванов Иван Иванович</option>
-                                <option >Петров Петр Родионович</option>                            
-                            </select>
+                      <div class="form-group row">
+                        <label class="col-sm-2 col-form-label" for="pacient">Пациент</label>
+                        <div class="col">
+                            <select select id='pacient' class="form-control">
+                              <option>Мацаев Михаил Михайлович</option>
+                              <option>Судденок Владимир Геннадьевич</option>                              
+                            </select>                            
                         </div>    
                       </div>
                       
                       <div class="form-group row">
-                        <div class="col-sm-10">
-                          <button type="submit" class="mbtn btn btn-primary" style='background-color: #9bc53d; border-color: #9bc53d'>Записаться</button>
+                       <div class="cal cal-container">
+                        <div id='calendar'>
+                          <div class = 'row month'>
+                            <div class='month col prev-month'><h4><</h4></div>
+                              <div class ='month col' id='month-name'>
+                              Месяц
+                              </div>
+                            <div class='month col next-month'><h4>></h4></div>
+
+                          </div>
+                          <div class="row week">
+                            <div class="col">
+                            Пн
+                            </div>
+                            <div class="col">
+                            Вт
+                            </div>
+                            <div class="col">
+                            Ср
+                            </div>
+                            <div class="col">
+                            Чт
+                            </div>
+                            <div class="col">
+                            Пт
+                            </div>
+                            <div class="col">
+                            Сб
+                            </div>
+                            <div class="col">
+                            Вс
+                            </div>
+                          </div>
+                          <div id = 'dates-calendar' class = 'row'></div>
                         </div>
-                      </div>  
+                      </div>
+
+                      <div id='timepicker' class = 'cal'>
+                        <ul class = 'list-unstyled'>
+                          <li class = 'time-choose'>
+                            <table>
+                              <tr class= 'date-line'>
+                                <td rowspan="2" class="timepicker-date">12</td>
+                                <td >Декабрь</td>
+                                <td ><i class="fas fa-clock"></i></td>
+                                <td >09.15</td>
+                              </tr>
+                              <tr class='date-line'>
+                                <td >Среда</td>
+                                <td ><i class="fas fa-clock"></i></td>
+                                <td >09.40</td>
+                              </tr>
+                            </table> 
+                          </li>
+                          <li class = 'time-choose'>
+                            <table>
+                              <tr class= 'date-line'>
+                                <td rowspan="2" class="timepicker-date">12</td>
+                                <td >Декабрь</td>
+                                <td ><i class="fas fa-clock"></i></td>
+                                <td >09.15</td>
+                              </tr>
+                              <tr class='date-line'>
+                                <td >Среда</td>
+                                <td ><i class="fas fa-clock"></i></td>
+                                <td >09.40</td>
+                              </tr>
+                            </table> 
+                          </li>
+                          <li class = 'time-choose'>
+                            <table>
+                              <tr class= 'date-line'>
+                                <td rowspan="2" class="timepicker-date">12</td>
+                                <td >Декабрь</td>
+                                <td ><i class="fas fa-clock"></i></td>
+                                <td >09.15</td>
+                              </tr>
+                              <tr class='date-line'>
+                                <td >Среда</td>
+                                <td ><i class="fas fa-clock"></i></td>
+                                <td >09.40</td>
+                              </tr>
+                            </table> 
+                          </li>
+                          <li class = 'time-choose'>
+                            <table>
+                              <tr class= 'date-line'>
+                                <td rowspan="2" class="timepicker-date">12</td>
+                                <td >Декабрь</td>
+                                <td ><i class="fas fa-clock"></i></td>
+                                <td >09.15</td>
+                              </tr>
+                              <tr class='date-line'>
+                                <td >Среда</td>
+                                <td ><i class="fas fa-clock"></i></td>
+                                <td >09.40</td>
+                              </tr>
+                            </table> 
+                          </li>
+                          <li class = 'time-choose'>
+                            <table>
+                              <tr class= 'date-line'>
+                                <td rowspan="2" class="timepicker-date">12</td>
+                                <td >Декабрь</td>
+                                <td ><i class="fas fa-clock"></i></td>
+                                <td >09.15</td>
+                              </tr>
+                              <tr class='date-line'>
+                                <td >Среда</td>
+                                <td ><i class="fas fa-clock"></i></td>
+                                <td >09.40</td>
+                              </tr>
+                            </table> 
+                          </li>
+                          <li class = 'time-choose'>
+                            <table>
+                              <tr class= 'date-line'>
+                                <td rowspan="2" class="timepicker-date">12</td>
+                                <td >Декабрь</td>
+                                <td ><i class="fas fa-clock"></i></td>
+                                <td >09.15</td>
+                              </tr>
+                              <tr class='date-line'>
+                                <td >Среда</td>
+                                <td ><i class="fas fa-clock"></i></td>
+                                <td >09.40</td>
+                              </tr>
+                            </table> 
+                          </li>
+
+                          <li class = 'time-choose'>
+                            <table>
+                              <tr class= 'date-line'>
+                                <td rowspan="2" class="timepicker-date">12</td>
+                                <td >Декабрь</td>
+                                <td ><i class="fas fa-clock"></i></td>
+                                <td >09.15</td>
+                              </tr>
+                              <tr class='date-line'>
+                                <td >Среда</td>
+                                <td ><i class="fas fa-clock"></i></td>
+                                <td >09.40</td>
+                              </tr>
+                            </table> 
+                          </li>
+
+                          <li class = 'time-choose'>
+                            <table>
+                              <tr class= 'date-line'>
+                                <td rowspan="2" class="timepicker-date">12</td>
+                                <td >Декабрь</td>
+                                <td ><i class="fas fa-clock"></i></td>
+                                <td >09.15</td>
+                              </tr>
+                              <tr class='date-line'>
+                                <td >Среда</td>
+                                <td ><i class="fas fa-clock"></i></td>
+                                <td >09.40</td>
+                              </tr>
+                            </table> 
+                          </li>
+
+                        </ul>  
+                      </div>  <!--timepicker-->
+                    </div> <!--form-group row-->
+
+
+
+                      
+
                     </form> 
+                    <div class="form-group row">
+                        <div class="col-sm-10">
+                          <button id='check-btn' class="mbtn btn">Записаться</button>
+                        </div>
+                      </div> 
             </div>
         </div>
+
+
+
+
+                <div class= 'overlay'></div>
+        <div class="check-appointment-window">
+          <div class='container'>
+            <div class='row'>
+              <div class = 'col-4'>
+              {% load static %}
+                <img class='doctor-png' src="{% static 'doctor.png'%}">
+              
+              </div>
+
+              <div class = 'col-8 text-center'>
+                
+                <h4 id = 'choosen-doctor' style = 'line-height: 150px;'></h4>
+              </div>
+            </div>
+
+            <div class="row">
+              Поликлиника:&nbsp;<div id = 'choosen-poly'></div>
+            </div>
+
+            <div class="row">
+              Пациент:&nbsp;<div id = 'choosen-patient'></div>
+            </div>
+
+            <div class="row">
+              Дата:&nbsp;<div id = 'choosen-date'></div>
+            </div>
+            <div class='row d-flex justify-content-center'>
+              <button class='btn approve-btn'>Все верно, записаться</button>
+            </div>  
+          </div>
+        </div> <!--check-appointment-window-->
+
+        <script type="text/javascript">
+          
+          class Calendar 
+  {
+
+    constructor(date, calendar){
+      this.date = date
+      this.calendar = calendar;
+      this.months = ['Январь', 'Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+      
+    }
+
+    daysInMonth(year, month){ //год соответствует и месяц соответствует с нашим
+      var a = new Date(year, month, 0).getDate();      
+      return a;
+    }
+
+    getDateDay(year, month, day){ //а вот тут месяцы с нуля почему то
+      var thisDate = new Date(year, month, day);
+      var a = [6,0,1,2,3,4,5]
+      return a[thisDate.getDay()];
+    }
+
+    getMonthCalendarString(year, month){
+
+      var firstDay = this.getDateDay(year, month,1);
+      var start = [];
+      for (var i=0;i<firstDay;i++){
+        start.push('&nbsp');
+      }
+      var dim = this.daysInMonth(year, month+1);
+      
+      for(var i=1;i<=dim;i++){
+        start.push(i);        
+      }
+
+      while (start.length % 7 !=0)
+      {
+        start.push('&nbsp');
+      }
+
+      return start;
+    }
+
+
+
+    ifEvent(date, events){
+      for(var i=0; i<events.length; i++)
+      {
+        var b=events[i]['date'];
+        var a=date;
+        if (this.sameDay(a,b)){
+          return true;
+
+        }
+      }
+      return false;
+
+    }
+
+    drawCalendar(events){   
+      var dates = this.getMonthCalendarString(this.date.getFullYear(), this.date.getMonth()); 
+      var currentRow = $('<div>', {'class': 'row dates'});
+      
+      var counter = 0;
+      var currentPosition=$('<div>', {'class': 'dates col '});
+      $("#month-name").text(this.months[this.date.getMonth()]);
+      for(var i =0; i< dates.length; i++){
+        currentPosition=$('<div>', {'class': 'dates col d-flex justify-content-center'});
+        if(i%7==5 || i%7==6){
+          currentPosition.addClass('weekend');
+        }
+        if(Number.isInteger(dates[i]))
+        {
+          if (this.ifEvent(new Date(this.date.getFullYear(), this.date.getMonth(), dates[i]), events))
+          {
+            currentPosition.addClass('event');
+          }
+        }        
+    
+        currentPosition.html("<div class = 'date-text'>"+dates[i]+"</span>");   
+        currentRow.append(currentPosition);
+        if(i%7==6)
+        {
+          this.calendar.append(currentRow);
+          currentRow = $('<div>', {'class': 'row dates'});
+        }       
+
+      }
+    }
+
+
+    addZero(i) {
+        if (i < 10) {
+            i = "0" + i;
+        }
+        return i;
+    }
+
+    drawEvents(eventsList){
+      var eList = $('#task')
+      eList.empty();
+      for(var row in eventsList){
+        var l = this.eventLiCreator(eventsList[row]);
+        eList.append(l);
+      }
+    }
+
+    sameDay(d1, d2) {
+      return d1.getFullYear() === d2.getFullYear() &&
+        d1.getMonth() === d2.getMonth() &&
+        d1.getDate() === d2.getDate();
+    }
+
+    eventLiCreator(event){
+      var row="<li class='row'>";
+      row+="<div clas='col-2'><ul class='list-unstyled'><li class='grey-li'></li></ul></div>";
+      row+="<div clas='col'>";
+        row+="<ul class='list-unstyled'>";
+          row+="<li>"+event['date'].getDate()+" "
+                +this.months[event['date'].getMonth()]+' '
+                +event['date'].getFullYear()+' '
+                 +this.addZero(event['date'].getHours())+':'
+                  +this.addZero(event['date'].getMinutes())+ "</li>";
+          row+="<li class='grey-li'>"+event['text']+"</li>";
+        row+="</ul>";
+      row+="</div>";
+
+      row+="</li>";
+      row+="<hr class='grey-li'>";
+      return row;
+    }
+
+    getNextMonth(){
+      var a = this.date.getMonth();
+      if(a==11){
+        this.date = new Date(this.date.getFullYear()+1, 0, 1);
+        
+      }
+      else{
+        var m = this.date.getMonth()+1;
+        this.date = new Date(this.date.getFullYear(), m, 1);
+        var d = this.date;
+      }
+      $('.dates').remove();
+          }
+
+    getPreviousMonth(){
+      if(this.date.getMonth()==0){
+        this.date = new Date(this.date.getFullYear()-1, 11, 1);
+      }
+      else{
+        this.date = new Date(this.date.getFullYear(), this.date.getMonth()-1, 1);
+      }
+      $('.dates').remove();
+          }    
+
+  }
+
+
+
+
+
+    function show_appoitment(date){
+      var months = ['Январь', 'Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+
+      var weekday = ['Понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота',        'воскресенье']
+
+      $('.overlay').css('display', 'block');
+      $('.overlay').css('opacity', '0.7');
+      $('.check-appointment-window').css('display', 'block');
+      
+      $('#choosen-doctor').html($('#type-doctor option:selected').text());
+      $('#choosen-poly').html($('#clinic option:selected').text());
+      $('#choosen-patient').html($('#pacient option:selected').text());
+      $('#choosen-date').html(weekday[date.getDay()]+' '+ date.getDate()+" "+months[date.getMonth()]);
+    }
+
+    window.onload = function(){
+      var current = new Date();
+      current.setHours(0,0,0,0)   
+      
+      cal = new Calendar(current, $('#calendar')); 
+      var events =  [];
+      cal.drawCalendar(events);
+
+      $('.prev-month').click(function(){
+        cal.getPreviousMonth();
+        cal.drawCalendar([]);
+      });
+
+      $('.next-month').click(function(){
+        cal.getNextMonth();
+        cal.drawCalendar([]);
+      });
+
+      var previously_clicked_date=null;
+      $('.date-text').click(function(e){
+        //alert(cal.date.getFullYear() + " " + cal.date.getMonth() + " " + $(e.target).text()) ;
+        if (previously_clicked_date!=null){
+          $(previously_clicked_date).removeClass('choosen-date');
+        }
+
+        $(e.target).addClass('choosen-date');
+        
+        previously_clicked_date = e.target;
+
+      });
+
+      var previously_clicked_time = null;
+      $('.time-choose').click(function(e){
+        if(previously_clicked_time!=null){
+          $(previously_clicked_time).removeClass('choosen-time');
+        }
+        $(e.target).addClass('choosen-time');
+        previously_clicked_time = e.target;
+      })
+
+      $('#check-btn').click(function(e){
+        if (previously_clicked_date==null){
+          alert('Вы не выбрали Дату!');
+        }
+        else if (previously_clicked_time==null){
+          alert('Вы не выбрали Время!');
+        }
+        else{
+          show_appoitment(new Date(cal.date.getFullYear(), cal.date.getMonth(), $(previously_clicked_date).text(), 9, 15, 0));          
+        }
+      })
+
+      $('.approve-btn').click(function(){
+        $('.overlay').css('display', 'none');
+        $('.check-appointment-window').css('display', 'none');
+      })
+
+
+      
+
+
+      $('#timepicker').mCustomScrollbar({theme: "dark"});
+    }
+
+    </script>
 {% endblock %}
