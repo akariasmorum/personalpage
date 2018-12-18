@@ -148,6 +148,10 @@ def ehr(request):
 def app(request):
 	return render(request, 'appointment.html', context={'title': 'Запись на прием', 'nbar': 'app', 'name': (request.user.surname + ' ' + request.user.name) })			
 
+
+def therapist(request):
+	return render(request, 'schedule_therapist.html', context={'title': 'Расписание участкового врача', 'nbar': 'therapist'})	
+
 #####################
 def send_call_doctor(request):
 	'''
@@ -212,9 +216,11 @@ def busExchangeMethod(request, method, params_dict, nestedKeys):
 			print(traceback.format_exc())
 			responce = str(Ex)
 
+
+			
 		if len(nestedKeys) == 1:	
 			return HttpResponse(responce[nestedKeys[0]])
-		if len(nestedKeys) == 2:	
+		elif len(nestedKeys) == 2:	
 			return HttpResponse(responce[nestedKeys[0]][nestedKeys[1]])
 					
 	else:
@@ -250,7 +256,17 @@ def safe_calldoc_check(request, snils, kladr, house, room):
 					adress['dom'] == house and
 					adress['kvstr'] == room):
 					return true
-	return false				
+	return false
+
+def safe_schedule_check(request, snils):
+	'''
+	Проверить, есть ли данного юзера такой пациент. чтобы нельзя было чужим людям узнавать расписание
+
+	Arguments:
+		request - ...
+		snils - string, снилс выбранного пациента
+	'''
+	pass
 
 
 def send_message(request):
@@ -292,6 +308,8 @@ def send_message(request):
 
 	else:
 		return HttpResponse('Нет данных для отправки!')
+
+		
 
 ####Календарь пациента	
 def calendar(request):

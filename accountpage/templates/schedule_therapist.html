@@ -159,47 +159,11 @@
   
 </style>
 
-<div class='main-area'>
+	<div class='main-area'>
             <div class = 'container'>
-                <h2>Запись на прием</h2>
-                  <form >
-                      <div class="form-group row">
-                        <label class="col-sm-2 col-form-label" >Поликлиника</label>
-                        <div class="col">
-                            <select id='clinic' class="form-control">
-                              <option>Поликлиника № 1 ул. Терешковой, 5</option>
-                              <option>Поликлиника № 2 ул. Пойменная, 23</option>
-                              <option>Поликлиника № 3 ул. Алтайская, 2</option>
-                              <option>Поликлиника № 4 ул. Туркестанская, 43</option>
-                              <option>Консультативно-диагностический центр ул. Кобозева, 25</option>
-                            </select>                            
-                        </div>    
-                      </div>
+            	<h2>Расписание участкового врача</h2>
 
-                      <div class="form-group row">
-                        <label class="col-sm-2 col-form-label" >Врач</label>
-                        <div class="col">
-                            <select id="type-doctor" class="form-control">
-                                <option >Невролог</option>
-                                <option >Кардиолог</option>
-                                <option >ЛОР</option>
-                                <option >Функциональный диагност</option>
-                                <option >Пульмонолог</option>                                
-                            </select>
-                        </div>    
-                      </div>
-
-                      <!--<div class="form-group row">
-                        <label class="col-sm-2 col-form-label" for="pacient">Пациент</label>
-                        <div class="col">
-                            <select select id='pacient' class="form-control">
-                              <option>Мацаев Михаил Михайлович</option>
-                              <option>Судденок Владимир Геннадьевич</option>                              
-                            </select>                            
-                        </div>    
-                      </div> -->
-                      
-                      <div class="form-group row">
+            		<div class="form-group row">
                        <div class="cal cal-container">
                         <div id='calendar'>
                           <div class = 'row month'>
@@ -240,63 +204,17 @@
                       <div id='timepicker' class = 'cal'>
                         <ul id = 'time-list' class = 'list-unstyled'>
                           
-
                         </ul>  
                       </div>  <!--timepicker-->
                     </div> <!--form-group row-->
 
+            </div> <!--container-->
+    </div> <!--main-area-->        
 
 
-                      
+    <script type="text/javascript">
 
-                    </form> 
-                    <div class="form-group row">
-                        <div class="col-sm-10">
-                          <button id='check-btn' class="mbtn btn">Записаться</button>
-                        </div>
-                      </div> 
-            </div>
-        </div>
-
-
-
-
-                <div class= 'overlay'></div>
-        <div class="check-appointment-window">
-          <div class='container'>
-            <div class='row'>
-              <div class = 'col-4'>
-              {% load static %}
-                <img class='doctor-png' src="{% static 'doctor.png'%}">
-              
-              </div>
-
-              <div class = 'col-8 text-center'>
-                
-                <h4 id = 'choosen-doctor' style = 'line-height: 150px;'></h4>
-              </div>
-            </div>
-
-            <div class="row">
-              Поликлиника:&nbsp;<div id = 'choosen-poly'></div>
-            </div>
-
-            <div class="row">
-              Пациент:&nbsp;<div id = 'choosen-patient'></div>
-            </div>
-
-            <div class="row">
-              Дата:&nbsp;<div id = 'choosen-date'></div>
-            </div>
-            <div class='row d-flex justify-content-center'>
-              <button class='btn approve-btn'>Все верно, записаться</button>
-            </div>  
-          </div>
-        </div> <!--check-appointment-window-->
-
-        <script type="text/javascript">
-          
-          class Calendar 
+    class Calendar 
   {
 
     constructor(date, calendar){
@@ -449,39 +367,15 @@
         this.date = new Date(this.date.getFullYear(), this.date.getMonth()-1, 1);
       }
       $('.dates').remove();
-          }    
+          }  
 
   }
 
 
-
-
-
-    function show_appoitment(date){
-      var months = ['Январь', 'Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
-
-      var weekday = ['Понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота',        'воскресенье']
-
-      $('.overlay').css('display', 'block');
-      $('.overlay').css('opacity', '0.7');
-      $('.check-appointment-window').css('display', 'block');
-      
-      $('#choosen-doctor').html($('#type-doctor option:selected').text());
-      $('#choosen-poly').html($('#clinic option:selected').text());
-      $('#choosen-patient').html($('#pacient option:selected').text());
-      $('#choosen-date').html(weekday[date.getDay()]+' '+ date.getDate()+" "+months[date.getMonth()]);
-    }
-
-
-
-    var previously_clicked_time = null;
-    var previously_clicked_date=null;
-
-    function assign_time(time){
+  	function assign_time(time){
 		var time_list = $('#time-list');
 		$(time_list).empty();  		
-  		for(var i=0;i<time.length; i++)
-  		{
+  		for(var i=0;i<time.length; i++){
   			var x = 12;
   			console.log('hi there! ${x}')
   			var li='<li class = "time-choose"> \
@@ -500,66 +394,33 @@
                             </table> \
                           </li>';
 
-            $(time_list).append(li); 
-
+            $(time_list).append(li);              
   		}
-
-  		$(document).on('click', '.time-choose' , function(e) {	     
-	        if(previously_clicked_time!=null){
-	          $(previously_clicked_time).removeClass('choosen-time');
-	        }
-	        $(e.target).addClass('choosen-time');
-	        previously_clicked_time = e.target;
-	    });
-  		
   	}
 
+    	window.onload = function(){
+
+    	  var current = new Date();
+	      current.setHours(0,0,0,0)   
+	      
+	      cal = new Calendar(current, $('#calendar')); 
+	      var events =  [];
+	      cal.drawCalendar(events);
+
+	      $('.prev-month').click(function(){
+	        cal.getPreviousMonth();
+	        cal.drawCalendar([]);
+	      });
+
+	      $('.next-month').click(function(){
+	        cal.getNextMonth();
+	        cal.drawCalendar([]);
+	      });
 
 
-    window.onload = function(){
-      var current = new Date();
-      current.setHours(0,0,0,0)   
-      
-      cal = new Calendar(current, $('#calendar')); 
-      var events =  [];
-      cal.drawCalendar(events);
-
-      $('.prev-month').click(function(){
-        cal.getPreviousMonth();
-        cal.drawCalendar([]);
-
-        $(document).on('click', '.date-text' , function(e) {	     
-	        if(previously_clicked_time!=null){
-	          $(previously_clicked_time).removeClass('choosen-date');
-	        }
-	        $(e.target).addClass('choosen-date');
-	        previously_clicked_time = e.target;
-	    });
-
-
-      });
-
-      $('.next-month').click(function(){
-        cal.getNextMonth();
-        cal.drawCalendar([]);
-      });
-
-      var previously_clicked_date=null;
-      $('.date-text').click(function(e){
-        //alert(cal.date.getFullYear() + " " + cal.date.getMonth() + " " + $(e.target).text()) ;
-        if (previously_clicked_date!=null){
-          $(previously_clicked_date).removeClass('choosen-date');
-        }
-
-        $(e.target).addClass('choosen-date');
-        
-        previously_clicked_date = e.target;
-
-      });
-
-      assign_time([{'day': 12, 'dayWeek': 'Среда', 'month': 'Декабрь', 'from': '09.40', 'to': '10.00'},
+	      assign_time([{'day': 12, 'dayWeek': 'Среда', 'month': 'Декабрь', 'from': '09.40', 'to': '10.00'},
 	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '09.40', 'to': '10.00'},
-	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '10.10', 'to': '10.20'},
+	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь','from': '10.10', 'to': '10.20'},
 	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '10.20', 'to': '10.30'},
 	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '10.30', 'to': '10.40'},
 	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '10.40', 'to': '10.50'},
@@ -568,31 +429,7 @@
 	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '11.10', 'to': '11.20'},
 	      	])
 
-      
-
-      $('#check-btn').click(function(e){
-        if (previously_clicked_date==null){
-          alert('Вы не выбрали Дату!');
-        }
-        else if (previously_clicked_time==null){
-          alert('Вы не выбрали Время!');
-        }
-        else{
-          show_appoitment(new Date(cal.date.getFullYear(), cal.date.getMonth(), $(previously_clicked_date).text(), 9, 15, 0));          
-        }
-      })
-
-      $('.approve-btn').click(function(){
-        $('.overlay').css('display', 'none');
-        $('.check-appointment-window').css('display', 'none');
-      })
-
-      
-      
-
-
-      $('#timepicker').mCustomScrollbar({theme: "dark"});
-    }
-
+    	  $('#timepicker').mCustomScrollbar({theme: "dark"});    
+    	}
     </script>
 {% endblock %}

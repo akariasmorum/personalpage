@@ -239,6 +239,9 @@
               <li {% if nbar == 'mypage'%} class='active' {% endif %}>
                   <a href="{% url 'my-page' %}"><i class="fas fa-user-circle"></i>Моя информация</a>
               </li>
+              <li {% if nbar == 'therapist'%} class='active' {% endif %}>
+                  <a href="{% url 'therapist' %}"><i class="fas fa-calendar-alt"></i>Терапевт</a>
+              </li>
 
 
           </ul>
