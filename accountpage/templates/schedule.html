@@ -348,10 +348,7 @@ class Calendar
   
 function Query(my_method, for_request, name_service, callback)
   {
-      // var for_request = {snils:"184-434-687 96",date_begin:"2017-08-10",
-      //    date_end:"2017-10-10"     };
-      
-    
+          
 
     var token = '{{ csrf_token }}';
     
@@ -375,11 +372,8 @@ function Query(my_method, for_request, name_service, callback)
           //error in msg
           callback("error");          
         }
-        // error: function(jqXHR, textStatus, errorThrown) {
-       //     alert(JSON.stringify(jqXHR));
-        //   alert("AJAX error: " + textStatus + ' : ' + errorThrown);
-        // }         
-              }).responceText;    
+      
+      }).responceText;    
   }
     
   
@@ -432,55 +426,8 @@ function getFirstLast(date_search){
      
   }
 
-    function assignValue(to, from){
-      to = from;
-    }
-    function eventsFromService2(date_for_request){
-     var dataFromRequest = getFirstLast(date_for_request);
-
-      var e = document.getElementById("snils");
-      dataFromRequest.snils = e.textContent || e.innerText;
-      
-       var ajax_info;
-       
-       send_messages('get-month-schedule', dataFromRequest, function(data){
-        alert(data);
-        ajax_info = data;
-        if(ajax_info == "error")
-         {
-            alert("Сервис временно недоступен.Приносим извенения за предоставленные неудобства.");
-            return [];
-         }
-         else
-         {
-            return return_array(ajax_info);
-         }
-       });       
-    }
-
-    function send_messages(url, my_data, callback){
-
-      var token = '{{ csrf_token }}';
-
-
-      console.log("sending via send_message!") // sanity check
-        $.ajax({
-            url : url, // the endpoint
-            type : "POST", // http method
-            headers: { "X-CSRFToken": token },
-            data:my_data, // data sent with the post request
-
-            // handle a successful response
-            success: function(msg){callback(msg);},
-            
-
-            // handle a non-successful response
-            error : function(xhr,errmsg,err) {
-              callback(errmsg);                
-            }
-        });
-    }
-     
+    
+         
     window.onload = function(){
       //alert('ВНИМАНИЕ ПРИ ЗАПРОСАХ ИСПОЛЬЗУЮТСЯ ТЕСТОВЫЕ СНИЛСЫ !!!');
         

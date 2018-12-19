@@ -176,7 +176,10 @@ def send_call_doctor(request):
 		},
 		['message'])	
 
+def get_doc_day_schedule(request):
+	pass
 
+	
 def get_schedule_month(request):
 	'''
 	запрос расписания на указанный месяц для указанного пациента
@@ -192,7 +195,7 @@ def get_schedule_month(request):
 		},
 		['output', 'CalendarList'])	
 
-		
+
 def busExchangeMethod(request, method, params_dict, nestedKeys):
 	'''
 	Общий метод для работы с IBUS:

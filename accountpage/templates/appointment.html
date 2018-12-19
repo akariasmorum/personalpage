@@ -460,7 +460,7 @@
     function show_appoitment(date){
       var months = ['Январь', 'Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
 
-      var weekday = ['Понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота',        'воскресенье']
+      var weekday = ['Понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота',        'воскресенье'];
 
       $('.overlay').css('display', 'block');
       $('.overlay').css('opacity', '0.7');
@@ -469,15 +469,32 @@
       $('#choosen-doctor').html($('#type-doctor option:selected').text());
       $('#choosen-poly').html($('#clinic option:selected').text());
       $('#choosen-patient').html($('#pacient option:selected').text());
-      $('#choosen-date').html(weekday[date.getDay()]+' '+ date.getDate()+" "+months[date.getMonth()]);
+      $('#choosen-date').html(weekday[date.getDay()]+' '+ date.getDate()+" "+months[date.getMonth()]+" " + times[selectedTimeIndex].from);
     }
 
 
 
-    var previously_clicked_time = null;
-    var previously_clicked_date=null;
+    
+    var clicked_object = {'time': null, 'date': null};
 
+    var times = [{'day': 12, 'dayWeek': 'Среда', 'month': 'Декабрь', 'from': '09.40', 'to': '10.00'},
+	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '09.40', 'to': '10.00'},
+	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '10.10', 'to': '10.20'},
+	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '10.20', 'to': '10.30'},
+	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '10.30', 'to': '10.40'},
+	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '10.40', 'to': '10.50'},
+	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '10.50', 'to': '11.00'},
+	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '11.00', 'to': '11.10'},
+	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '11.10', 'to': '11.20'},
+	      	];
+
+
+
+	var selectedTimeIndex = null;
     function assign_time(time){
+
+    	//Добавить время в time-list
+
 		var time_list = $('#time-list');
 		$(time_list).empty();  		
   		for(var i=0;i<time.length; i++)
@@ -490,7 +507,7 @@
                                 <td rowspan="2" class="timepicker-date">'+time[i].day+'</td> \
                                 <td >'+time[i].month+'</td> \
                                 <td ><i class="fas fa-clock"></i></td> \
-                                <td >'+time[i].from+'</td> \
+                                <td class="from-time">'+time[i].from+'</td> \
                               </tr> \
                               <tr class="date-line"> \
                                 <td >'+time[i].dayWeek+'</td> \
@@ -504,19 +521,92 @@
 
   		}
 
-  		$(document).on('click', '.time-choose' , function(e) {	     
-	        if(previously_clicked_time!=null){
-	          $(previously_clicked_time).removeClass('choosen-time');
-	        }
-	        $(e.target).addClass('choosen-time');
-	        previously_clicked_time = e.target;
+  		$('.time-choose').on('click', function(e) {	     
+	        change_clicked('time', this, 'choosen-time');        
+	        selectedTimeIndex = $(this).index();
 	    });
   		
   	}
 
+  	function Query(url, for_request, callback)
+	  {
+	      // var for_request = {snils:"184-434-687 96",date_begin:"2017-08-10",
+	      //    date_end:"2017-10-10"     };
+	      
+	    
+
+	    var token = '{{ csrf_token }}';
+	    
+	    var responce = $.ajax({
+	        async:false,
+	        method:'POST',
+	        url: url,        
+	        
+	        headers: { "X-CSRFToken": token },
+	              
+	        data:for_request,       
+	      
+	                success: function(msg)
+	        {        
+	         callback(msg);
+	       
+	        },
+	        error: function(jqXHR, textStatus, errorThrown)
+	        {
+	          console.log(JSON.stringify(jqXHR));
+	          //error in msg
+	          callback("error");          
+	        }
+	      
+	      }).responceText;    
+	  }
 
 
+  	function check_fields(){
+
+  		// Проверить, чтобы была указана дата и время 
+
+        if (clicked_object.data==null){
+          alert('Вы не выбрали Дату!');
+        }
+        else if (clicked_object.time==null){
+          alert('Вы не выбрали Время!');
+        }
+        else{
+          show_appoitment(new Date(cal.date.getFullYear(), cal.date.getMonth(), $(previously_clicked_date).text(), 9, 15, 0));          
+        }
+      }
+
+    function request_schedule_on_day(date){
+    	var responce = "";
+
+    	Query('get-doc-schedule-day', {'id_org': null, 'day': null}, function(msg){
+    		responce = msg;
+    	})
+
+    	var data = convert_to_dates(responce);    	
+    }
+
+    function convert_to_dates(responce){
+    	
+    }
+    
+    function change_clicked(previously_clicked, currently_clicked, class_name){
+
+    	// Чтобы всегда была выбрана только одна дата или ввремя
+
+    	if (clicked_object[previously_clicked]!= null)
+    	{
+    		$(clicked_object[previously_clicked]).removeClass(class_name);
+    	}
+    	$(currently_clicked).addClass(class_name);
+    	clicked_object[previously_clicked] = currently_clicked;
+    }  
+
+  	
     window.onload = function(){
+
+
       var current = new Date();
       current.setHours(0,0,0,0)   
       
@@ -528,14 +618,9 @@
         cal.getPreviousMonth();
         cal.drawCalendar([]);
 
-        $(document).on('click', '.date-text' , function(e) {	     
-	        if(previously_clicked_time!=null){
-	          $(previously_clicked_time).removeClass('choosen-date');
-	        }
-	        $(e.target).addClass('choosen-date');
-	        previously_clicked_time = e.target;
+        $('.time-choose').on('click', function(e) {
+        	change_clicked('time', e.target, 'choosen-time');
 	    });
-
 
       });
 
@@ -544,51 +629,21 @@
         cal.drawCalendar([]);
       });
 
-      var previously_clicked_date=null;
-      $('.date-text').click(function(e){
-        //alert(cal.date.getFullYear() + " " + cal.date.getMonth() + " " + $(e.target).text()) ;
-        if (previously_clicked_date!=null){
-          $(previously_clicked_date).removeClass('choosen-date');
-        }
 
-        $(e.target).addClass('choosen-date');
-        
-        previously_clicked_date = e.target;
-
+      $('.date-text').on('click', function(e){
+      	change_clicked('date', e.target, 'choosen-date');
+      	
       });
 
-      assign_time([{'day': 12, 'dayWeek': 'Среда', 'month': 'Декабрь', 'from': '09.40', 'to': '10.00'},
-	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '09.40', 'to': '10.00'},
-	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '10.10', 'to': '10.20'},
-	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '10.20', 'to': '10.30'},
-	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '10.30', 'to': '10.40'},
-	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '10.40', 'to': '10.50'},
-	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '10.50', 'to': '11.00'},
-	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '11.00', 'to': '11.10'},
-	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '11.10', 'to': '11.20'},
-	      	])
-
+      assign_time(times);
       
 
-      $('#check-btn').click(function(e){
-        if (previously_clicked_date==null){
-          alert('Вы не выбрали Дату!');
-        }
-        else if (previously_clicked_time==null){
-          alert('Вы не выбрали Время!');
-        }
-        else{
-          show_appoitment(new Date(cal.date.getFullYear(), cal.date.getMonth(), $(previously_clicked_date).text(), 9, 15, 0));          
-        }
-      })
+      $('#check-btn').click(function(e){check_fields()});
 
       $('.approve-btn').click(function(){
         $('.overlay').css('display', 'none');
         $('.check-appointment-window').css('display', 'none');
-      })
-
-      
-      
+      })     
 
 
       $('#timepicker').mCustomScrollbar({theme: "dark"});
