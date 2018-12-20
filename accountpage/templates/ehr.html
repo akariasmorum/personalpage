@@ -1,27 +1,92 @@
 {% extends "base.html" %}
 {% block context %}
 
-
 <div class='main-area'>
             <div class = 'container'>
                 <h2>Электронная медицинская карта</h2>
-                  <ul>
-                    <li>
-                    {% load static %}
-                      <a href="{% static 'biohim.htm' %}">Биохимический анализ крови</a>
-                    </li>
-                    <li>
-                    {% load static %}
-                      <a href="{% static 'oak.htm' %}">Общий анализ крови</a>
-                    </li>
+                <!-- БЛОК 1-->
+                <h3>Список документов:</h3>
+ 					 {% if docs|length != 0 %}
+                <ul>             
+                	{% for doc in docs %}
+                	<li>
+                		<div id = 'headrs'>
+                			Название документа:{{ doc.namedoc }}
+                			Дата:{{ doc.datedoc }}                			
+                		</div>
+                		</br>
+                		<div id = 'main-data'>
+                			ФИО:{{ doc.FAM }} {{ doc.NAME }} {{ doc.OTH }}
+                			Пол:{{ doc.sex }} Дата рождения:{{ doc.dater }} СНИЛС: {{ doc.SNILS }}
 
-                    
+                		</div>
+                		<div id = 'chtml'>
+                			Приложенный документ:
+                			{% if doc.chtml|length != 0 %}
+                			{{ doc.chtml }}
+                			{% else %}
+                			Отсутствует
+                			{% endif%}
 
-                    <li>
-                    {% load static %}
-                      <a href="{% static 'uzi.htm' %}">Узи брюшной полости</a>
-                    </li>
-                  </ul> 
+                		</div>
+					<!--
+						Нужно уточнить занчение следуюших полей у ЕН
+						<div>???:{{ doc.kratnostDayDayChet }}</div></br>
+						<div>???:{{ doc.edizm }}</div></br>
+						<div>???:{{ doc.name_otkaz }}</div></br>
+						<div>???:{{ doc.cito }}</div></br>
+						<div>???:{{ doc.komplex }}</div></br>
+						<div>???:{{ doc.kratnostDayKoef }}</div></br>
+						<div>???:{{ doc.kratnostKoef }}</div></br>
+						<div>???:{{ doc.kratnostDayDayNeChet }}</div></br>
+					 -->
+                	</li></br></br>
+                	{% endfor %}
+              	</ul>
+                {% else %}
+                	<p> Список пуст </p>
+                {% endif%} 
+
+                <!-- БЛОК 2-->
+                <h3>Назвачение лекарственных препаратов:</h3>
+                	 {% if drug_records|length != 0 %}
+                <ul>             
+                	{% for record in drug_records %}
+                	<li>
+
+                		<div id = 'headrs'>
+                			Врач:{{ record.dol }}
+                			Дата назначения:{{ record.datedoc }}
+                			Препарат:{{ record.name }} 
+                		</div>
+                		</br>
+                		<div id = 'main-data'>
+                			Доп.название:{{ record.lat_name }}
+                			Метод введения:{{ record.MetodVvedenia }}
+                			Приём:{{ record.priem }}
+                			Красность приёма:{{ record.kratnost }}
+                			Дозировка:{{ record.doze }}
+                			Время применения:{{ record.kolday }}
+                		</div>
+					<!--
+						Нужно уточнить занчение следуюших полей у ЕН
+						<div>???:{{ record.kratnostDayDayChet }}</div></br>
+						<div>???:{{ record.edizm }}</div></br>
+						<div>???:{{ record.name_otkaz }}</div></br>
+						<div>???:{{ record.cito }}</div></br>
+						<div>???:{{ record.komplex }}</div></br>
+						<div>???:{{ record.kratnostDayKoef }}</div></br>
+						<div>???:{{ record.kratnostKoef }}</div></br>
+						<div>???:{{ record.kratnostDayDayNeChet }}</div></br>
+					 -->
+                	</li></br></br>
+                	{% endfor %}
+              	</ul>
+                {% else %}
+                	<p> Список пуст </p>
+                {% endif%} 
+
+                              
             </div>
-        </div>
+</div>
 {% endblock %}        

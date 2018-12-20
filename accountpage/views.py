@@ -139,10 +139,45 @@ def calldoc(request):
 ###############################
 
 
-##########ЭМК
+####---ЭМК---####
 def ehr(request):
-	return render(request, 'ehr.html', context={'title': 'Электронная медицинская карта', 'nbar': 'ehr', 'name': (request.user.surname + ' ' + request.user.name) })
-################
+	return render(request, 'ehr.html', 
+		 context={'title': 'Электронная медицинская карта', 'nbar': 'ehr',
+		           'name': (request.user.surname + ' ' + request.user.name),
+		           'docs': get_ehr_ListDocuments(request)           
+		           	,
+		           'drug_records': get_ehr_PrescriptionDrugs(request)		           
+		         })
+###---end|ЭМК---####
+
+
+####---Получить назначенные лекарственные препараты---####
+def get_ehr_PrescriptionDrugs(request):
+	#request.method = 'POST'
+	return BadBusExchangeMethod(
+		request,
+		'EHMK.PrescriptionDrugs',
+		{
+		#"snils":request.POST.get('snils')							   
+	     "snils":"074-500-645 44"
+	    },
+	    ['output','EHMK.PrescriptionDrugs'])
+###---end|Получить назначенные лекарственные препараты---####
+
+####---Получить назначенные лекарственные препараты---####
+def get_ehr_ListDocuments(request):
+	#request.method = 'POST'
+	return BadBusExchangeMethod(
+		request,
+		'EHMK.ListDocuments',
+		{
+			#"snils":       request.POST.get('snils')
+			"snils":"032-524-797 39",					
+		},
+		['output','EHMK.ListDocuments'])	
+###---end|Получить назначенные лекарственные препараты---####
+
+
 
 #Запись на прием
 def app(request):
@@ -179,7 +214,7 @@ def send_call_doctor(request):
 def get_doc_day_schedule(request):
 	pass
 
-	
+
 def get_schedule_month(request):
 	'''
 	запрос расписания на указанный месяц для указанного пациента
@@ -210,25 +245,42 @@ def busExchangeMethod(request, method, params_dict, nestedKeys):
 		get- методам  тут делать нечего	
 	'''
 
-
 	if request.method == 'POST':
 		try:
 			responce = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message(method, params_dict)
-			print(responce)
+			#print(responce)
 		except Exception as Ex:
 			print(traceback.format_exc())
 			responce = str(Ex)
 
 
 			
-		if len(nestedKeys) == 1:	
+		if len(nestedKeys) == 1:
+			#print(responce)
+			print(responce[nestedKeys[0]])
 			return HttpResponse(responce[nestedKeys[0]])
-		elif len(nestedKeys) == 2:	
+		elif len(nestedKeys) == 2:
+			print(responce[nestedKeys[0]][nestedKeys[1]])
+			print(type(responce[nestedKeys[0]][nestedKeys[1]]))
 			return HttpResponse(responce[nestedKeys[0]][nestedKeys[1]])
 					
 	else:
 		return HttpResponse('Nothing to do here!')
 
+def BadBusExchangeMethod(request, method, params_dict, nestedKeys):
+	
+		try:
+			responce = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message(method, params_dict)
+			#print(responce)
+		except Exception as Ex:
+			print(traceback.format_exc())
+			responce = str(Ex)
+			
+		if len(nestedKeys) == 1:			
+			return json.loads(responce[nestedKeys[0]])
+		elif len(nestedKeys) == 2:			
+			return json.loads(responce[nestedKeys[0]][nestedKeys[1]])		
+	
 
 
 
