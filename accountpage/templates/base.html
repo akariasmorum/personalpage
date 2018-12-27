@@ -151,7 +151,7 @@
     .data{
       margin: 10px 10px;
     }
-    
+
 
     /* календарь */
 
@@ -205,10 +205,10 @@
                 <img class = 'align-self-center my-pic ' src='{% static "user.png" %}'></li>
               <li class='row d-flex justify-content-center'>
                 <a href='#user-submenu' data-toggle='collapse' aria-expanded='false' class='dropdown-toggle collapsed align-self-center'>
-                {{ user.name }} {{ user.surname }} <div id="snils">{{ user.snils }}</div> 
+                {{ user.name }} {{ user.surname }} <div id="snils">{{ user.snils }}</div>
                 </a>
               </li>
-              
+
                 <ul class='collapse list-unstyled align-self-center' id='user-submenu'>
                   <li class='text-center'>Сменить пароль</li>
                   <a href = "{% url 'logout' %}"><li class='text-center'>Выход</li>
@@ -218,14 +218,20 @@
           </ul>
 
           <ul class="list-unstyled components">
+			  
+			   <li {% if nbar == 'main'%} class='active' {% endif %}>
+                  <a href="{% url 'main' %}"><i class="fas fa-calendar-alt"></i>Главная</a>
+              </li>
+			  
 
               <li {% if nbar == 'call-doc'%} class='active' {% endif %}>
                   <a href = "{% url 'call-doc' %}" > <i class="fas fa-user-md"> </i>Вызов врача на дом</a>
               </li>
 
-              <li {% if nbar == 'app'%} class='active' {% endif %}>
+
+            <!--  <li {% if nbar == 'app'%} class='active' {% endif %}>
                   <a href="{% url 'appointment' %}"><i class="fas fa-book-open"></i>Запись на прием</a>
-              </li>
+              </li> -->
 
               <li {% if nbar == 'schedule'%} class='active' {% endif %}>
                   <a href="{% url 'schedule' %}"><i class="fas fa-calendar-alt"></i>Календарь пациента</a>
@@ -240,7 +246,7 @@
                   <a href="{% url 'my-page' %}"><i class="fas fa-user-circle"></i>Моя информация</a>
               </li>
               <li {% if nbar == 'therapist'%} class='active' {% endif %}>
-                  <a href="{% url 'therapist' %}"><i class="fas fa-calendar-alt"></i>Терапевт</a>
+                  <a href="{% url 'therapist' %}"><i class="fas fa-calendar-alt"></i>Участковый врач</a>
               </li>
 
 
@@ -251,18 +257,18 @@
     <div id="content">
       <div class='container'>
           <div class = 'input-group'>
-            
+
               <input class="form-control" type="text" placeholder="Search" aria-label="Search">
               <span class='input-group-btn'>
                 <button class="btn btn-secondary green" id = 'top-button' type="button" data-toggle="collapse" aria-haspopup="true" aria-expanded="false" data-target = '#topbar' aria-controls='topbar'>
                   <i class="fas fa-align-left"></i>
-                </button>  
-              </span>  
-            </form>  
-            
-          </button>          
+                </button>
+              </span>
+            </form>
+
+          </button>
           </div>
-          
+
           <nav id="topbar" class='collapse'>
             <ul class="sidebar-header list-unstyled">
               <li class='row d-flex justify-content-center' >
@@ -284,12 +290,12 @@
           <ul class="list-unstyled components">
 
               <li {% if nbar == 'call-doc'%} class='active' {% endif %}>
-                  <a href = "{% url 'call-doc' %}" > <i class="fas fa-user-md"> </i>Вызов врача на дом</a>
+                  <a href = "{% url 'call-doc' %}" > <i class="fas fa-user-md"> </i>Вызоdв врача на дом</a>
               </li>
 
-              <li {% if nbar == 'app'%} class='active' {% endif %}>
+            <!--  <li {% if nbar == 'app'%} class='active' {% endif %}>
                   <a href="{% url 'appointment' %}"><i class="fas fa-book-open"></i>Запись на прием</a>
-              </li>
+              </li> -->
 
               <li {% if nbar == 'schedule'%} class='active' {% endif %}>
                   <a href="{% url 'schedule' %}"><i class="fas fa-calendar-alt"></i>Календарь пациента</a>
@@ -310,6 +316,20 @@
           </div>
 
           <div class = 'main-content'>
+
+       <div class="form-group row">
+		            <div class="col-sm-2 col-form-label">
+                  <label for="pacient">Пациент:</label>
+                </div>
+		        <div class="col">
+              <select name="patient" class="form-control" id="pacient">
+                {% for pacient in pacients %}
+                <option value="{{ pacient.SNILS }}">{{ pacient.FAM }} {{ pacient.NAME }} {{ pacient.OTH }},Дата рождения: {{ pacient.dater }}</option>
+                {% endfor %}
+              </select>
+           </div>
+		    </div>
+
           {% block context %}
 
 
@@ -331,11 +351,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
 
     <script type="text/javascript">
-    	
+
     		$("#sidebar").mCustomScrollbar({
                  theme: "dark"
             });
-    	
+
     </script>
   </body>
 </html>

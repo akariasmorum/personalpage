@@ -7,6 +7,7 @@ from . import forms
 urlpatterns = [
 	url(r'^$', views.loginView, name='login'),
 	url(r'^login', views.loginView, name='login'),
+	url(r'^main', views.main, name='main'),
 	url(r'^signup', views.SignUp.as_view(), name = 'signup'),
 	url(r'^logout', views.user_logout, name = 'logout'),
 	url(r'^call', views.calldoc, name='call-doc'),
