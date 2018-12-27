@@ -134,7 +134,7 @@ def calldoc(request):
 				 'hidden': ['status_send', 'date', 
 							'id_doc_site', 'kladr' ,
 								 'house' , 'room'],
-				'pacients': str(pacients) 
+				'pacients': pacients
 				 })
 ###############################
 
@@ -159,7 +159,8 @@ def get_ehr_PrescriptionDrugs(request):
 		'EHMK.PrescriptionDrugs',
 		{
 		#"snils":request.POST.get('snils')							   
-	     "snils":"074-500-645 44"
+		"snils":request.user.snils,
+	     #"snils":"074-500-645 44"
 	    },
 	    ['output','EHMK.PrescriptionDrugs'])
 ###---end|Получить назначенные лекарственные препараты---####
@@ -172,7 +173,8 @@ def get_ehr_ListDocuments(request):
 		'EHMK.ListDocuments',
 		{
 			#"snils":       request.POST.get('snils')
-			"snils":"032-524-797 39",					
+			#"snils":"032-524-797 39",					
+			"snils":request.user.snils,
 		},
 		['output','EHMK.ListDocuments'])	
 ###---end|Получить назначенные лекарственные препараты---####
@@ -210,6 +212,29 @@ def send_call_doctor(request):
 							"addit_inform":request.POST.get('addit_inform'),
 		},
 		['message'])	
+
+#Информация об участковом терапевте 
+def get_district_doctor_info(request):
+	return busExchangeMethod(
+		request,
+		'DistrictDoctor',
+		{
+			"snils":       request.POST.get('snils'),							
+		},
+		['message','DistrictDoctor'])	
+
+#Раписание приёма участкового терапевта
+def get_schedule_district_doctor(request):
+	return busExchangeMethod(
+		request,
+		'ScheduleDistrictDoctor',
+		{
+			"snils":       request.POST.get('snils'),
+			"date" :       request.POST.get('date'),						
+		},
+		['message','ScheduleDistrictDoctor'])
+
+
 
 def get_doc_day_schedule(request):
 	pass
@@ -422,10 +447,11 @@ def request_user_children(snils):
 #запросить адреса данного пациента
 #output: list[ { адрес }, { адрес } ]
 def request_adress(snils):
+	#print ('snils ',snils)
 	adress = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message('AddressList', 
 		 {'snils': snils})
-	adress_list_json = json.loads(adress['output']['AddressList'])
-	
+	#print (adress['output'])
+	adress_list_json = json.loads(adress['output']['AddressList'])	
 
 	return adress_list_json
 
@@ -433,12 +459,15 @@ def request_adress(snils):
 #запрашивает опекаемых и их адреса, и упаковывает эту информацию в dict
 #output: list [{пациент, адреса пациента:[]}, {пациент, адреса пациента:[]}]
 def request_user_adress(snils):
-	pacients = request_user_children(snils)
+
+	pacients = request_user_children(snils)	
+	# error  вот тут ошибка СНИЛС ПУСТОЙ!
 
 	for pacient in pacients:
+		print(pacient['SNILS'])
 		adresses = request_adress(pacient['SNILS'])
 		pacient['adresses'] = adresses
-	print(pacients)
+	#print(pacients)
 	return pacients	
 
 class SignUp(generic.CreateView):

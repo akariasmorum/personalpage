@@ -1,35 +1,40 @@
 {% extends "base.html" %}
 {% block context %}
 
+<style type="text/css">
+	.h4.collapsed:before{		
+     	content:"+"
+	}
+	.h4:before{		
+     	content:"-";
+	}
+	.doc-separator{
+		border-top: 2px solid rgba(225,225,0,1)
+	}
+
+	.doc-li{
+		padding: 5px;
+		background-color: white;
+		border-radius: 10px;
+	}
+	@media (max-width: 980px){
+		.doc-button{
+			display: none;
+		}
+	}
+</style>
 <div class='main-area'>
             <div class = 'container'>
                 <h2>Электронная медицинская карта</h2>
-                <!-- БЛОК 1-->
-                <h3>Список документов:</h3>
- 					 {% if docs|length != 0 %}
-                <ul>             
-                	{% for doc in docs %}
-                	<li>
-                		<div id = 'headrs'>
-                			Название документа:{{ doc.namedoc }}
-                			Дата:{{ doc.datedoc }}                			
-                		</div>
-                		</br>
-                		<div id = 'main-data'>
-                			ФИО:{{ doc.FAM }} {{ doc.NAME }} {{ doc.OTH }}
-                			Пол:{{ doc.sex }} Дата рождения:{{ doc.dater }} СНИЛС: {{ doc.SNILS }}
+                <!-- БЛОК Список документов-->
+                <a class='h4 collapsed'  href="#doc-list" data-toggle="collapse">                	
+                	<i class="fas fa-folder"></i>
+                	Список Документов
+                </a>
 
-                		</div>
-                		<div id = 'chtml'>
-                			Приложенный документ:
-                			{% if doc.chtml|length != 0 %}
-                			{{ doc.chtml }}
-                			{% else %}
-                			Отсутствует
-                			{% endif%}
-
-                		</div>
-					<!--
+ 				{% if docs|length != 0 %}
+                <ul id="doc-list" class="collapse"> 
+                <!--
 						Нужно уточнить занчение следуюших полей у ЕН
 						<div>???:{{ doc.kratnostDayDayChet }}</div></br>
 						<div>???:{{ doc.edizm }}</div></br>
@@ -39,34 +44,75 @@
 						<div>???:{{ doc.kratnostDayKoef }}</div></br>
 						<div>???:{{ doc.kratnostKoef }}</div></br>
 						<div>???:{{ doc.kratnostDayDayNeChet }}</div></br>
-					 -->
-                	</li></br></br>
+					 -->            
+                	{% for doc in docs %}
+                	<li class='list-unstyled'><i class="fas fa-file"></i>
+                		
+                			Название документа:{{ doc.namedoc }}
+                			Дата:{{ doc.datedoc }}                			
+                		
+                		
+                		<div id = 'main-data'>
+                			ФИО:{{ doc.FAM }} {{ doc.NAME }} {{ doc.OTH }}
+                			Пол:{{ doc.sex }} Дата рождения:{{ doc.dater }} СНИЛС: {{ doc.SNILS }}
+
+                		</div>
+                		</a>
+                		<div>
+                			
+                			{% if doc.chtml|length != 0 %}
+                				<a class='doc-button h5 collapsed' href="#doc-li-{{forloop.counter}}" data-toggle="collapse">
+                				Документ
+                				</a>
+                				<a class='h5' href="#doc-li-{{forloop.counter}}" onclick = 'open_new(this);'>Открыть в новом окне</a>
+                			<div class = 'doc-li collapse' id = 'doc-li-{{forloop.counter}}'>
+                			
+	                			{% autoescape off %}
+					                {{ doc.chtml }}
+					            {% endautoescape %}
+					            	</font></font></body>
+                			</div>
+
+                			
+                			{% endif%}
+
+                		</div>
+					
+                	</li></br>
                 	{% endfor %}
               	</ul>
                 {% else %}
                 	<p> Список пуст </p>
                 {% endif%} 
 
-                <!-- БЛОК 2-->
-                <h3>Назвачение лекарственных препаратов:</h3>
-                	 {% if drug_records|length != 0 %}
-                <ul>             
-                	{% for record in drug_records %}
-                	<li>
+                <!--Конец Списка документов-->
 
-                		<div id = 'headrs'>
+                <!-- БЛОК Назначение -->
+                <br>
+                <a class='h4 collapsed' href="#prescribe-list" data-toggle="collapse">
+                	<i class="fas fa-folder"></i>
+                	Назначение лекарственных препаратов
+                </a>
+
+                	 {% if drug_records|length != 0 %}
+                <ul id='prescribe-list' class="collapse">             
+                	{% for record in drug_records %}
+                	<li  class='list-unstyled'> 
+
+                		<a class='h5 collapsed' href="#prescribe-li-{{forloop.counter}}" data-toggle="collapse"><i class="fas fa-file"></i>
                 			Врач:{{ record.dol }}
                 			Дата назначения:{{ record.datedoc }}
                 			Препарат:{{ record.name }} 
-                		</div>
-                		</br>
-                		<div id = 'main-data'>
-                			Доп.название:{{ record.lat_name }}
-                			Метод введения:{{ record.MetodVvedenia }}
-                			Приём:{{ record.priem }}
-                			Красность приёма:{{ record.kratnost }}
-                			Дозировка:{{ record.doze }}
-                			Время применения:{{ record.kolday }}
+                		</a>
+                		
+                		<div id = 'prescribe-li-{{ forloop.counter }}' class='collapse'>
+                		<br>
+                			Доп.название:{{ record.lat_name }}<br>
+                			Метод введения:{{ record.MetodVvedenia }}<br>
+                			Приём:{{ record.priem }}<br>
+                			Красность приёма:{{ record.kratnost }}<br>
+                			Дозировка:{{ record.doze }}<br>
+                			Время применения:{{ record.kolday }}<br>
                 		</div>
 					<!--
 						Нужно уточнить занчение следуюших полей у ЕН
@@ -89,4 +135,15 @@
                               
             </div>
 </div>
+<script type="text/javascript">
+function open_new(e){
+	var link = $(e).attr('href'); 
+	var content = $(link).html();
+	
+	var newWindow = window.open();
+	newWindow.document.write("<html><head></head><body>"+content+"</body></html>");
+	newWindow.document.close();
+}
+
+</script>
 {% endblock %}        

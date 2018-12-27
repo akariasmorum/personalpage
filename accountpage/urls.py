@@ -21,4 +21,6 @@ urlpatterns = [
 	url(r'^get-month-schedule', views.get_schedule_month, name = 'get-month-schedule'),
 	url(r'^therapist-schedule', views.therapist, name='therapist'),
 	url(r'^get-doc-schedule-day', views.get_doc_day_schedule, name='doc-day-shedule'),
+	url(r'^get-district-doctor-info', views.get_district_doctor_info, name='district_doctor'),
+	url(r'^get-schedule-district-doctor', views.get_schedule_district_doctor, name='schedule_district_doctor'),
 ]
