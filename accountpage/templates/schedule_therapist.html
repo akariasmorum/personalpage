@@ -30,7 +30,7 @@
   }
 
   #timepicker{
-    
+
     height: 400px;
     background-color: white;
     border-radius: 10px;
@@ -49,16 +49,16 @@
 
   #timepicker td{
     color: #444444;
-    padding: 0px 15px; 
+    padding: 0px 15px;
   }
   .timepicker-date{
     color: #9D50BB !important;
-    font-size: 40px; 
+    font-size: 40px;
     font-family: "Source Code Pro", Courier, monospace !important;
   }
-  .date-line{    
+  .date-line{
     line-height: 20px;
-    
+
   }
   .fa-clock{
     color:#9D50BB;
@@ -74,8 +74,8 @@
       background: linear-gradient(to right, rgba(157,80,187,1) 0%, rgba(110,72,170,1) 100%);
       filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9d50bb', endColorstr='#6e48aa', GradientType=1 );
       border-radius: 5px;
-      
-  }  
+
+  }
   #timepicker li:hover td{
     color: white;
   }
@@ -112,18 +112,18 @@
   }
 
   .check-appointment-window{
-   
+
     -webkit-transition: top 1s ease-out 0.5s;
      -moz-transition: top 1s ease-out 0.5s;
      -o-transition: top 1s ease-out 0.5s;
      transition: top 1s ease-out 0.5s;
      display: none;
-     
+
     position: fixed;
     width: 450px;
     height: 400px;
     left: 50%;
-    margin-left: -225px;    
+    margin-left: -225px;
     top:50%;
     margin-top: -200px;
     overflow: auto;
@@ -156,7 +156,7 @@
     right:0;
     bottom: 0;
   }
-  
+
 </style>
 
 	<div class='main-area'>
@@ -203,29 +203,29 @@
 
                       <div id='timepicker' class = 'cal'>
                         <ul id = 'time-list' class = 'list-unstyled'>
-                          
-                        </ul>  
+
+                        </ul>
                       </div>  <!--timepicker-->
                     </div> <!--form-group row-->
 
             </div> <!--container-->
-    </div> <!--main-area-->        
+    </div> <!--main-area-->
 
 
     <script type="text/javascript">
 
-    class Calendar 
+    class Calendar
   {
 
     constructor(date, calendar){
       this.date = date
       this.calendar = calendar;
       this.months = ['Январь', 'Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
-      
+
     }
 
     daysInMonth(year, month){ //год соответствует и месяц соответствует с нашим
-      var a = new Date(year, month, 0).getDate();      
+      var a = new Date(year, month, 0).getDate();
       return a;
     }
 
@@ -243,9 +243,9 @@
         start.push('&nbsp');
       }
       var dim = this.daysInMonth(year, month+1);
-      
+
       for(var i=1;i<=dim;i++){
-        start.push(i);        
+        start.push(i);
       }
 
       while (start.length % 7 !=0)
@@ -272,10 +272,10 @@
 
     }
 
-    drawCalendar(events){   
-      var dates = this.getMonthCalendarString(this.date.getFullYear(), this.date.getMonth()); 
+    drawCalendar(events){
+      var dates = this.getMonthCalendarString(this.date.getFullYear(), this.date.getMonth());
       var currentRow = $('<div>', {'class': 'row dates'});
-      
+
       var counter = 0;
       var currentPosition=$('<div>', {'class': 'dates col '});
       $("#month-name").text(this.months[this.date.getMonth()]);
@@ -290,15 +290,15 @@
           {
             currentPosition.addClass('event');
           }
-        }        
-    
-        currentPosition.html("<div class = 'date-text'>"+dates[i]+"</span>");   
+        }
+
+        currentPosition.html("<div class = 'date-text'>"+dates[i]+"</span>");
         currentRow.append(currentPosition);
         if(i%7==6)
         {
           this.calendar.append(currentRow);
           currentRow = $('<div>', {'class': 'row dates'});
-        }       
+        }
 
       }
     }
@@ -349,7 +349,7 @@
       var a = this.date.getMonth();
       if(a==11){
         this.date = new Date(this.date.getFullYear()+1, 0, 1);
-        
+
       }
       else{
         var m = this.date.getMonth()+1;
@@ -367,43 +367,118 @@
         this.date = new Date(this.date.getFullYear(), this.date.getMonth()-1, 1);
       }
       $('.dates').remove();
-          }  
+          }
 
   }
 
+  function Query(url, for_request, callback)
+  {
+      // var for_request = {snils:"184-434-687 96",date_begin:"2017-08-10",
+      //    date_end:"2017-10-10"     };
 
-  	function assign_time(time){
+
+
+    var token = '{{ csrf_token }}';
+
+    var responce = $.ajax({
+        async:false,
+        method:'POST',
+        url: url,
+
+        headers: { "X-CSRFToken": token },
+
+        data:for_request,
+
+                success: function(msg)
+        {
+         callback(msg);
+
+        },
+        error: function(jqXHR, textStatus, errorThrown)
+        {
+          console.log(JSON.stringify(jqXHR));
+          //error in msg
+          callback("error");
+        }
+
+      }).responceText;
+  }
+
+
+
+var clicked_object = {'date': null};
+  function change_clicked(previously_clicked, currently_clicked, class_name){
+
+    // Чтобы всегда была выбрана только одна дата или ввремя
+
+    if (clicked_object[previously_clicked]!= null)
+    {
+      $(clicked_object[previously_clicked]).removeClass(class_name);
+    }
+    $(currently_clicked).addClass(class_name);
+    clicked_object[previously_clicked] = currently_clicked;
+  }
+
+
+  function get_times(year, month, date){
+    var ajax_responce = null;
+    if(date<10) { date = '0' + date; }
+
+    Query('get-schedule-district-doctor',
+      {"snils": "032-524-797 39", "date": year+'-'+(month+1)+'-'+date },
+      function(msg)
+      {
+        ajax_responce = msg;
+      });
+    return JSON.parse(ajax_responce);
+  }
+
+
+  function assign_time(time, date)
+  {
 		var time_list = $('#time-list');
-		$(time_list).empty();  		
-  		for(var i=0;i<time.length; i++){
-  			var x = 12;
-  			console.log('hi there! ${x}')
+
+    var weekday = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+		$(time_list).empty();
+
+
+    if(time.length == 0 ){
+      $(time_list).append('<li>На текущую дату нет расписания</li>');
+    }
+    else
+    {
+      for(var i=0;i<time.length; i++)
+      {
+
+
+
   			var li='<li class = "time-choose"> \
                             <table> \
                               <tr class= "date-line"> \
-                                <td rowspan="2" class="timepicker-date">'+time[i].day+'</td> \
-                                <td >'+time[i].month+'</td> \
-                                <td ><i class="fas fa-clock"></i></td> \
-                                <td >'+time[i].from+'</td> \
+                                <td rowspan="2" class="timepicker-date">'+date.getDate()+'</td> \
+                                <td >'+cal.months[date.getMonth()]+'</td> \
+                                <td class="timepicker-date" rowspan="2"><i class="fas fa-clock"></i></td> \
+                                <td class="timepicker-date" rowspan="2">'+time[i].priem_time+'</td> \
                               </tr> \
                               <tr class="date-line"> \
-                                <td >'+time[i].dayWeek+'</td> \
-                                <td ><i class="fas fa-clock"></i></td> \
-                                <td >'+time[i].to+'</td> \
+                                <td >'+weekday[date.getDay()]+'</td> \
+                                 \
                               </tr> \
                             </table> \
                           </li>';
 
-            $(time_list).append(li);              
-  		}
-  	}
+            $(time_list).append(li);
+  		} //for
+    } // else
+
+  } //assign_time
 
     	window.onload = function(){
 
     	  var current = new Date();
-	      current.setHours(0,0,0,0)   
-	      
-	      cal = new Calendar(current, $('#calendar')); 
+	      current.setHours(0,0,0,0)
+
+	      cal = new Calendar(current, $('#calendar'));
 	      var events =  [];
 	      cal.drawCalendar(events);
 
@@ -418,7 +493,7 @@
 	      });
 
 
-	      assign_time([{'day': 12, 'dayWeek': 'Среда', 'month': 'Декабрь', 'from': '09.40', 'to': '10.00'},
+	      /*assign_time([{'day': 12, 'dayWeek': 'Среда', 'month': 'Декабрь', 'from': '09.40', 'to': '10.00'},
 	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '09.40', 'to': '10.00'},
 	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь','from': '10.10', 'to': '10.20'},
 	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '10.20', 'to': '10.30'},
@@ -427,9 +502,19 @@
 	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '10.50', 'to': '11.00'},
 	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '11.00', 'to': '11.10'},
 	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '11.10', 'to': '11.20'},
-	      	])
+        ])*/
 
-    	  $('#timepicker').mCustomScrollbar({theme: "dark"});    
+
+        $('.date-text').on('click', function(e){
+          $('#time-list').empty();
+        	change_clicked('date', e.target, 'choosen-date');
+
+          var times = get_times(cal.date.getFullYear(), cal.date.getMonth(), $(e.target).text());
+          var date = new Date(cal.date.getFullYear(), cal.date.getMonth(), $(e.target).text());
+          assign_time(times, date);
+        });
+
+    	  $('#timepicker').mCustomScrollbar({theme: "dark"});
     	}
     </script>
 {% endblock %}

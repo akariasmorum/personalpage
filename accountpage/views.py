@@ -244,6 +244,8 @@ def get_district_doctor_info(request):
 
 #Раписание приёма участкового терапевта
 def get_schedule_district_doctor(request):
+	print(request.POST.get('snils'))
+	print(request.POST.get('date'))
 	return busExchangeMethod(
 		request,
 		'ScheduleDistrictDoctor',
@@ -251,7 +253,8 @@ def get_schedule_district_doctor(request):
 			"snils":       request.POST.get('snils'),
 			"date" :       request.POST.get('date'),
 		},
-		['message','ScheduleDistrictDoctor'])
+		['output','ScheduleDistrictDoctor'])
+
 
 
 
