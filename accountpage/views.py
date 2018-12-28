@@ -206,7 +206,7 @@ def main(request):
 	return render(request, 'main.html', 
 	              context={'title': 'Главная', 
 	                        'nbar': 'main',
-	                    'pacients':request_user_children(request.user.snils)})
+	                    })
 
 #####################
 def send_call_doctor(request):

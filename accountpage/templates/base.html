@@ -218,11 +218,11 @@
           </ul>
 
           <ul class="list-unstyled components">
-			  
+
 			   <li {% if nbar == 'main'%} class='active' {% endif %}>
                   <a href="{% url 'main' %}"><i class="fas fa-calendar-alt"></i>Главная</a>
               </li>
-			  
+
 
               <li {% if nbar == 'call-doc'%} class='active' {% endif %}>
                   <a href = "{% url 'call-doc' %}" > <i class="fas fa-user-md"> </i>Вызов врача на дом</a>
@@ -258,12 +258,16 @@
       <div class='container'>
           <div class = 'input-group'>
 
-              <input class="form-control" type="text" placeholder="Search" aria-label="Search">
-              <span class='input-group-btn'>
-                <button class="btn btn-secondary green" id = 'top-button' type="button" data-toggle="collapse" aria-haspopup="true" aria-expanded="false" data-target = '#topbar' aria-controls='topbar'>
-                  <i class="fas fa-align-left"></i>
-                </button>
-              </span>
+              <div class= 'header'>
+                <span class='input-group-btn'>
+                  <button class="btn btn-secondary green" id = 'top-button' type="button" data-toggle="collapse" aria-haspopup="true" aria-expanded="false" data-target = '#topbar' aria-controls='topbar'>
+                    <i class="fas fa-align-left"></i>
+                  </button>
+                </span>
+
+                <strong class ='h5'>Гауз ДГКБ</strong>
+              </div>
+
             </form>
 
           </button>
@@ -290,7 +294,7 @@
           <ul class="list-unstyled components">
 
               <li {% if nbar == 'call-doc'%} class='active' {% endif %}>
-                  <a href = "{% url 'call-doc' %}" > <i class="fas fa-user-md"> </i>Вызоdв врача на дом</a>
+                  <a href = "{% url 'call-doc' %}" > <i class="fas fa-user-md"> </i>Вызов врача на дом</a>
               </li>
 
             <!--  <li {% if nbar == 'app'%} class='active' {% endif %}>
@@ -317,6 +321,7 @@
 
           <div class = 'main-content'>
 
+      {% if pacients %}
        <div class="form-group row">
 		            <div class="col-sm-2 col-form-label">
                   <label for="pacient">Пациент:</label>
@@ -329,6 +334,7 @@
               </select>
            </div>
 		    </div>
+        {% endif %}
 
           {% block context %}
 
