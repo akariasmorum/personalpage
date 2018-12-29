@@ -20,6 +20,10 @@
  					 });
   		}
 
+  		function check_fields(){
+  			var formElement = document.querySelector('#id_complaints');
+			return formElement.reportValidity();
+  		}
 
 		function collect_data(){
 			var data_dict = {};
@@ -40,9 +44,15 @@
 
 
 		function send_data(){
-			var data = collect_data();
-			console.log(data);
-			send_messages('send-calldoc', data);
+			if(check_fields())
+			{
+				var data = collect_data();
+				console.log(data);
+				send_messages('send-calldoc', data);				
+			}
+			else{
+
+			}
 
 		}
 
@@ -61,7 +71,9 @@
 		        // handle a successful response
 		        success : function(msg) {
 		        	
-		        	alert(msg);   
+		        	alert(msg);
+		        	$('#id_complaints').val('');
+					$('#add_inform').val('');   
 		        },
 
 		        // handle a non-successful response
@@ -74,11 +86,11 @@
 		}
 
 		function assign_patients(pacients){
-			for (var i=0; i<pacients.length; i++)
+			/*for (var i=0; i<pacients.length; i++)
 			{
 				var pacient = pacients[i]['FAM']+" " + pacients[i]['NAME']+" " + pacients[i]['OTH']+", Дата Рождения: " + pacients[i]['dater'];
 				$('#pacient').append($("<option></option>").text(pacient));
-			}
+			}*/
 		}
 
 		function assign_adresses(index){

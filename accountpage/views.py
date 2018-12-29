@@ -133,6 +133,7 @@ def calldoc(request):
 
 	form = CallDoctorForm()
 	pacients = request_user_adress(request.user.snils)
+	print(len(pacients))
 	return render(request, 'calldoc.html',
 		 context={'title': 'Вызов врача на дом', 'nbar': 'call-doc',
 				   'form': form,

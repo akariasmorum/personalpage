@@ -78,7 +78,7 @@ class CallDoctorForm(forms.Form):
 	
 	date         = forms.DateTimeField(widget = forms.TextInput(attrs={'class': 'form-control','id':'date_doc'   }),label='Дата')
 	id_doc_site  = forms.CharField    (widget = forms.TextInput(attrs={'class': 'form-control','id':'id_doc_site'}),label='ID вставки', max_length=50)
-	patient      = forms.CharField    (widget = forms.Select   (attrs={'class': 'form-control','id':'pacient'   }),label='Пациент')
+	#patient      = forms.CharField    (widget = forms.Select   (attrs={'class': 'form-control','id':'pacient'   }),label='Пациент')
 	adress       = forms.CharField    (widget = forms.Select   (attrs={'class': 'form-control', 'id': 'select_address'}), label='Адрес пациента')
 	temperature  = forms.ChoiceField  (widget = forms.Select   (attrs={'class': 'form-control'}),label='Температура', choices = ((str(x*0.1)[:4], str(x*0.1)[:4]) for x in range(360, 401)))
 	complaints   = forms.CharField    (widget = forms.Textarea (attrs={'class': 'form-control'}),label='Жалобы', max_length=1000, required = True)
