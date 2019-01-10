@@ -15,7 +15,7 @@
 		<div class='form-group row'><h2 class='col'>Обращение</h2></div>
 		
 		<div id="email" class="hidden_fields">{{ my_email }}</div>
-		<div id="phone" class="hidden_fields">{{ my_phone }}</div>
+		
 
 		{% csrf_token %}
 		{% for field in form.visible_fields %}	
@@ -82,22 +82,17 @@
 		
 
 		function check_form(){
-			if (!document.getElementById('recipient').value){
-				alert('Не указан получатель сообщения!');
-				return false;
-			}
 
-			else if (!document.getElementById('subject').value){
-				alert('Не указана тема сообщения!');
-				return false;
-			}
-			else if (!document.getElementById('recipient').value){
-				alert('Не указано сообщение!');
-				return false;
+			if( document.getElementById('recipient').reportValidity() &&
+				document.getElementById('subject').reportValidity() &&
+				document.getElementById('message').reportValidity() &&
+				document.getElementById('phone').reportValidity())
+			{
+				return true;
 			}
 			else{
 				
-				return true;
+				return false;
 			}
 
 
@@ -106,8 +101,9 @@
 		function collect_data(){
 			var collection_object = {};
 
-			
-			collection_object.recipient = document.getElementById('recipient').value;			
+			collection_object.snils = $('#pacient').val();
+			collection_object.recipient = document.getElementById('recipient').value;	
+			collection_object.phone = document.getElementById('phone').value;		
 			collection_object.subject = document.getElementById('subject').value;
 			collection_object.message = document.getElementById('message').value;
 			collection_object.date = return_date();
@@ -139,7 +135,7 @@
 		        // handle a non-successful response
 		        error : function(xhr,errmsg,err) {
 		        	
-		            alert("Ошибка");
+		            console.log(xhr.responseText);
 		            
 		        }
 		    });

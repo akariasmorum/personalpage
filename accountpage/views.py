@@ -296,11 +296,12 @@ def busExchangeMethod(request, method, params_dict, nestedKeys):
 	if request.method == 'POST':
 		try:
 			responce = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message(method, params_dict)
-			#print(responce)
+			print(responce)
 		except Exception as Ex:
 			print(traceback.format_exc())
 			responce = str(Ex)
-
+		if 'ErrorsType:' in responce['output']:
+			return HttpResponse(responce['output']['ErrorsType:'])
 
 
 		if len(nestedKeys) == 1:
@@ -383,21 +384,34 @@ def send_message(request):
 			message = message_form.save(commit=False)
 			message.sender = request.user
 			message.save()
-
-
-			responce = None
-			try:
-				responce = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message('MessagePacientNew',
+			print(datetime.now().strftime('%Y-%m-%dT%H:%M:%S'))
+			resp =  busExchangeMethod(
+					request, 
+					'MessagePacientNew',
 					{
-							"snils": request.user.snils,
+							"snils": request.POST.get('snils'),
 							"id_doc_site": request.POST.get('id_doc_site'),
-							"datedoc": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+							"datedoc": 	datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
 							"recipient": request.POST.get('recipient'),
 							"subject": request.POST.get('subject'),
 							"message": request.POST.get('message'),
-							"phone":   request.user.telephone,
+							"phone":   request.POST.get('phone'),
 							"email":   request.user.email
-					})
+					},
+					['message'])
+			print(resp)
+			return resp
+		else:
+			print(str(message_form.errors))
+			return HttpResponse(str(message_form.errors))
+			
+
+			'''
+			responce = None
+			try:
+				responce = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message('MessagePacientNew',
+					)
+				print(responce)
 
 			except Exception as Ex:
 				print(str(traceback.format_exc()))
@@ -412,7 +426,7 @@ def send_message(request):
 
 
 	else:
-		return HttpResponse('Нет данных для отправки!')
+		return HttpResponse('Нет данных для отправки!')'''
 
 
 

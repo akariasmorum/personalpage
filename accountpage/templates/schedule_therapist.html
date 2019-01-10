@@ -473,6 +473,15 @@ var clicked_object = {'date': null};
 
   } //assign_time
 
+  	function date_click(e){
+  		$('#time-list').empty();
+        	change_clicked('date', e.target, 'choosen-date');
+
+          var times = get_times(cal.date.getFullYear(), cal.date.getMonth(), $(e.target).text());
+          var date = new Date(cal.date.getFullYear(), cal.date.getMonth(), $(e.target).text());
+          assign_time(times, date);
+
+  	}
     	window.onload = function(){
 
     	  var current = new Date();
@@ -485,11 +494,13 @@ var clicked_object = {'date': null};
 	      $('.prev-month').click(function(){
 	        cal.getPreviousMonth();
 	        cal.drawCalendar([]);
+	        $('.date-text').on('click', function(e){date_click(e);});
 	      });
 
 	      $('.next-month').click(function(){
 	        cal.getNextMonth();
 	        cal.drawCalendar([]);
+	        $('.date-text').on('click', function(e){date_click(e);});
 	      });
 
 
@@ -505,14 +516,7 @@ var clicked_object = {'date': null};
         ])*/
 
 
-        $('.date-text').on('click', function(e){
-          $('#time-list').empty();
-        	change_clicked('date', e.target, 'choosen-date');
-
-          var times = get_times(cal.date.getFullYear(), cal.date.getMonth(), $(e.target).text());
-          var date = new Date(cal.date.getFullYear(), cal.date.getMonth(), $(e.target).text());
-          assign_time(times, date);
-        });
+        $('.date-text').on('click', function(e){date_click(e);});
 
     	  $('#timepicker').mCustomScrollbar({theme: "dark"});
     	}
