@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 import traceback
 from .forms import Message
 from datetime import datetime
@@ -40,13 +41,13 @@ def loginView(request):
 
 
 ###Расписание#########
-
+@login_required(login_url='/login')
 def schedule(request):
 	return render(request, 'schedule.html',
 	                      context={'title': 'Расписание',
 						            'nbar': 'schedule',
 									'name': (request.user.surname + ' ' + request.user.name),
-								'pacients':request_user_children(request.user.snils)
+								'pacients': request.session['pacients']
 								  })
 
 ######################
@@ -55,7 +56,7 @@ def schedule(request):
 
 
 #просмотр детей
-
+@login_required(login_url='/login')
 class ChildrenView(generic.ListView):
 	model = Patient
 	context_object_name = 'children'
@@ -81,7 +82,7 @@ class ChildrenView(generic.ListView):
 
 
 #моя страница #####################
-
+@login_required(login_url='/login')
 def mypage(request):
 
 	children = Patient.objects.filter(trustee = request.user)
@@ -95,7 +96,7 @@ def mypage(request):
 		context= {'title': 'Моя информация', 'nbar': 'mypage',
 				   'name': (request.user.surname + ' ' + request.user.name),
 			   'children': children, 'form': form,
-			   'pacients':request_user_children(request.user.snils)})
+			   'pacients': request.session['pacients']})
 
 
 ############################
@@ -103,7 +104,7 @@ def mypage(request):
 
 
 #Обращение пациента
-
+@login_required(login_url='/login')
 def get_message(request):
 
 	form = MessageForm()
@@ -114,7 +115,7 @@ def get_message(request):
 					 'my_email': 'email@email.ru',
 					 'my_phone': '+7(987)123-32-23',
 					   'hidden': ['status_send','date','id_doc_site'],
-					   'pacients':request_user_children(request.user.snils)
+					 'pacients': request.session['pacients']
 					 })
 
 ################################
@@ -122,7 +123,7 @@ def get_message(request):
 
 
 #вызов врача на дом
-
+@login_required(login_url='/login')
 def calldoc(request):
 	if request.method =='POST':
 		if request.POST["status_send"] == "false":
@@ -133,7 +134,7 @@ def calldoc(request):
 
 	form = CallDoctorForm()
 	pacients = request_user_adress(request.user.snils)
-	print(len(pacients))
+
 	return render(request, 'calldoc.html',
 		 context={'title': 'Вызов врача на дом', 'nbar': 'call-doc',
 				   'form': form,
@@ -149,15 +150,15 @@ def calldoc(request):
 
 
 ####---ЭМК---####
+@login_required(login_url='/login')
 def ehr(request):
+
 	return render(request, 'ehr.html',
 		 context={'title': 'Электронная медицинская карта', 'nbar': 'ehr',
 		           'name': (request.user.surname + ' ' + request.user.name),
-		           'docs': [] 
-					   #get_ehr_ListDocuments(request)
-					   ,
+		           'docs': [],#get_ehr_ListDocuments(request) ,
 		           'drug_records': get_ehr_PrescriptionDrugs(request),
-		           'pacients':request_user_children(request.user.snils)
+		           'pacients':request.session['pacients']
 		         })
 ###---end|ЭМК---####
 
@@ -193,23 +194,47 @@ def get_ehr_ListDocuments(request):
 
 
 #Запись на прием
+@login_required(login_url='/login')
 def app(request):
-	return render(request, 'appointment.html', context={'title': 'Запись на прием', 'nbar': 'app', 'name': (request.user.surname + ' ' + request.user.name) })
+	return render(request, 'appointment.html',
+	context={'title': 'Запись на прием',
+	'nbar': 'app', 'name': (request.user.surname + ' ' + request.user.name) })
 
-
+@login_required(login_url='/login')
 def therapist(request):
-	return render(request, 'schedule_therapist.html', 
-	              context={'title': 'Расписание участкового врача', 
+	return render(request, 'schedule_therapist.html',
+	              context={'title': 'Расписание участкового врача',
 	                        'nbar': 'therapist',
-	                    'pacients':request_user_children(request.user.snils)})
-	                    
+	                    'pacients': request.session['pacients']})
+
+@login_required(login_url='/login')
 def main(request):
-	return render(request, 'main.html', 
-	              context={'title': 'Главная', 
+	return render(request, 'main.html',
+	              context={'title': 'Главная',
 	                        'nbar': 'main',
 	                    })
 
 #####################
+def get_docs_list(request):
+	''' Список документов по снилсу '''
+	return busExchangeMethod(
+		request,
+		'EHMK.ListDocuments',
+		{
+			"snils":request.POST.get('snils'),
+		},
+		['output','EHMK.ListDocuments'])
+
+def get_drugs_list(request):
+	''' Назначение лек.препара по снилсу '''
+	return busExchangeMethod(
+		request,
+		'EHMK.PrescriptionDrugs',
+		{
+			"snils":request.POST.get('snils'),
+		},
+		['output','EHMK.PrescriptionDrugs'])
+
 def send_call_doctor(request):
 	'''
 	послать вызов врача на дом в ИШ

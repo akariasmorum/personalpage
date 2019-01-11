@@ -2,10 +2,10 @@
 {% block context %}
 
 <style type="text/css">
-	.h4.collapsed:before{		
+	.h4.collapsed:before{
      	content:"+"
 	}
-	.h4:before{		
+	.h4:before{
      	content:"-";
 	}
 	.doc-separator{
@@ -24,126 +24,190 @@
 	}
 </style>
 <div class='main-area'>
-            <div class = 'container'>
-                <h2>Электронная медицинская карта</h2>
-                <!-- БЛОК Список документов-->
-                <a class='h4 collapsed'  href="#doc-list" data-toggle="collapse">                	
-                	<i class="fas fa-folder"></i>
-                	Список Документов
-                </a>
+    <div class = 'container'>
+			<h2>Электронная медицинская карта</h2>
+			<!-- БЛОК Список документов-->
+			<a class='h4 collapsed'  href="#doc-list" data-toggle="collapse">
+				<i class="fas fa-folder"></i>
+				Список Документов
+				</a>
+			<ul id="doc-list" class="collapse">
 
- 				{% if docs|length != 0 %}
-                <ul id="doc-list" class="collapse"> 
-                <!--
-						Нужно уточнить занчение следуюших полей у ЕН
-						<div>???:{{ doc.kratnostDayDayChet }}</div></br>
-						<div>???:{{ doc.edizm }}</div></br>
-						<div>???:{{ doc.name_otkaz }}</div></br>
-						<div>???:{{ doc.cito }}</div></br>
-						<div>???:{{ doc.komplex }}</div></br>
-						<div>???:{{ doc.kratnostDayKoef }}</div></br>
-						<div>???:{{ doc.kratnostKoef }}</div></br>
-						<div>???:{{ doc.kratnostDayDayNeChet }}</div></br>
-					 -->            
-                	{% for doc in docs %}
-                	<li class='list-unstyled'><i class="fas fa-file"></i>
-                		
-                			Название документа:{{ doc.namedoc }}
-                			Дата:{{ doc.datedoc }}                			
-                		
-                		
-                		<div id = 'main-data'>
-                			ФИО:{{ doc.FAM }} {{ doc.NAME }} {{ doc.OTH }}
-                			Пол:{{ doc.sex }} Дата рождения:{{ doc.dater }} СНИЛС: {{ doc.SNILS }}
+			</ul>
 
-                		</div>
-                		</a>
-                		<div>
-                			
-                			{% if doc.chtml|length != 0 %}
-                				<a class='doc-button h5 collapsed' href="#doc-li-{{forloop.counter}}" data-toggle="collapse">
-                				Документ
-                				</a>
-                				<a class='h5' href="#doc-li-{{forloop.counter}}" onclick = 'open_new(this);'>Открыть в новом окне</a>
-                			<div class = 'doc-li collapse' id = 'doc-li-{{forloop.counter}}'>
-                			
-	                			{% autoescape off %}
-					                {{ doc.chtml }}
-					            {% endautoescape %}
-					            	</font></font></body>
-                			</div>
+			<br>
+			<a class='h4 collapsed' href="#prescribe-list" data-toggle="collapse">
+			  <i class="fas fa-folder"></i>
+			  Назначение лекарственных препаратов
+			</a>
+			<ul id='prescribe-list' class="collapse">
 
-                			
-                			{% endif%}
+			</ul>
 
-                		</div>
-					
-                	</li></br>
-                	{% endfor %}
-              	</ul>
-                {% else %}
-                	<p> Список пуст </p>
-                {% endif%} 
-
-                <!--Конец Списка документов-->
-
-                <!-- БЛОК Назначение -->
-                <br>
-                <a class='h4 collapsed' href="#prescribe-list" data-toggle="collapse">
-                	<i class="fas fa-folder"></i>
-                	Назначение лекарственных препаратов
-                </a>
-
-                	 {% if drug_records|length != 0 %}
-                <ul id='prescribe-list' class="collapse">             
-                	{% for record in drug_records %}
-                	<li  class='list-unstyled'> 
-
-                		<a class='h5 collapsed' href="#prescribe-li-{{forloop.counter}}" data-toggle="collapse"><i class="fas fa-file"></i>
-                			Врач:{{ record.dol }}
-                			Дата назначения:{{ record.datedoc }}
-                			Препарат:{{ record.name }} 
-                		</a>
-                		
-                		<div id = 'prescribe-li-{{ forloop.counter }}' class='collapse'>
-                		<br>
-                			Доп.название:{{ record.lat_name }}<br>
-                			Метод введения:{{ record.MetodVvedenia }}<br>
-                			Приём:{{ record.priem }}<br>
-                			Красность приёма:{{ record.kratnost }}<br>
-                			Дозировка:{{ record.doze }}<br>
-                			Время применения:{{ record.kolday }}<br>
-                		</div>
-					<!--
-						Нужно уточнить занчение следуюших полей у ЕН
-						<div>???:{{ record.kratnostDayDayChet }}</div></br>
-						<div>???:{{ record.edizm }}</div></br>
-						<div>???:{{ record.name_otkaz }}</div></br>
-						<div>???:{{ record.cito }}</div></br>
-						<div>???:{{ record.komplex }}</div></br>
-						<div>???:{{ record.kratnostDayKoef }}</div></br>
-						<div>???:{{ record.kratnostKoef }}</div></br>
-						<div>???:{{ record.kratnostDayDayNeChet }}</div></br>
-					 -->
-                	</li></br></br>
-                	{% endfor %}
-              	</ul>
-                {% else %}
-                	<p> Список пуст </p>
-                {% endif%} 
-
-                              
-            </div>
+    </div>
 </div>
+
+
 <script type="text/javascript">
+
 function open_new(e){
-	var link = $(e).attr('href'); 
+	var link = $(e).attr('href');
 	var content = $(link).html();
-	
+
 	var newWindow = window.open();
 	newWindow.document.write("<html><head></head><body>"+content+"</body></html>");
 	newWindow.document.close();
-}
+};
 
+window.onload = function(){
+	load_data();
+};
+
+function Query_NS(my_method, for_request, name_service, url_serv, callback){
+    var token = '{{ csrf_token }}';
+
+    var responce = $.ajax(
+			{
+        async:false,
+        method:my_method,
+        url:url_serv,
+
+        headers: { "X-CSRFToken": token },
+
+        data:for_request,
+        success: function(msg)
+        {callback(msg);},
+        error: function(jqXHR, textStatus, errorThrown)
+        {
+					console.log(JSON.stringify(jqXHR));
+          //error in msg
+          callback("error");
+        }
+
+      }).responceText;
+};
+
+function request_data(service, url_serv)
+{
+	//Получение снилса
+	 var e = document.getElementById("pacient");
+	 var dataFromRequest = {};
+	 dataFromRequest.snils = e.options[e.selectedIndex].value;
+
+	 var ajax_info = "";
+	 Query_NS("POST", dataFromRequest, service, url_serv, function (info){
+				ajax_info = info;
+	 });
+
+	 if(ajax_info == "error")
+	 {
+			alert("Сервис временно недоступен.Приносим извенения за предоставленные неудобства.");
+			return [];
+	 }
+	 else
+	 {
+			return $.parseJSON(ajax_info);
+	 }
+};
+
+function load_data(){
+	var docs = request_data('EHMK.ListDocuments','get-docs-list');
+	var drug_records = request_data('EHMK.PrescriptionDrugs','get-drugs-list');
+
+	add_docs(docs);
+	add_drug(drug_records);
+};
+
+function add_docs(docs){
+	var main_ul = document.getElementById('doc-list');
+
+	if (docs.length == 0){
+		var newLi = document.createElement('li');
+		newLi.innerHTML +='<P>Список пуст</P>';
+		main_ul.appendChild(newLi);
+	}
+	else {
+		for (var i = 0; i < docs.length; i++) {
+
+			 //console.log(docs[i]);
+			 var newLi = document.createElement('li');//создание элемента списка
+			 newLi.className='list-unstyled'; //определения класса
+
+			 newLi.innerHTML +='<div><i class="fas fa-file"></i>'            +
+												 ' Название документа:' +  docs[i].namedoc    +
+												 ' Дата:' +  docs[i].datedoc                  +
+												 ' <div id = "main-data"> '               +
+												 ' ФИО:' + docs[i].FAM + ' ' + docs[i].NAME + ' ' + docs[i].OTH  +
+												 ' Пол:' + docs[i].sex + ' ' + ' Дата рождения:' +  docs[i].dater +
+												 ' СНИЛС:' + docs[i].SNILS + ' </div></a>';
+
+			 if ( docs[i].chtml != undefined )
+			 {
+				 newLi.innerHTML +=  ' <a class="doc-button h5 collapsed" ' +
+				                    ' href="#doc-li-' + i + '" data-toggle="collapse">' +
+														' Документ		</a><a class="h5" href="#doc-li-' + i + '"' +
+	         									' onclick = "open_new(this);">Открыть в новом окне</a> ' +
+														' <div class = "doc-li collapse" id = "doc-li-' + i + '">' +
+														  docs[i].chtml + '</font></font></body></div></div></br>';
+			 }
+			 newLi.innerHTML += '</br>'
+			 //Добавление в список нового элемента
+			 main_ul.appendChild(newLi);
+		}
+	}
+};
+
+function add_drug(drug_records){
+	var main_ul = document.getElementById('prescribe-list');
+  if (drug_records.length == 0){
+		var newLi = document.createElement('li');
+		newLi.innerHTML +='<P>Список пуст</P>';
+		main_ul.appendChild(newLi);
+	}
+	else {
+		for (var i = 0; i < drug_records.length; i++) {
+			 console.log(drug_records[i]);
+			 var newLi = document.createElement('li');//создание элемента списка
+			 newLi.className ='list-unstyled'; //определения класса
+
+			 newLi.innerHTML +='<a class="h5 collapsed" href="#prescribe-li-' + i + '"' +
+			                   'data-toggle="collapse"><i class="fas fa-file"></i>' +
+	       				 				 ' Врач:' +  drug_records[i].dol +
+												 ' Дата назначения:' + drug_records[i].datedoc +
+												 ' Препарат:' + drug_records[i].name + '</a>' +
+												 '<div id = "prescribe-li-' + i + '" class="collapse">' + '<br>' +
+												 'Доп.название:' + drug_records[i].lat_name + '<br>' +
+									       'Метод введения:' +  drug_records[i].MetodVvedenia + '<br>' +
+									       'Приём:' + drug_records[i].priem + '<br>' +
+									       'Красность приёма:' + drug_records[i].kratnost + '<br>' +
+									       'Дозировка:' + drug_records[i].doze + '<br>' +
+									       'Время применения:' + drug_records[i].kolday + '<br>' +
+									       '</div></br></br>';
+
+				main_ul.appendChild(newLi);
+			}
+	}
+
+
+};
+
+function clear_ul(){
+	var myNode = document.getElementById("doc-list");
+    while (myNode.firstChild) {
+    myNode.removeChild(myNode.firstChild);
+	}
+
+	var myNode = document.getElementById("prescribe-list");
+    while (myNode.firstChild) {
+    myNode.removeChild(myNode.firstChild);
+	}
+};
+
+function update(){
+	setTimeout(function todo(){
+		clear_ul();
+		load_data();
+	});
+};
 </script>
-{% endblock %}        
+{% endblock %}

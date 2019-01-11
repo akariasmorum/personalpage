@@ -327,7 +327,7 @@
                   <label for="pacient">Пациент:</label>
                 </div>
 		        <div class="col">
-              <select name="patient" class="form-control" id="pacient">
+              <select name="patient" class="form-control" id="pacient" onchange="update()">
                 {% for pacient in pacients %}
                 <option value="{{ pacient.SNILS }}">{{ pacient.FAM }} {{ pacient.NAME }} {{ pacient.OTH }},Дата рождения: {{ pacient.dater }}</option>
                 {% endfor %}
