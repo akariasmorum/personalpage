@@ -233,29 +233,45 @@ def send_call_doctor(request):
 		},
 		['message'])
 
+
+def get_dictrict_doctor_info(request):
+	pass		
+
+
 #Информация об участковом терапевте
-def get_district_doctor_info(request):
+def get_district_doctor_info(request, snils):
+	
 	return busExchangeMethod(
 		request,
 		'DistrictDoctor',
 		{
-			"snils":       request.POST.get('snils'),
+			"snils":       snils,
 		},
-		['message','DistrictDoctor'])
+		['output','DistrictDoctor'])
 
+	
+	if result.content==b'[]':
+		return HttpResponse('У данного пользователя нет участкового врача', status=500)
+	else:
+		return result	
+	
 #Раписание приёма участкового терапевта
-def get_schedule_district_doctor(request):
-	print(request.POST.get('snils'))
-	print(request.POST.get('date'))
-	return busExchangeMethod(
+def get_dictrict_doctor_schedule(request):
+	
+	snils = request.POST.get('snils')
+	date = request.POST.get('date')
+	
+
+	sched =  busExchangeMethod(
 		request,
 		'ScheduleDistrictDoctor',
 		{
-			"snils":       request.POST.get('snils'),
-			"date" :       request.POST.get('date'),
+			"snils":       snils,
+			"date" :       date
 		},
 		['output','ScheduleDistrictDoctor'])
-
+	
+	return sched
 
 
 
