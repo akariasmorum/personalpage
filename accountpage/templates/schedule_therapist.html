@@ -497,13 +497,13 @@ var clicked_object = {'date': null};
 	        cal.getPreviousMonth();
 	        cal.drawCalendar([]);
 	        $('.date-text').on('click', function(e){date_click(e);});
-	      });
+	      }); //prev-month
 
 	      $('.next-month').click(function(){
 	        cal.getNextMonth();
 	        cal.drawCalendar([]);
 	        $('.date-text').on('click', function(e){date_click(e);});
-	      });
+	      }); //next-month
 
         $('.date-text').on('click', function(e){date_click(e);});
 
