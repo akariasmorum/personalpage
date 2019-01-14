@@ -22,16 +22,16 @@ urlpatterns = [
 	url(r'^get-month-schedule', views.get_schedule_month, name = 'get-month-schedule'),
 	url(r'^therapist-schedule', views.therapist, name='therapist'),
 	url(r'^get-doc-schedule-day', views.get_doc_day_schedule, name='doc-day-shedule'),
-<<<<<<< HEAD
+
 	url(r'^get-district-doctor-info', views.get_district_doctor_info, name='district_doctor'),
-	url(r'^get-schedule-district-doctor', views.get_schedule_district_doctor, name='schedule_district_doctor'),
+	url(r'^get-schedule-district-doctor', views.get_dictrict_doctor_schedule, name='schedule_district_doctor'),
 
 	#EHR links
 	url(r'^get-docs-list', views.get_docs_list, name='get-docs-list'),
 	url(r'^get-drugs-list', views.get_drugs_list, name='get-drugs-list'),
-=======
+
 	url(r'^get-dictrict-doctor-schedule', views.get_dictrict_doctor_schedule, name='dictrict_doctor_schedule'),
 	url(r'^get-district-doctor-info', views.get_district_doctor_info, name='district_doctor_info'),
 	
->>>>>>> 076f1e764374e163abc504043996d855aabbbc27
+
 ]
