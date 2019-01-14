@@ -59,7 +59,7 @@
   }
   .date-line{
     line-height: 20px;
-
+    
   }
   .fa-clock{
     color:#9D50BB;
@@ -112,6 +112,10 @@
     color: white;
   }
 
+  .time-choose{
+  	border-radius: 10px;
+  }
+
   .check-appointment-window{
 
     -webkit-transition: top 1s ease-out 0.5s;
@@ -140,6 +144,28 @@
   .doctor-png{
     height: 150px;
   }
+
+  .red{  	
+  	background: #FF595E; /* Old browsers */
+	background: -moz-linear-gradient(45deg, #d31027 0%, #ea384d 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(45deg, #d31027 0%,#ea384d 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(45deg, #d31027 0%,#ea384d 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d31027', endColorstr='#ea384d',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+  }
+
+  .red *{
+  	color:white !important;
+  }
+
+  .green{
+  	background-color: #CCE2A3;
+  }
+
+  .green *{
+  	color:black !important;
+  }
+
+
 
   .overlay{
     -webkit-transition: top 1s ease-out 0.5s;
@@ -455,8 +481,8 @@ var clicked_object = {'date': null};
 
 
 
-  			var li='<li class = "time-choose"> \
-                            <table> \
+  			var li='<li class = "time-choose '; if(time[i].pacient.length>0){li+='red';} 
+            	   li += '"><table> \
                               <tr class= "date-line"> \
                                 <td rowspan="2" class="timepicker-date">'+date.getDate()+'</td> \
                                 <td >'+cal.months[date.getMonth()]+'</td> \
