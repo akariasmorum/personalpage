@@ -25,6 +25,7 @@
 
     .cal{
       margin: 10px;
+      min-width: 400px ;
       width: 450px;
       background-color: white;
       border-radius: 10px;
@@ -48,10 +49,10 @@
       left:50%;
       margin-left: -5px;
       content: '';
-      
+
       content: '';
 
-       
+
        width: 10px;
        height: 10px;
        -moz-border-radius: 7.5px;
@@ -61,7 +62,7 @@
 
     }
 
-    
+
 
     #calendar>.row>.col{
       text-align: center;
@@ -87,15 +88,15 @@
     #task>li>span{
     }
     #task>li:hover{
-      
+
     }
     .grey-li{
       color:#686868;
     }
     #task-div{
-      
+
     }
-    
+
     @media(max-width: 992px){
       #sidebar {
           margin-left: -250px;
@@ -114,7 +115,7 @@
         display: inline-block;
       }
     }
-    
+
 
     @media (max-width: 768px){
       .tasks{
@@ -171,9 +172,9 @@
                 <ul id="task">
                 </ul>
               </div>
-            </div> <!--form-group row-->  
+            </div> <!--form-group row-->
 
-  
+
 
 
 
@@ -188,18 +189,18 @@
 
           <script type="text/javascript">
 
-class Calendar 
+class Calendar
   {
 
     constructor(date, calendar){
       this.date = date
       this.calendar = calendar;
       this.months = ['Январь', 'Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
-      
+
     }
 
     daysInMonth(year, month){ //год соответствует и месяц соответствует с нашим
-      var a = new Date(year, month, 0).getDate();      
+      var a = new Date(year, month, 0).getDate();
       return a;
     }
 
@@ -217,9 +218,9 @@ class Calendar
         start.push('&nbsp');
       }
       var dim = this.daysInMonth(year, month+1);
-      
+
       for(var i=1;i<=dim;i++){
-        start.push(i);        
+        start.push(i);
       }
 
       while (start.length % 7 !=0)
@@ -247,10 +248,10 @@ class Calendar
     }
 
     drawCalendar(events){
-      $('.dates').remove();   
-      var dates = this.getMonthCalendarString(this.date.getFullYear(), this.date.getMonth()); 
+      $('.dates').remove();
+      var dates = this.getMonthCalendarString(this.date.getFullYear(), this.date.getMonth());
       var currentRow = $('<div>', {'class': 'row dates'});
-      
+
       var counter = 0;
       var currentPosition=$('<div>', {'class': 'col'});
       $("#month-name").text(this.months[this.date.getMonth()]);
@@ -265,15 +266,15 @@ class Calendar
           {
             currentPosition.addClass('event');
           }
-        }        
-    
-        currentPosition.html(dates[i]);   
+        }
+
+        currentPosition.html(dates[i]);
         currentRow.append(currentPosition);
         if(i%7==6)
         {
           this.calendar.append(currentRow);
           currentRow = $('<div>', {'class': 'row dates'});
-        }       
+        }
 
       }
     }
@@ -324,14 +325,14 @@ class Calendar
       var a = this.date.getMonth();
       if(a==11){
         this.date = new Date(this.date.getFullYear()+1, 0, 1);
-        
+
       }
       else{
         var m = this.date.getMonth()+1;
         this.date = new Date(this.date.getFullYear(), m, 1);
         var d = this.date;
       }
-      
+
           }
 
     getPreviousMonth(){
@@ -341,56 +342,56 @@ class Calendar
       else{
         this.date = new Date(this.date.getFullYear(), this.date.getMonth()-1, 1);
       }
-      
-          }    
+
+          }
 
   }
 
-  
-  
-  
+
+
+
 function Query(my_method, for_request, name_service, callback)
   {
-          
+
 
     var token = '{{ csrf_token }}';
-    
+
     var responce = $.ajax({
         async:false,
         method:my_method,
-        url:"get-month-schedule",        
-        
+        url:"get-month-schedule",
+
         headers: { "X-CSRFToken": token },
-              
-        data:for_request,       
-      
+
+        data:for_request,
+
                 success: function(msg)
-        {        
+        {
          callback(msg);
-       
+
         },
         error: function(jqXHR, textStatus, errorThrown)
         {
           console.log(JSON.stringify(jqXHR));
           //error in msg
-          callback("error");          
+          callback("error");
         }
-      
-      }).responceText;    
+
+      }).responceText;
   }
-    
-  
+
+
   function return_array(object){
-      
+
       var events = $.parseJSON(object);
       var ar = new Array()
       for (var event in events) {
           ar.push({'date':new Date(events[event].datedoc), 'text':events[event].NRU_NAME});
-      };     
+      };
 
       return ar;
      };
- 
+
 
 function getFirstLast(date_search){
     var value = date_search.getMonth() + 1;
@@ -403,21 +404,21 @@ function getFirstLast(date_search){
 
     return {
       date_begin:date_search.getFullYear() + "-" + month + "-" + "01",
-        date_end:date_search.getFullYear() + "-" + month + "-" + 
+        date_end:date_search.getFullYear() + "-" + month + "-" +
         new Date(date_search.getFullYear(), date_search.getMonth() +1, 0).getDate()
     };
   }
 
-  function eventsFromService(date_for_request){     
+  function eventsFromService(date_for_request){
     var dataFromRequest = getFirstLast(date_for_request);
 
     var e = document.getElementById("snils");
     dataFromRequest.snils = $('#pacient').val();
-    
+
      var ajax_info = "";
-     Query("POST", dataFromRequest, "CalendarList", function (info){ 
+     Query("POST", dataFromRequest, "CalendarList", function (info){
           ajax_info = info;
-          
+
      });
      if(ajax_info == "error"){
         alert("Сервис временно недоступен.Приносим извенения за предоставленные неудобства.");
@@ -426,14 +427,14 @@ function getFirstLast(date_search){
      else{
         return return_array(ajax_info);
      }
-     
+
   }
 
-    
-         
+
+
     window.onload = function(){
       //alert('ВНИМАНИЕ ПРИ ЗАПРОСАХ ИСПОЛЬЗУЮТСЯ ТЕСТОВЫЕ СНИЛСЫ !!!');
-        
+
         $('#task-div').mCustomScrollbar({theme: "dark"});
 
         $('#sidebarCollapse').on('click', function () {
@@ -446,13 +447,13 @@ function getFirstLast(date_search){
           // in our CSS
           $('a[aria-expanded=true]').attr('aria-expanded', 'false');
         });
-  
+
       var current = new Date();
-      current.setHours(0,0,0,0)   
+      current.setHours(0,0,0,0)
       var weekday = ['Пн', 'Вт','Ср','Чт','Пт','Сб','Вс'];
 
-         
-      cal = new Calendar(current, $('#calendar')); 
+
+      cal = new Calendar(current, $('#calendar'));
       var events =  eventsFromService(cal.date);
 
       cal.drawCalendar(events);
@@ -462,7 +463,7 @@ function getFirstLast(date_search){
         $("#loader").fadeIn("slow", function(){
 
 
-            //нужно АСИНХРОННО получить events и передать их           
+            //нужно АСИНХРОННО получить events и передать их
 
             cal.getPreviousMonth();
             var events = eventsFromService(cal.date);
@@ -473,16 +474,16 @@ function getFirstLast(date_search){
             $("#loader").fadeOut("slow", function() { });
 
 
-            }); //fadeIn 
+            }); //fadeIn
         }); //Click
 
 
       $('.next-month').click(function(){
         $("#loader").fadeIn("slow", function(){
 
-          
-            //нужно АСИНХРОННО получить events и передать их 
-           
+
+            //нужно АСИНХРОННО получить events и передать их
+
             cal.getNextMonth();
             var events = eventsFromService(cal.date);
 
@@ -492,7 +493,7 @@ function getFirstLast(date_search){
             $("#loader").fadeOut("slow", function() { });
 
 
-            }); //fadeIn 
+            }); //fadeIn
         }); //Click
 
       $('#pacient').change(function(){
@@ -510,13 +511,13 @@ function getFirstLast(date_search){
 
       $("#loader").fadeOut("slow", function() { });
 
-      
+
       $("#task-div").css('height', $('.cal-container').css('height'));
-  
+
     };
-    
-    
-      
+
+
+
     </script>
 
-{% endblock %}        
+{% endblock %}

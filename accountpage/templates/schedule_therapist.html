@@ -20,6 +20,7 @@
 
   .cal{
     margin: 10px;
+    min-width: 400px ;
     width: 450px;
     background-color: white;
     border-radius: 10px;
@@ -390,8 +391,8 @@
         data:for_request,
 
                 success: function(msg, status, xhr)
-        {        	
-        		callback(msg);       	
+        {
+        		callback(msg);
         },
         error: function(jqXHR, textStatus, errorThrown)
         {
@@ -421,7 +422,7 @@ var clicked_object = {'date': null};
     var ajax_responce = null;
     if(date<10) { date = '0' + date; }
     if((month+1)<10) { month = '0' + (month+1); }
-    else 
+    else
     {
     	month = month +1;
     }
@@ -431,7 +432,7 @@ var clicked_object = {'date': null};
       {
         ajax_responce = msg;
       });
-    
+
     return JSON.parse(ajax_responce);
   }
 
