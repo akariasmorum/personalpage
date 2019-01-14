@@ -92,6 +92,9 @@
     .grey-li{
       color:#686868;
     }
+    #task-div{
+      
+    }
     
     @media(max-width: 992px){
       #sidebar {
@@ -505,7 +508,8 @@ function getFirstLast(date_search){
         })// fadeIn
       }); //pacient.change()
 
-      $("#loader").fadeOut("slow", function() { });
+      
+      $("#task-div").css('height', $('.cal-container').css('height'));
   
     };
     
