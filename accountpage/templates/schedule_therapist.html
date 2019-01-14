@@ -389,16 +389,13 @@
 
         data:for_request,
 
-                success: function(msg)
-        {
-         callback(msg);
-
+                success: function(msg, status, xhr)
+        {        	
+        		callback(msg);       	
         },
         error: function(jqXHR, textStatus, errorThrown)
         {
-          console.log(JSON.stringify(jqXHR));
-          //error in msg
-          callback("error");
+          	alert(jqXHR.responseText);
         }
 
       }).responceText;
@@ -423,20 +420,25 @@ var clicked_object = {'date': null};
   function get_times(year, month, date){
     var ajax_responce = null;
     if(date<10) { date = '0' + date; }
-
-    Query('get-schedule-district-doctor',
-      {"snils": "032-524-797 39", "date": year+'-'+(month+1)+'-'+date },
+    if((month+1)<10) { month = '0' + (month+1); }
+    else 
+    {
+    	month = month +1;
+    }
+    Query('get-dictrict-doctor-schedule',
+      {"snils": $('#pacient').val(), "date": year+'-'+month+'-'+date },
       function(msg)
       {
         ajax_responce = msg;
       });
+    
     return JSON.parse(ajax_responce);
   }
 
 
   function assign_time(time, date)
   {
-		var time_list = $('#time-list');
+	var time_list = $('#time-list');
 
     var weekday = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
 		$(time_list).empty();
@@ -473,6 +475,15 @@ var clicked_object = {'date': null};
 
   } //assign_time
 
+  	function date_click(e){
+  		$('#time-list').empty();
+        	change_clicked('date', e.target, 'choosen-date');
+
+          var times = get_times(cal.date.getFullYear(), cal.date.getMonth(), $(e.target).text());
+          var date = new Date(cal.date.getFullYear(), cal.date.getMonth(), $(e.target).text());
+          assign_time(times, date);
+
+  	}
     	window.onload = function(){
 
     	  var current = new Date();
@@ -485,36 +496,18 @@ var clicked_object = {'date': null};
 	      $('.prev-month').click(function(){
 	        cal.getPreviousMonth();
 	        cal.drawCalendar([]);
+	        $('.date-text').on('click', function(e){date_click(e);});
 	      });
 
 	      $('.next-month').click(function(){
 	        cal.getNextMonth();
 	        cal.drawCalendar([]);
+	        $('.date-text').on('click', function(e){date_click(e);});
 	      });
 
+        $('.date-text').on('click', function(e){date_click(e);});
 
-	      /*assign_time([{'day': 12, 'dayWeek': 'Среда', 'month': 'Декабрь', 'from': '09.40', 'to': '10.00'},
-	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '09.40', 'to': '10.00'},
-	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь','from': '10.10', 'to': '10.20'},
-	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '10.20', 'to': '10.30'},
-	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '10.30', 'to': '10.40'},
-	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '10.40', 'to': '10.50'},
-	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '10.50', 'to': '11.00'},
-	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '11.00', 'to': '11.10'},
-	      	{'day': 12, 'dayWeek': 'Среда',  'month': 'Декабрь', 'from': '11.10', 'to': '11.20'},
-        ])*/
-
-
-        $('.date-text').on('click', function(e){
-          $('#time-list').empty();
-        	change_clicked('date', e.target, 'choosen-date');
-
-          var times = get_times(cal.date.getFullYear(), cal.date.getMonth(), $(e.target).text());
-          var date = new Date(cal.date.getFullYear(), cal.date.getMonth(), $(e.target).text());
-          assign_time(times, date);
-        });
-
-    	  $('#timepicker').mCustomScrollbar({theme: "dark"});
+        $('#timepicker').mCustomScrollbar({theme: "dark"});
     	}
     </script>
 {% endblock %}

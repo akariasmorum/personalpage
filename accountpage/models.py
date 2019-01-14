@@ -99,11 +99,11 @@ class Message(models.Model):
 	sender      = models.ForeignKey   (PatientUser, models.CASCADE)
 	date        = models.DateTimeField('Дата обращения' )#, auto_now_add=True)
 	id_doc_site = models.CharField    ('ID сайта'       , max_length=50)
-	recipient   = models.CharField    ('Кому обращение' , max_length=50, blank=True)
+	recipient   = models.CharField    ('Кому обращение' , max_length=50)
 	subject     = models.CharField    ('Тема сообщения' , max_length=50)
 	message     = models.CharField    ('Сообщение'      , max_length=100)
 	status_send = models.CharField    ('Статус отправки', max_length=10)	
-	
+	phone   	= models.CharField    ('Номер телефона' , max_length=16)
 
 	
 

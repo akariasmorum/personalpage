@@ -41,12 +41,12 @@ class LoginForm(forms.Form):
 
 class MessageForm(ModelForm):
 	#status_send = forms.CharField(    widget = forms.TextInput(attrs={'class': 'form-control','id':'ajax_status'}),label='Статус выполнения Ajax', max_length=10)
-	date      = forms.DateTimeField(widget = forms.TextInput(attrs={'class': 'form-control','id':'date_doc'   }),label='Дата')
-	id_doc_site = forms.CharField(    widget = forms.TextInput(attrs={'class': 'form-control','id':'id_doc_site'}),label='ID вставки', max_length=50)
-	
-	recipient   = forms.CharField(    widget = forms.TextInput(attrs={'class': 'form-control','id':'recipient'  }),label='Кому обращение', max_length=20, required = False)
-	subject     = forms.CharField(    widget = forms.TextInput(attrs={'class': 'form-control','id':'subject'    }),label='Тема сообщения', max_length=50)
-	message     = forms.CharField(    widget = forms.Textarea (attrs={'class': 'form-control','id':'message'    }),label='Сообщение', max_length=200)
+	date      = forms.DateTimeField(  widget = forms.TextInput(attrs={'class': 'form-control','id':'date_doc'   }), label='Дата')
+	id_doc_site = forms.CharField(    widget = forms.TextInput(attrs={'class': 'form-control','id':'id_doc_site'}), label='ID вставки',     max_length=50)
+	phone 		= forms.CharField(	  widget = forms.TextInput(attrs={'class': 'form-control','id':'phone'  }), label='Номер телефона', max_length=16)
+	recipient   = forms.CharField(    widget = forms.TextInput(attrs={'class': 'form-control','id':'recipient'  }), label='Кому обращение', max_length=20)
+	subject     = forms.CharField(    widget = forms.TextInput(attrs={'class': 'form-control','id':'subject'    }), label='Тема сообщения', max_length=50)
+	message     = forms.CharField(    widget = forms.Textarea (attrs={'class': 'form-control','id':'message'    }), label='Сообщение',      max_length=200)
 	
 	
 	
@@ -71,7 +71,7 @@ class MessageForm(ModelForm):
 	
 	class Meta:
 		model  = Message
-		fields = ['date', 'id_doc_site', 'recipient', 'subject', 'message']
+		fields = ['date', 'phone',  'id_doc_site', 'recipient', 'subject', 'message']
 
 
 class CallDoctorForm(forms.Form):
