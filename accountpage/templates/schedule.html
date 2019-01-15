@@ -313,6 +313,7 @@ class Calendar
                  +this.addZero(event['date'].getHours())+':'
                   +this.addZero(event['date'].getMinutes())+ "</li>";
           row+="<li class='grey-li'>"+event['text']+"</li>";
+          row+="<li class='grey-li'>"+event['pacient']+"</li>";
         row+="</ul>";
       row+="</div>";
 
@@ -347,12 +348,10 @@ class Calendar
 
   }
 
-
-
-
 function Query(my_method, for_request, name_service, callback)
   {
-
+    //alert(JSON.stringify(for_request));
+    //alert(for_request.amount);
 
     var token = '{{ csrf_token }}';
 
@@ -383,10 +382,17 @@ function Query(my_method, for_request, name_service, callback)
 
   function return_array(object){
 
+      //alert(object);
       var events = $.parseJSON(object);
       var ar = new Array()
       for (var event in events) {
-          ar.push({'date':new Date(events[event].datedoc), 'text':events[event].NRU_NAME});
+          //var FIO = events[event].fam + " " + events[event].name + " " + events[event].oth;
+          ar.push(
+            {'date':new Date(events[event].datedoc),
+             'text':events[event].NRU_NAME,
+             'pacient': events[event].fam + " " + events[event].name + " " + events[event].oth,
+            }
+          );
       };
 
       return ar;
@@ -412,8 +418,19 @@ function getFirstLast(date_search){
   function eventsFromService(date_for_request){
     var dataFromRequest = getFirstLast(date_for_request);
 
-    var e = document.getElementById("snils");
-    dataFromRequest.snils = $('#pacient').val();
+    //var e = document.getElementById("snils");
+    //var bufer = $('#pacient').val();
+    dataFromRequest.abc = 'key';
+    if ($('#pacient').val() == 0){
+      dataFromRequest.snils = $('#snils').text();
+      dataFromRequest.amount = 'many';
+    }
+    else {
+      dataFromRequest.snils = $('#pacient').val();
+      dataFromRequest.amount = 'one';
+    }
+
+    //alert(JSON.stringify(dataFromRequest));
 
      var ajax_info = "";
      Query("POST", dataFromRequest, "CalendarList", function (info){
@@ -434,6 +451,7 @@ function getFirstLast(date_search){
 
     window.onload = function(){
       //alert('ВНИМАНИЕ ПРИ ЗАПРОСАХ ИСПОЛЬЗУЮТСЯ ТЕСТОВЫЕ СНИЛСЫ !!!');
+        $('#pacient').append($("<option></option>", {value:0, text: "Расписание по всем пациентам"}));
 
         $('#task-div').mCustomScrollbar({theme: "dark"});
 
@@ -454,7 +472,7 @@ function getFirstLast(date_search){
 
 
       cal = new Calendar(current, $('#calendar'));
-      var events =  eventsFromService(cal.date);
+      var events =  eventsFromService(cal.date); //<---
 
       cal.drawCalendar(events);
       cal.drawEvents(events);

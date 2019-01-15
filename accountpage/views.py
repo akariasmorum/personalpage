@@ -260,12 +260,12 @@ def send_call_doctor(request):
 
 
 def get_dictrict_doctor_info(request):
-	pass		
+	pass
 
 
 #Информация об участковом терапевте
 def get_district_doctor_info(request, snils):
-	
+
 	return busExchangeMethod(
 		request,
 		'DistrictDoctor',
@@ -274,18 +274,18 @@ def get_district_doctor_info(request, snils):
 		},
 		['output','DistrictDoctor'])
 
-	
+
 	if result.content==b'[]':
 		return HttpResponse('У данного пользователя нет участкового врача', status=500)
 	else:
-		return result	
-	
+		return result
+
 #Раписание приёма участкового терапевта
 def get_dictrict_doctor_schedule(request):
-	
+
 	snils = request.POST.get('snils')
 	date = request.POST.get('date')
-	
+
 
 	sched =  busExchangeMethod(
 		request,
@@ -295,7 +295,7 @@ def get_dictrict_doctor_schedule(request):
 			"date" :       date
 		},
 		['output','ScheduleDistrictDoctor'])
-	
+
 	return sched
 
 
@@ -309,6 +309,7 @@ def get_schedule_month(request):
 	запрос расписания на указанный месяц для указанного пациента
 	'''
 
+	print (request.POST)
 	return busExchangeMethod(
 		request,
 		'CalendarList',
@@ -316,6 +317,7 @@ def get_schedule_month(request):
 			"snils": request.POST.get('snils'),
 			"date_begin": request.POST.get('date_begin'),
 			"date_end": request.POST.get('date_end'),
+			"amount": request.POST.get('amount'),
 		},
 		['output', 'CalendarList'])
 
@@ -427,7 +429,7 @@ def send_message(request):
 			message.save()
 			print(datetime.now().strftime('%Y-%m-%dT%H:%M:%S'))
 			resp =  busExchangeMethod(
-					request, 
+					request,
 					'MessagePacientNew',
 					{
 							"snils": request.POST.get('snils'),
@@ -445,7 +447,7 @@ def send_message(request):
 		else:
 			print(str(message_form.errors))
 			return HttpResponse(str(message_form.errors))
-			
+
 
 			'''
 			responce = None
