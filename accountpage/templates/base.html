@@ -120,25 +120,7 @@
       width:100%;
     }
 
-    @media (max-width: 768px)
-    {
-      #sidebar {
-          margin-left: -250px;
-      }
-      #sidebar.active {
-          margin-left: 0;
-      }
-      #content{
-        width:100%;
-      }
-
-      #content.active {
-          width: calc(100% - 250px);
-      }
-      #top-button{
-        display: inline-block;
-      }
-    }
+    
 
     .main-content{
       padding-top: 40px;
@@ -189,7 +171,27 @@
        }
 
   /* конец календаря */
+  @media(max-width: 992px){
+      #sidebar {
+          margin-left: -250px;
+      }
+      #sidebar.active {
+          margin-left: 0;
+      }
+      #content{
+        width:100%;
+      }
 
+      #content.active {
+          width: calc(100% - 250px);
+      }
+      #top-button{
+        display: inline-block;
+      }
+    }
+
+
+    
 
 
 
@@ -330,18 +332,20 @@
           <div class = 'main-content'>
 
       {% if pacients %}
-       <div class="form-group row">
-		            <div class="col-sm-2 col-form-label">
-                  <label for="pacient">Пациент:</label>
-                </div>
-		        <div class="col">
-              <select name="patient" class="form-control" id="pacient" onchange="update()">
-                {% for pacient in pacients %}
-                <option value="{{ pacient.SNILS }}">{{ pacient.FAM }} {{ pacient.NAME }} {{ pacient.OTH }},Дата рождения: {{ pacient.dater }}</option>
-                {% endfor %}
-              </select>
-           </div>
-		    </div>
+      <div class='container'>
+         <div class="form-group row">
+  		            <div class="col-sm-2 col-form-label">
+                    <label for="pacient">Пациент:</label>
+                  </div>
+  		        <div class="col">
+                <select name="patient" class="form-control" id="pacient" onchange="update()">
+                  {% for pacient in pacients %}
+                  <option value="{{ pacient.SNILS }}">{{ pacient.FAM }} {{ pacient.NAME }} {{ pacient.OTH }},Дата рождения: {{ pacient.dater }}</option>
+                  {% endfor %}
+                </select>
+             </div>
+  		    </div>
+      </div> <!--container-->    
         {% endif %}
 
           {% block context %}

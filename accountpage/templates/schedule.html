@@ -24,7 +24,7 @@
 
 
     .cal{
-      margin: 10px;
+      margin: 10px auto;
       min-width: 400px ;
       width: 450px;
       background-color: white;
@@ -33,6 +33,10 @@
         -moz-box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
         box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
       padding: 10px;
+    }
+
+    .cal-container{
+      height: 100%;
     }
     #task{
       padding: 10px 10px;
@@ -96,40 +100,18 @@
     #task-div{
 
     }
-
-    @media(max-width: 992px){
-      #sidebar {
-          margin-left: -250px;
-      }
-      #sidebar.active {
-          margin-left: 0;
-      }
-      #content{
-        width:100%;
-      }
-
-      #content.active {
-          width: calc(100% - 250px);
-      }
-      #top-button{
-        display: inline-block;
-      }
-    }
-
-
+    
     @media (max-width: 768px){
-      .tasks{
-        width: 100%;
-        min-width: 350px;
-      }
-      .cal-container{
+
+      .cal{
         width: 100%;
       }
+    
     }
   </style>
   {% load static %}
   <div id='loader'><img class='loading-gif align-self-center' src='{% static 'loading.gif' %}'></div>
-
+          <div class='container'>
             <div class="form-group row">
               <div class="cal cal-container">
                 <div id='calendar'>
@@ -173,7 +155,7 @@
                 </ul>
               </div>
             </div> <!--form-group row-->
-
+          </div><!--container-->
 
 
 
