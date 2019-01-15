@@ -6,28 +6,28 @@
 		}
 	</style>
 
-	
 
-	
-	
+
+
+
 
 	<form id = "message-form" method = "POST" class = 'message-form'>
 		<div class='form-group row'><h2 class='col'>Обращение</h2></div>
-		
+
 		<div id="email" class="hidden_fields">{{ my_email }}</div>
-		
+
 
 		{% csrf_token %}
-		{% for field in form.visible_fields %}	
+		{% for field in form.visible_fields %}
 		 <!-- убрать одну d in hiddden что скрыть поля  -->
-		    {% if field.name  in hidden %} 
+		    {% if field.name  in hidden %}
 		    	<div class="hidden_fields">
 		    	{{ field.label_tag }}{{ field }}
 		    	</div>
 		    {% else %}
 		    <div class="form-group row">
 		        {{ field.errors }}
-		        <div class="col-sm-2 col-form-label">{{ field.label_tag }}</div> 
+		        <div class="col-sm-2 col-form-label">{{ field.label_tag }}</div>
 		        <div class="col"> {{ field }} </div>
 		    </div>
 		    {% endif %}
@@ -38,11 +38,11 @@
 		{% endfor %}
 		<button type="submit" class="btn btn-primary" onclick ="form_submit()">Отправить</button>
 	</form>
-	<!--<input type="button" class="mbtn btn btn-primary" values="my_buttom" 
+	<!--<input type="button" class="mbtn btn btn-primary" values="my_buttom"
 			onclick="send_message()"	> -->
 
 	<script type="text/javascript">
-		
+
 
 
 		function generate_id(str) {
@@ -50,7 +50,7 @@
     				var r = Math.random() * 16 | 0;
    					 return (c == 'x' ? r : (r & 0x3 | 0x8 )).toString(16);
  					 });
-  			
+
 				}
 
 		function min_ten(value){
@@ -59,27 +59,32 @@
 
 		function return_date(){
 			 var now = new Date();
-			   		
+
 			 var str_time =   now.getFullYear()  + "-"
-			 		+  min_ten(now.getMonth  ()  + 1)  + "-" 
+			 		+  min_ten(now.getMonth  ()  + 1)  + "-"
 			 		+  min_ten(now.getDate   ()) + " "
 			 		+  min_ten(now.getHours  ()) + ":"
 			 		+  min_ten(now.getMinutes());
-   			 	
+
     		 return str_time;
 	    }
 
-				
+
 		function form_submit(){
-				
+
 				console.log("submitting form!");
 				if(check_form()){
 					data = collect_data();
-					send_messages(data);
+					send_messages(data, function (info){
+						alert(info);
+						$('#recipient').val('');
+						$('#subject').val('');
+						$('#message').val('');
+						$('#phone').val('');
+					});
 				}
-
 			}
-		
+
 
 		function check_form(){
 
@@ -91,7 +96,7 @@
 				return true;
 			}
 			else{
-				
+
 				return false;
 			}
 
@@ -102,19 +107,19 @@
 			var collection_object = {};
 
 			collection_object.snils = $('#pacient').val();
-			collection_object.recipient = document.getElementById('recipient').value;	
-			collection_object.phone = document.getElementById('phone').value;		
+			collection_object.recipient = document.getElementById('recipient').value;
+			collection_object.phone = document.getElementById('phone').value;
 			collection_object.subject = document.getElementById('subject').value;
 			collection_object.message = document.getElementById('message').value;
 			collection_object.date = return_date();
-			collection_object.id_doc_site	=   generate_id('xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx');						
+			collection_object.id_doc_site	=   generate_id('xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx');
 			console.log(collection_object);
 			return collection_object;
 
 
 		}
 
-		function send_messages(my_data){
+		function send_messages(my_data, callback){
 
 			var token = '{{ csrf_token }}';
 
@@ -128,25 +133,24 @@
 
 		        // handle a successful response
 		        success : function(msg) {
-		        	
-		        	alert(msg);   
+							callback(msg);
 		        },
 
 		        // handle a non-successful response
 		        error : function(xhr,errmsg,err) {
-		        	
+
 		            console.log(xhr.responseText);
-		            
+
 		        }
 		    });
 		}
 
 
-		
 
 
 
-				
-	</script>		
 
-{% endblock %}   
+
+	</script>
+
+{% endblock %}
