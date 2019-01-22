@@ -9,10 +9,13 @@ import tempfile
 import pytz
 import json
 import requests
+from django.conf import settings
+
 
 class Auth_esia:
 
 	def __init__(self):
+		self.url = settings.AUTH_ESIA_ADDRESS
 		self.scope = self.get_scope()
 		self.stamp = self.get_timestamp()
 		self.clientID = self.get_cliendID()
@@ -62,11 +65,7 @@ class Auth_esia:
 		certificates = Path(__file__).resolve().parent / 'certificates' / name
 
 		return certificates
-		'''
-		with open(certificates, 'r') as f:
-			print(name + ": " + f.read())
-			return sert
-		'''
+
 	def _load_private_key(self):
 		return self._load_sertificate('private.key')
 
@@ -74,37 +73,16 @@ class Auth_esia:
 		return self._load_sertificate('certificate.crt')
 
 	def _sign_PKCS7_message(self, text):
-		'''Подписать text в формате PKCS#7
+		'''Подписать text в формате PKCS#7'''
 
-
-		cert_buf = None
-		key_buf = None
-		try:
-			cert_buf = self._load_public_sertificate()
-
-			key_buf = self._load_private_key()
-
-		except Exception as ex:
-			print(print(ex))
-
-
-		pkey = crypto.load_privatekey(crypto.FILETYPE_PEM, key_buf)
-		signcert = crypto.load_certificate(crypto.FILETYPE_PEM, cert_buf)
-
-		bio_in = crypto._new_mem_buf(text.encode())
-		PKCS7_NOSIGS = 0x4  # defined in pkcs7.h
-		pkcs7 = crypto._lib.PKCS7_sign(signcert._x509, pkey._pkey, crypto._ffi.NULL, bio_in, PKCS7_NOSIGS)  # noqa
-		bio_out = crypto._new_mem_buf()
-		crypto._lib.i2d_PKCS7_bio(bio_out, pkcs7)
-		sigbytes = crypto._bio_to_string(bio_out)
-
-		return sigbytes'''
+		#Создаем входной Temp File, куда записываем текст
 		source_path = ""
 		with tempfile.NamedTemporaryFile(mode='w', delete=False) as source_file:
 
 			source_file.write(text)
 			source_path = source_file.name
 
+		#Создаем Выходной temp file, куда записываем результат подписи
 		destination_path = ""
 		with tempfile.NamedTemporaryFile(mode='wb', delete=False) as destination_file:
 
@@ -114,7 +92,7 @@ class Auth_esia:
 		# You can verify this signature using:
 		# openssl smime -verify -inform DER -in out.msg -content msg.txt -noverify \
 		# -certfile ../key/septem_sp_saprun_com.crt
-
+		#Выполнить команду
 		os.system(cmd.format(
 			f_in=source_path,
 			cert=self._load_public_sertificate(),
@@ -122,7 +100,7 @@ class Auth_esia:
 			f_out= destination_path,
 		))
 
-
+		#Считываем выходной temp файл
 		raw_client_secret = open(destination_path, 'rb').read()
 
 		return raw_client_secret
@@ -164,19 +142,19 @@ class Auth_esia:
 		return self.params
 
 	def post_access_token_params(self):
-		r = requests.post('https://esia-portal1.test.gosuslugi.ru/aas/oauth2/te', data = self.params)
+		r = requests.post('{url}aas/oauth2/te'.format(url=self.url), data = self.params)
 		return r
 
 
 	def generate_uri(self):
 		#url = "https://esia-portal1.test.gosuslugi.ru?"
-		url = "https://esia-portal1.test.gosuslugi.ru/aas/oauth2/ac?"
+		url = "{url}aas/oauth2/ac?".format(url = self.url)
 
 		url += urlencode(self.generate_params())
 		return url
 
 	def _request_user_data(self, resource_id, access_token, oid):
-		url = 'https://esia-portal1.test.gosuslugi.ru/{resource_id}/{oid}'.format(resource_id = resource_id, oid = oid)
+		url = '{url}{resource_id}/{oid}'.format(url = self.url, resource_id = resource_id, oid = oid)
 		headers = {'Authorization': 'Bearer ' + access_token}
 		req = requests.get(url, headers=headers)
 		return req.text
