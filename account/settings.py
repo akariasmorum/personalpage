@@ -150,13 +150,13 @@ LOGGING = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Yekaterinburg'
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 AUTH_USER_MODEL = 'accountpage.PatientUser'
 LOGIN_REDIRECT_URL = '/schedule'

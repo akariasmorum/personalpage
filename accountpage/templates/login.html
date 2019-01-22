@@ -78,12 +78,13 @@
 
 								<p style='text-align: center'>Или</p>
 
-							<div class="form-group">
-								<a href="https://www.gosuslugi.ru/"><button type="submit" class="btn btn-primary-outline gos">Войти через <span class='text-primary'>ГОС</span><span class='text-danger'>УСЛУГИ</span></button></a>
-							</div>
-							<p> Или вы можете <a href="{% url 'signup' %}">Зарегистрироваться</a></p>
+							
 
 						</form>
+						<div class="form-group">
+								<a href="{% url 'redirect-esia' %}"><button type="submit" class="btn btn-primary-outline gos">Войти через <span class='text-primary'>ГОС</span><span class='text-danger'>УСЛУГИ</span></button></a>
+							</div>
+							<p> Или вы можете <a href="{% url 'signup' %}">Зарегистрироваться</a></p>
 					</div>
 
 

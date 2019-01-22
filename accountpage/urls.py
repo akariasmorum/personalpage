@@ -33,5 +33,7 @@ urlpatterns = [
 	url(r'^get-dictrict-doctor-schedule', views.get_dictrict_doctor_schedule, name='dictrict_doctor_schedule'),
 	url(r'^get-district-doctor-info', views.get_district_doctor_info, name='district_doctor_info'),
 	
+	url(r'^redirect-esia', views.redirect_esia, name = 'redirect-esia'),
+	url(r'^esia_callback', views.esia_callback, name = 'callback'),
 
 ]

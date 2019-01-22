@@ -10,13 +10,74 @@ from datetime import datetime
 import http.client as hc
 import json
 import logging
-
+from .auth_esia import Auth_esia
 from .forms import SignUpForm, CallDocForm, Patient, AddChildForm, MessageForm, LoginForm, CallDoctorForm
+from .models import PatientUser
+import base64
+
+def redirect_esia(request):
+	auth = Auth_esia()
+	url = auth.generate_uri()
+
+	return redirect(url)
+
+def esia_callback(request):
+	if 'code' in request.GET:
+		auth = Auth_esia()
+
+		#генерация параметров для запроса маркера доступа
+		auth.generate_access_token_params(request.GET.get('code'))
+
+		#запрос маркера доступа
+		r = auth.post_access_token_params()
+
+
+		mas = json.loads(r.text)
+		#print('mas: {0}'.format(mas['access_token']))
+		access_token = mas['access_token']
+
+		#access_token - строка, состоящая из 3ех параметров, разделенных точкой
+		#header.data.signature, закодированных в формате base64
+		spl = mas['access_token'].split('.')
+
+		encoded_data = spl[1]
+
+		#base64 кодируется 4мя символами и бывает, что в конце блока не достает
+		#знаков =, поэтому дополняем строку знаками =, пока длина строки не
+		#будет равна 4
+		encoded_data += '=' * (-len(encoded_data) % 4)
+
+
+		decoded = base64.urlsafe_b64decode(encoded_data)
+		decoded_json = json.loads(decoded)
+		oid = str(decoded_json['urn:esia:sbj_id'])
+
+		#запрос снилса пациента по указанному OID
+		snils = auth.request_user_snils(access_token, oid)
+		print ('snils {0}'.format(snils))
+
+		#Получаем пациента по возвращенному с ЕСИА СНИЛСу
+		patient = PatientUser.objects.get(snils = snils)
+
+
+		if patient is None:
+			return HttpResponce('<h2>Пользователь с таким СНИЛС не зарегистрирован в системе</h2>')
+		else:
+			login(request, patient)
+			return redirect('/main')
+
+	elif 'access_token' in request.GET:
+
+		return HttpResponse('<h2>Hello TOKEN: {0}</h2>'.format(request.GET.get('access_token')))
+
+
 
 logger = logging.getLogger('django')
 #
 #ЛОГИН
 #
+
+
 
 def loginView(request):
 	if request.method == 'POST':
@@ -518,13 +579,15 @@ def user_logout(request):
 #запросить опекаемых данным польователем
 #output: list [] опекаемых
 def request_user_children(snils):
-	children = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message('PacientList',
-		 {'snils':snils})
-	pacient_list_json = json.loads(children['output']['PacientList'])
+	try:
+		children = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message(
+			'PacientList',
+			{'snils':snils})
+		pacient_list_json = json.loads(children['output']['PacientList'])
 
-
-
-	return pacient_list_json
+		return pacient_list_json
+	except Exception as Ex:
+		return []
 
 #запросить адреса данного пациента
 #output: list[ { адрес }, { адрес } ]
