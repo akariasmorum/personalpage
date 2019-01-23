@@ -43,11 +43,11 @@ class MessageForm(ModelForm):
 	#status_send = forms.CharField(    widget = forms.TextInput(attrs={'class': 'form-control','id':'ajax_status'}),label='Статус выполнения Ajax', max_length=10)
 	date      = forms.DateTimeField(  widget = forms.TextInput(attrs={'class': 'form-control','id':'date_doc'   }), label='Дата')
 	id_doc_site = forms.CharField(    widget = forms.TextInput(attrs={'class': 'form-control','id':'id_doc_site'}), label='ID вставки',     max_length=50)
-	phone 		= forms.CharField(	  widget = forms.TextInput(attrs={'class': 'form-control','id':'phone'  }), label='Номер телефона', max_length=16)
+	
 	recipient   = forms.CharField(    widget = forms.TextInput(attrs={'class': 'form-control','id':'recipient'  }), label='Кому обращение', max_length=20)
 	subject     = forms.CharField(    widget = forms.TextInput(attrs={'class': 'form-control','id':'subject'    }), label='Тема сообщения', max_length=50)
-	message     = forms.CharField(    widget = forms.Textarea (attrs={'class': 'form-control','id':'message'    }), label='Сообщение',      max_length=200)
-	
+	message     = forms.CharField(    widget = forms.Textarea (attrs={'class': 'form-control','id':'message'    }), label='Сообщение',      max_length=500, required = True)
+	phone 		= forms.CharField(	  widget = forms.TextInput(attrs={'class': 'form-control','id':'phone'	}), label='Номер телефона', max_length=16, required = True)
 	
 	
 
@@ -56,11 +56,12 @@ class MessageForm(ModelForm):
 		
 		msg.sender      = PatientUser.objects.get(snils = Snils) #сделать запрос id по user(snils)
 		
-		msg.date        = Post.get('date'    )
+		msg.date        = Post.get('date'    	)
 		msg.id_doc_site = Post.get('id_doc_site')
 		msg.recipient   = Post.get('recipient'  )
 		msg.subject     = Post.get('subject'    )
 		msg.message     = Post.get('message'    )
+		msg.phone 		= Post.get('phone'		)
 		#msg.status_send = Post.get('status_send')
 
 		msg.save()
@@ -71,7 +72,7 @@ class MessageForm(ModelForm):
 	
 	class Meta:
 		model  = Message
-		fields = ['date', 'phone',  'id_doc_site', 'recipient', 'subject', 'message']
+		fields = ['date',  'id_doc_site', 'recipient', 'subject', 'message', 'phone']
 
 
 class CallDoctorForm(forms.Form):
@@ -84,6 +85,7 @@ class CallDoctorForm(forms.Form):
 	complaints   = forms.CharField    (widget = forms.Textarea (attrs={'class': 'form-control'}),label='Жалобы', max_length=1000, required = True)
 
 	add_inform   = forms.CharField    (widget = forms.Textarea (attrs={'class': 'form-control addition','id':'add_inform'}),label='Дополнительная информация', max_length=1000, required = False)
+	telephone 	 = forms.CharField 	  (widget = forms.TextInput(attrs={'class': 'form-control', 'id': 'telephone'}), label = 'Номер телефона', max_length = 16, required = True)
 	#kladr 		 = forms.CharField	  (widget = forms.TextInput(attrs={'class': 'form-control d-none', 'id': 'kladr'}))
 	#home 		 = forms.CharField	  (widget = forms.TextInput(attrs={'class': 'form-control d-none', 'id': 'kladr'}))
 	#kv  		 = forms.CharField	  (widget = forms.TextInput(attrs={'class': 'form-control d-none', 'id': 'kladr'}))

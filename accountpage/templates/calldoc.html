@@ -10,130 +10,6 @@
 	}
 </style>
 
-<script type="text/javascript">
-		
-
-		function generate_id(str) {
-  			return str.replace(/[xy]/g, function(c) {
-    				var r = Math.random() * 16 | 0;
-   					 return (c == 'x' ? r : (r & 0x3 | 0x8 )).toString(16);
- 					 });
-  		}
-
-  		function check_fields(){
-  			var formElement = document.querySelector('#id_complaints');
-			return formElement.reportValidity();
-  		}
-
-		function collect_data(){
-			var data_dict = {};
-
-			data_dict.snils = pacients[currentUser]['SNILS'];
-			data_dict.id_doc_site = generate_id('xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx');
-
-			data_dict.temperature = document.getElementById('id_temperature').value;
-			data_dict.complaint  = document.getElementById('id_complaints').value;
-			data_dict.kladr = pacients[currentUser]['adresses'][currentAdress]['KLADR'];
-			data_dict.house = pacients[currentUser]['adresses'][currentAdress]['dom'];
-			data_dict.room = pacients[currentUser]['adresses'][currentAdress]['kvstr'];
-			data_dict.phone = '+7(919)854-35-59';
-			data_dict.addit_inform = document.getElementById('add_inform').value;
-
-			return data_dict;
-		}
-
-
-		function send_data(){
-			if(check_fields())
-			{
-				var data = collect_data();
-				console.log(data);
-				send_messages('send-calldoc', data);				
-			}
-			else{
-
-			}
-
-		}
-
-		function send_messages(url, my_data){
-
-			var token = '{{ csrf_token }}';
-
-
-			console.log("sending via send_message!") // sanity check
-		    $.ajax({
-		        url : url, // the endpoint
-		        type : "POST", // http method
-		        headers: { "X-CSRFToken": token },
-		        data:my_data, // data sent with the post request
-
-		        // handle a successful response
-		        success : function(msg) {
-		        	
-		        	alert(msg);
-		        	$('#id_complaints').val('');
-					$('#add_inform').val('');   
-		        },
-
-		        // handle a non-successful response
-		        error : function(xhr,errmsg,err) {
-		        	console.log(JSON.stringify(xhr));
-		            alert("Ошибка");
-		            
-		        }
-		    });
-		}
-
-		function assign_patients(pacients){
-			/*for (var i=0; i<pacients.length; i++)
-			{
-				var pacient = pacients[i]['FAM']+" " + pacients[i]['NAME']+" " + pacients[i]['OTH']+", Дата Рождения: " + pacients[i]['dater'];
-				$('#pacient').append($("<option></option>").text(pacient));
-			}*/
-		}
-
-		function assign_adresses(index){
-			for(var i = 0; i < pacients[index]['adresses'].length; i++){
-				var adress = pacients[index]['adresses'][i]['adress'];
-				$('#select_address').append($("<option></option>").text(adress));
-			}
-		}
-
-		function remove_adresses(){
-			$('#select_address')
-			    .find('option')
-			    .remove();
-		}
-
-		function get_select_index(select){
-			return ($(select).prop('selectedIndex'));
-		}
-
-		function adressFacade(){
-			currentUser = get_select_index('#pacient');
-			   remove_adresses();
-			   assign_adresses(currentUser);
-		}
-
-		var pacients = {{ pacients|safe }};
-		var currentUser=0;
-		var currentAdress=0;
-		window.onload = function(){
-				
-			assign_patients(pacients);
-			adressFacade();	
-			$( "#pacient" ).change(function() {
-			   adressFacade();
-			});
-			$( "#select_adress" ).change(function() {
-			   currentAdress = get_select_index('#select_adress');
-			});
-		}
-		
-				
-	</script>
-
 
 <div class='main-area'>
 
@@ -182,4 +58,134 @@
            
 					
         </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>             
+
+		<script type="text/javascript">
+		
+
+		function generate_id(str) {
+  			return str.replace(/[xy]/g, function(c) {
+    				var r = Math.random() * 16 | 0;
+   					 return (c == 'x' ? r : (r & 0x3 | 0x8 )).toString(16);
+ 					 });
+  		}
+
+  		function check_fields(){
+  			var formElement = document.querySelector('#id_complaints');
+			return formElement.reportValidity();
+  		}
+
+		function collect_data(){
+			var data_dict = {};
+
+			data_dict.snils = pacients[currentUser]['SNILS'];
+			data_dict.id_doc_site = generate_id('xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx');
+
+			data_dict.temperature = document.getElementById('id_temperature').value;
+			data_dict.complaint  = document.getElementById('id_complaints').value;
+			data_dict.kladr = pacients[currentUser]['adresses'][currentAdress]['KLADR'];
+			data_dict.house = pacients[currentUser]['adresses'][currentAdress]['dom'];
+			data_dict.room = pacients[currentUser]['adresses'][currentAdress]['kvstr'];
+			data_dict.telephone = $('#telephone').val();
+			data_dict.addit_inform = document.getElementById('add_inform').value;
+
+			return data_dict;
+		}
+
+
+		function send_data(){
+			if(check_fields())
+			{
+				var data = collect_data();
+				console.log(data);
+				send_messages('send-calldoc', data);				
+			}
+			else{
+
+			}
+
+		}
+
+		function send_messages(url, my_data){
+
+			var token = '{{ csrf_token }}';
+
+
+			console.log("sending via send_message!") // sanity check
+		    $.ajax({
+		        url : url, // the endpoint
+		        type : "POST", // http method
+		        headers: { "X-CSRFToken": token },
+		        data:my_data, // data sent with the post request
+
+		        // handle a successful response
+		        success : function(msg) {
+		        	
+		        	alert(msg);
+		        	$('#id_complaints').val('');
+					$('#add_inform').val('');
+					$('#telephone').val('');   
+		        },
+
+		        // handle a non-successful response
+		        error : function(xhr,errmsg,err) {
+		        	console.log(JSON.stringify(xhr));
+		            alert("Ошибка");
+		            
+		        }
+		    });
+		}
+
+		function assign_patients(pacients){
+			/*for (var i=0; i<pacients.length; i++)
+			{
+				var pacient = pacients[i]['FAM']+" " + pacients[i]['NAME']+" " + pacients[i]['OTH']+", Дата Рождения: " + pacients[i]['dater'];
+				$('#pacient').append($("<option></option>").text(pacient));
+			}*/
+		}
+
+		function assign_adresses(index){
+			for(var i = 0; i < pacients[index]['adresses'].length; i++){
+				var adress = pacients[index]['adresses'][i]['adress'];
+				$('#select_address').append($("<option></option>").text(adress));
+			}
+		}
+
+		function remove_adresses(){
+			$('#select_address')
+			    .find('option')
+			    .remove();
+		}
+
+		function get_select_index(select){
+			return ($(select).prop('selectedIndex'));
+		}
+
+		function adressFacade(){
+			currentUser = get_select_index('#pacient');
+			   remove_adresses();
+			   assign_adresses(currentUser);
+		}
+
+		var pacients = {{ pacients|safe }};
+		var currentUser=0;
+		var currentAdress=0;
+		window.onload = function(){
+			$("#telephone").mask("+0(000)000-00-00");							
+			assign_patients(pacients);
+			adressFacade();	
+			$( "#pacient" ).change(function() {
+			   adressFacade();
+			});
+			$( "#select_adress" ).change(function() {
+			   currentAdress = get_select_index('#select_adress');
+			});
+		}
+		
+		
+				
+	</script>
+
+
 {% endblock %}

@@ -40,7 +40,7 @@
 	</form>
 	<!--<input type="button" class="mbtn btn btn-primary" values="my_buttom"
 			onclick="send_message()"	> -->
-
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>			
 	<script type="text/javascript">
 
 
@@ -145,8 +145,55 @@
 		    });
 		}
 
+		function check_element_length_greater_than(element, length){
+
+			console.log($(element));
+			console.log($(element).val())
+			console.log($(element).val().length);
+			
+
+		}	
 
 
+		//var elements_to_check = [$('#recipient'), $('#subject'), $('#message'), $('#phone') ]
+		var elements_to_check = {
+			'#recipient': 4 ,
+			'#subject': 4,
+			'#message': 10,	
+			'#phone': 16,			
+		}
+		window.onload = function(){
+			$("#phone").mask("+0(000)000-00-00", {placeholder: "+7(___)___-__-__"});
+
+			for(var key in elements_to_check)
+			{
+
+				$(key).bind('keyup', function() {
+					console.log( $(this) );
+					console.log( elements_to_check['#'+$(this).attr('id')] );
+				  if ($(this).val().length >=elements_to_check['#'+$(this).attr('id')])
+					{
+						$(this).removeClass('is-invalid');
+						$(this).addClass('is-valid');
+					}
+					else
+					{
+						$(this).removeClass('is-valid');
+						$(this).addClass('is-invalid');
+					}
+				});
+
+
+				/*var element = document.getElementById(key);
+				element.addEventListener('change', function(el){
+					console.log(el.target);
+					
+				})*/
+
+
+			}
+
+		}
 
 
 

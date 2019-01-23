@@ -320,7 +320,7 @@ def send_call_doctor(request):
 							"kladr": 	   request.POST.get('kladr'),
 							"house":       request.POST.get('house'),
 							"room":        request.POST.get('room'),
-							"phone":       request.POST.get('phone'),
+							"phone":       request.POST.get('telephone'),
 							"email":       request.user.email,
 							"addit_inform":request.POST.get('addit_inform'),
 		},

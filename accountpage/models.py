@@ -77,7 +77,7 @@ class CallDoc(models.Model):
 	trustee = models.ForeignKey(PatientUser, models.CASCADE)
 	temperature = models.CharField('Температура', max_length=4)
 	complaints = models.CharField('Жалобы', max_length=1000)
-
+	telephone = models.CharField('Номер телефона', max_length = 16)
 
 class CallDoctor(models.Model):
 	trustee     = models.ForeignKey   (PatientUser, models.CASCADE)
