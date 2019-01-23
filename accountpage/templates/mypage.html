@@ -1,37 +1,106 @@
 {% extends "base.html" %}
 {% block context %}
-	<h3>Мои дети:</h3>
-
-    {% if children %}
-    <ul>
-
-      {% for child in children %}
-      
-        	<p>Имя: {{ child.surname }} {{child.name}} СНИЛС: {{child.snils}} Дата Рождения: {{child.date_born}} </p>
-      
-      {% endfor %}
-
-    </ul>
-    {% else %}
-      <p>У Вас пока не указаны опекаемые</p>
 
 
-    {% endif %}   
+				<div class='container'>
+							<div id='data'>
+							</div>
+				</div>
 
-    <h3>Добавить Опекаемого</h3>
-    	<form method = "POST" class = 'add-child'>
-					{% csrf_token %}
-					{% for field in form.visible_fields %}
-					    <div class="form-group row">
-					        {{ field.errors }}
-					        <div class="col-sm-2 col-form-label">{{ field.label_tag }}</div> 
-					        <div class="col"> {{ field }} </div>
-					    </div>
-					{% endfor %}
 
-					{% for hidden in form.hidden_fields %}
-					{{ hidden }}
-					{% endfor %}
-					<input type="submit" class="mbtn btn btn-primary" values="submit">
-				</form>
+<script type="text/javascript">
+
+				window.onload = function(){
+					load_data();
+				};
+
+				function Query_NS(my_method, for_request, name_service, url_serv, callback){
+				    var token = '{{ csrf_token }}';
+
+				    var responce = $.ajax(
+							{
+				        async:false,
+				        method:my_method,
+				        url:url_serv,
+
+				        headers: { "X-CSRFToken": token },
+
+				        data:for_request,
+				        success: function(msg)
+				        {callback(msg);},
+				        error: function(jqXHR, textStatus, errorThrown)
+				        {
+									console.log(JSON.stringify(jqXHR));
+				          //error in msg
+				          callback("error");
+				        }
+
+				      }).responceText;
+				};
+
+				function request_data(service, url_serv)
+				{
+					//Получение снилса
+					 var e = document.getElementById("pacient");
+					 var dataFromRequest = {};
+					 dataFromRequest.snils = e.options[e.selectedIndex].value;
+
+					 var ajax_info = "";
+					 Query_NS("POST", dataFromRequest, service, url_serv, function (info){
+								ajax_info = info;
+					 });
+
+					 if(ajax_info == "error")
+					 {
+							alert("Сервис временно недоступен.Приносим извенения за предоставленные неудобства.");
+							return [];
+					 }
+					 else
+					 {
+							return $.parseJSON(ajax_info);
+					 }
+				};
+
+				function load_data(){
+					var therapist_info = request_data('DistrictDoctor','get-district-doctor-info')
+					if (therapist_info.length == 0)
+					{
+     					show_data("У данного пациента нет участкового врача");
+					}
+					else {
+							show_data("Врач: " + therapist_info[0].Vrach + "</br>" +
+							          " Организация: " + therapist_info[0].name_org + "</br>" +
+												" Участок: #" + therapist_info[0].UCH);
+					}
+
+					//alert(JSON.stringify(therapist_info));
+					//var docs = request_data('EHMK.ListDocuments','get-docs-list');
+					//var drug_records = request_data('EHMK.PrescriptionDrugs','get-drugs-list');
+
+					//add_docs(docs);
+					//add_drug(drug_records);
+				};
+
+				function show_data(str) {
+					$( "#data" ).append( "<p>" + str + "</p>" );
+				}
+
+
+				function clear_ul(){
+					var myNode = document.getElementById("data");
+				    while (myNode.firstChild) {
+				    myNode.removeChild(myNode.firstChild);
+					}
+
+				};
+
+				function update(){
+
+					setTimeout(function todo(){
+						clear_ul();
+						load_data();
+					});
+				};
+				</script>
+
 {% endblock %}

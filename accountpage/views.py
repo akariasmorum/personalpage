@@ -145,7 +145,14 @@ class ChildrenView(generic.ListView):
 #моя страница #####################
 @login_required(login_url='/login')
 def mypage(request):
+	return render(request, 'mypage.html',
+		context= {'title': 'Моя информация', 'nbar': 'mypage',
+				   'name': (request.user.surname + ' ' + request.user.name),
+			   #'children': children, 'form': form,
+			    'pacients': request.session['pacients'],
+			  })
 
+	'''
 	children = Patient.objects.filter(trustee = request.user)
 	if request.method =='POST':
 		form = AddChildForm(request.POST)
@@ -158,7 +165,7 @@ def mypage(request):
 				   'name': (request.user.surname + ' ' + request.user.name),
 			   'children': children, 'form': form,
 			   'pacients': request.session['pacients']})
-
+ '''
 
 ############################
 
@@ -325,21 +332,18 @@ def get_dictrict_doctor_info(request):
 
 
 #Информация об участковом терапевте
-def get_district_doctor_info(request, snils):
+def get_district_doctor_info(request):
 
 	return busExchangeMethod(
 		request,
 		'DistrictDoctor',
 		{
-			"snils":       snils,
+			"snils":       request.POST.get('snils'),
 		},
 		['output','DistrictDoctor'])
 
 
-	if result.content==b'[]':
-		return HttpResponse('У данного пользователя нет участкового врача', status=500)
-	else:
-		return result
+
 
 #Раписание приёма участкового терапевта
 def get_dictrict_doctor_schedule(request):
