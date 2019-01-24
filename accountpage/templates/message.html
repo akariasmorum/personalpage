@@ -122,10 +122,11 @@
 	                success: function(msg)
 	        {        
 	         	alert(msg);
-	         	$('#recipient').val('');
-				$('#subject').val('');
-				$('#message').val('');
-				$('#phone').val('');
+	         	for(var element in elements_to_check)
+	         	{
+	         		$('#'+element).val('');
+	         		$('#'+element).removeClass('is-valid');
+	         	}
 
 	        },
 	        error: function(jqXHR, textStatus, errorThrown)
