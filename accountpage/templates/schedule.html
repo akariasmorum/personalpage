@@ -108,6 +108,26 @@
       }
     
     }
+    @media(max-width: 576px)
+    {
+      .main-content>.container{
+        padding-left: 0px;
+        padding-right: 0px;
+      }
+      #calendar{
+        margin:15px 0px;
+      }
+      .cal{
+        padding: 0px;
+        min-width: auto;
+      }
+      .cal .row{
+        margin: 10px 0px;
+      }
+      .cal .col{
+        padding: 0px;
+      }
+    }
   </style>
   {% load static %}
   <div id='loader'><img class='loading-gif align-self-center' src='{% static 'loading.gif' %}'></div>
