@@ -6,16 +6,10 @@
 		}
 	</style>
 
-
-
-
-
-
 	<form id = "message-form" method = "POST" class = 'message-form'>
 		<div class='form-group row'><h2 class='col'>Обращение</h2></div>
 
 		<div id="email" class="hidden_fields">{{ my_email }}</div>
-
 
 		{% csrf_token %}
 		{% for field in form.visible_fields %}
@@ -34,7 +28,7 @@
 		{% endfor %}
 
 		{% for hidden in form.hidden_fields %}
-		{{ hidden }}
+			{{ hidden }}
 		{% endfor %}
 		<button type="submit" class="btn btn-primary" onclick ="form_submit()">Отправить</button>
 	</form>
@@ -75,32 +69,19 @@
 				console.log("submitting form!");
 				if(check_form()){
 					data = collect_data();
-					send_messages(data, function (info){
-						alert(info);
-						$('#recipient').val('');
-						$('#subject').val('');
-						$('#message').val('');
-						$('#phone').val('');
-					});
+					Query("send-message", data);
 				}
 			}
 
 
 		function check_form(){
-
-			if( document.getElementById('recipient').reportValidity() &&
-				document.getElementById('subject').reportValidity() &&
-				document.getElementById('message').reportValidity() &&
-				document.getElementById('phone').reportValidity())
-			{
-				return true;
-			}
-			else{
-
-				return false;
+			for(var element in elements_to_check){
+				if(document.getElementById(element).reportValidity() == false){
+					return false;
+				}
 			}
 
-
+			return true;
 		}
 
 		function collect_data(){
@@ -119,77 +100,84 @@
 
 		}
 
-		function send_messages(my_data, callback){
 
-			var token = '{{ csrf_token }}';
+		function Query(url, for_request)
+	  	{
+	      // var for_request = {snils:"184-434-687 96",date_begin:"2017-08-10",
+	      //    date_end:"2017-10-10"     };
+	      
+	    
 
+	    var token = '{{ csrf_token }}';
+	    
+	    var responce = $.ajax({
+	        async:false,
+	        method:'POST',
+	        url: url,        
+	        
+	        headers: { "X-CSRFToken": token },
+	              
+	        data:for_request,       
+	      
+	                success: function(msg)
+	        {        
+	         	alert(msg);
+	         	$('#recipient').val('');
+				$('#subject').val('');
+				$('#message').val('');
+				$('#phone').val('');
 
-			console.log("sending via send_message!") // sanity check
-		    $.ajax({
-		        url : "send-message", // the endpoint
-		        type : "POST", // http method
-		        headers: { "X-CSRFToken": token },
-		        data:my_data, // data sent with the post request
+	        },
+	        error: function(jqXHR, textStatus, errorThrown)
+	        {
+	          console.log(JSON.stringify(jqXHR));
+	          //error in msg
+	          callback("error");          
+	        }
+	      
+	      }).responceText;    
+	  }
 
-		        // handle a successful response
-		        success : function(msg) {
-							callback(msg);
-		        },
-
-		        // handle a non-successful response
-		        error : function(xhr,errmsg,err) {
-
-		            console.log(xhr.responseText);
-
-		        }
-		    });
-		}
-
-		function check_element_length_greater_than(element, length){
-
-			console.log($(element));
-			console.log($(element).val())
-			console.log($(element).val().length);
-			
-
+	function check_element_length_greater_than(element){
+			console.log( $(element) );
+					console.log( elements_to_check[$(element).attr('id')] );
+				  if ($(element).val().length >=elements_to_check[$(element).attr('id')])
+					{
+						$(element).removeClass('is-invalid');
+						$(element).addClass('is-valid');
+					}
+					else
+					{
+						$(element).removeClass('is-valid');
+						$(element).addClass('is-invalid');
+					}			
 		}	
+
+
 
 
 		//var elements_to_check = [$('#recipient'), $('#subject'), $('#message'), $('#phone') ]
 		var elements_to_check = {
-			'#recipient': 4 ,
-			'#subject': 4,
-			'#message': 10,	
-			'#phone': 16,			
+			'recipient': 4 ,
+			'subject': 4,
+			'message': 10,	
+			'phone': 16,			
 		}
+
+		function check_validity(){
+			
+			
+		}
+
 		window.onload = function(){
 			$("#phone").mask("+0(000)000-00-00", {placeholder: "+7(___)___-__-__"});
 
 			for(var key in elements_to_check)
 			{
 
-				$(key).bind('keyup', function() {
-					console.log( $(this) );
-					console.log( elements_to_check['#'+$(this).attr('id')] );
-				  if ($(this).val().length >=elements_to_check['#'+$(this).attr('id')])
-					{
-						$(this).removeClass('is-invalid');
-						$(this).addClass('is-valid');
-					}
-					else
-					{
-						$(this).removeClass('is-valid');
-						$(this).addClass('is-invalid');
-					}
+				$('#'+key).bind('keyup', function() {
+					check_element_length_greater_than(this);					
 				});
-
-
-				/*var element = document.getElementById(key);
-				element.addEventListener('change', function(el){
-					console.log(el.target);
-					
-				})*/
-
 
 			}
 

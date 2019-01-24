@@ -49,6 +49,9 @@
     ul{
       padding: 0px;
     }
+    h3{
+      text-align:center;
+    }
 
     .container-fluid{
       height: 100%;
@@ -103,6 +106,21 @@
     .red{
       color: #f45f42;
     }
+    @media(max-width: 576px){
+      .mobile{
+        width: 100%;
+        margin: 0px;
+      }
+      .form{
+        width: 90%;
+      }
+      body{
+        height: auto;
+      }
+      label{
+        margin-bottom: 0px;
+      }
+    }
     
   </style>
   </head>
@@ -110,7 +128,7 @@
     
       <div class='mobile h-100'>
         
-          <div class="row h-100 justify-content-center align-items-center">
+          <div class="row justify-content-center align-items-center">
 
               {% block form %}
               
