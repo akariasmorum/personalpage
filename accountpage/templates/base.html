@@ -3,7 +3,7 @@
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
-    
+
     <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
 
@@ -23,7 +23,7 @@
     <!-- jQuery Custom Scroller CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
 
-    
+
     <title>{{ title }}</title>
     <style type="text/css">
     a{
@@ -363,7 +363,7 @@
   		        <div class="col">
                 <select name="patient" class="form-control" id="pacient" onchange="update()">
                   {% for pacient in pacients %}
-                  <option value="{{ pacient.SNILS }}">{{ pacient.FAM }} {{ pacient.NAME }} {{ pacient.OTH }},Дата рождения: {{ pacient.dater }}</option>
+                  <option value="{{ pacient.SNILS }}">{{ pacient.FAM }} {{ pacient.NAME }} {{ pacient.OTH }} ({{ pacient.dater }})</option>
                   {% endfor %}
                 </select>
              </div>
@@ -383,7 +383,7 @@
 
         <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    
+
 
     <script type="text/javascript">
 
