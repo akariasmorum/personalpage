@@ -125,7 +125,9 @@
 		        	alert(msg);
 		        	$('#id_complaints').val('');
 					$('#add_inform').val('');
-					$('#telephone').val('');   
+					$('#telephone').val(''); 
+					$('#id_complaints').removeClass('is-valid');
+					$('#telephone').removeClass('is-valid');
 		        },
 
 		        // handle a non-successful response
@@ -152,6 +154,33 @@
 			}
 		}
 
+
+		function check_element_length_greater_than(element){
+			console.log( $(element) );
+					console.log( elements_to_check[$(element).attr('id')] );
+				  if ($(element).val().length >=elements_to_check[$(element).attr('id')])
+					{
+						$(element).removeClass('is-invalid');
+						$(element).addClass('is-valid');
+					}
+					else
+					{
+						$(element).removeClass('is-valid');
+						$(element).addClass('is-invalid');
+					}			
+		}	
+
+
+
+
+		var elements_to_check = {
+			'id_complaints': 4 ,				
+			'telephone': 16,			
+		}
+
+
+
+
 		function remove_adresses(){
 			$('#select_address')
 			    .find('option')
@@ -172,7 +201,7 @@
 		var currentUser=0;
 		var currentAdress=0;
 		window.onload = function(){
-			$("#telephone").mask("+0(000)000-00-00");							
+			$("#telephone").mask("+0(000)000-00-00", {placeholder: "+7(___)___-__-__"});							
 			assign_patients(pacients);
 			adressFacade();	
 			$( "#pacient" ).change(function() {
@@ -181,6 +210,16 @@
 			$( "#select_adress" ).change(function() {
 			   currentAdress = get_select_index('#select_adress');
 			});
+
+			for(var key in elements_to_check)
+			{
+
+				$('#'+key).bind('keyup', function() {
+					check_element_length_greater_than(this);					
+				});
+
+			}
+
 		}
 		
 		
