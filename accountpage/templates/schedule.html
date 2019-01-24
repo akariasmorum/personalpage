@@ -435,6 +435,7 @@ function getFirstLast(date_search){
     //alert(JSON.stringify(dataFromRequest));
 
      var ajax_info = "";
+     alert(JSON.stringify(dataFromRequest));
      Query("POST", dataFromRequest, "CalendarList", function (info){
           ajax_info = info;
 
