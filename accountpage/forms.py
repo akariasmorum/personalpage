@@ -8,17 +8,6 @@ import json
 from .models import PatientUser, CallDoc, Patient, Message, CallDoctor
 from .views_ibus_connector import get_check_code
 
-'''class Message(forms.Form):
-	snils = forms.CharField(widget =forms.TextInput(attrs={'class': 'form-control'}),label='СНИЛС', max_length=14)
-	id_doc_site = forms.CharField(widget =forms.TextInput(attrs={'class': 'form-control'}),label='ID вставки', max_length=5)
-	recipient = forms.CharField(widget =forms.TextInput(attrs={'class': 'form-control'}),label='Кому обращение', max_length=20)
-	subject = forms.CharField(widget =forms.TextInput(attrs={'class': 'form-control'}),label='Тема сообщения', max_length=20)
-	message = forms.CharField(widget =forms.Textarea(attrs={'class': 'form-control'}),label='Сообщение', max_length=200)
-	phone = forms.CharField(widget =forms.TextInput(attrs={'class': 'form-control'}),label='Телефон', max_length=16)
-	email = forms.CharField(widget =forms.TextInput(attrs={'class': 'form-control'}),label='E-Mail', max_length=20)
-
-'''
-
 
 class LoginForm(forms.Form):
 	username = forms.CharField(label='Введите Ваш СНИЛС', widget = forms.TextInput(attrs={'class': 'form-control','id':'id_username', 'placeholder': 'Введите Ваш СНИЛС'}), max_length=14)
