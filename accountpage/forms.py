@@ -6,6 +6,7 @@ from django.forms import ModelForm, ModelChoiceField
 import json
 
 from .models import PatientUser, CallDoc, Patient, Message, CallDoctor
+from .views_ibus_connector import get_check_code
 
 '''class Message(forms.Form):
 	snils = forms.CharField(widget =forms.TextInput(attrs={'class': 'form-control'}),label='СНИЛС', max_length=14)
@@ -21,7 +22,7 @@ from .models import PatientUser, CallDoc, Patient, Message, CallDoctor
 
 class LoginForm(forms.Form):
 	username = forms.CharField(label='Введите Ваш СНИЛС', widget = forms.TextInput(attrs={'class': 'form-control','id':'id_username', 'placeholder': 'Введите Ваш СНИЛС'}), max_length=14)
-	password = forms.CharField(label='Введите Ваш пароль', widget=forms.PasswordInput(attrs={'class': 'form-control' , 'placeholder': 'Введите пароль'}))
+	password = forms.CharField(label='Введите Ваш пароль', widget = forms.PasswordInput(attrs={'class': 'form-control' , 'placeholder': 'Введите пароль'}))
 
 	def clean(self):
 		cleaned_data = super(LoginForm, self).clean()
@@ -137,10 +138,11 @@ class SignUpForm(UserCreationForm):
 		
 	}
 
-	snils = forms.CharField(widget =forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'СНИЛС'}), max_length=14, help_text='Номер СНИЛС', error_messages={'required': 'Введите СНИЛС!'})
-	name = forms.CharField(widget = forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Имя', 'id': 'inlineFormInputGroup'}), max_length=255, help_text='Ваше имя', error_messages={'required': 'Введите Имя!'})
-	surname=forms.CharField(widget = forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Фамилия'}), max_length=255, help_text='Фамилия', error_messages={'required': 'Введите Фамилию!'})
+	snils =   forms.CharField(widget = forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'СНИЛС'}), max_length=14, help_text='Номер СНИЛС', error_messages={'required': 'Введите СНИЛС!'})
+	name =    forms.CharField(widget = forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Имя', 'id': 'inlineFormInputGroup'}), max_length=255, help_text='Ваше имя', error_messages={'required': 'Введите Имя!'})
+	surname=  forms.CharField(widget = forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Фамилия'}), max_length=255, help_text='Фамилия', error_messages={'required': 'Введите Фамилию!'})
 	telephone=forms.CharField(widget = forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Телефон'}), max_length=18, help_text='Введите номер телефона', error_messages={'required': 'Введите номер телефона!'})
+	regcode  =forms.CharField(widget = forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Регистрационный код'}), max_length=18, help_text='Введите Регистрационный код', error_messages={'required': 'Введите регистрационный код!'})
 	password1=forms.CharField(widget = forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Пароль'}), error_messages = {'requied': 'Введите Пароль!', } )
 	password2=forms.CharField(widget = forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Повторите'}), error_messages = {'requied': 'Повторите Пароль!', 'password_entirely_numeric': 'Ваш пароль состоит только цифр. Добавьте и буквы'})
 
@@ -158,7 +160,15 @@ class SignUpForm(UserCreationForm):
 			#Если такой СНИЛС уже есть, то вывести ошибку
 			self.add_error('snils', 'Пользователь с таким СНИЛС уже существует!')
 		else:
-			return snils	
+			return snils
+
+	def clean_regcode(self):
+		reg = self.cleaned_data.get('regcode')
+
+		if get_check_code(None, self.cleaned_data.get('snils'), reg):
+			return reg
+		else:
+			self.add_error('regcode', 'Не правильный регистрационный код!')	
 
 			
 
