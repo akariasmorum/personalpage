@@ -249,31 +249,53 @@ class Calendar
 
     }
 
+
+
     drawCalendar(events){
+
+      const SATURDAY = 5, SUNDAY = 6;
       $('.dates').remove();
+
+      /*dates вначале будут пробелы, потом числа от 1 до 30(31, 28) и снова пробелы*/
       var dates = this.getMonthCalendarString(this.date.getFullYear(), this.date.getMonth());
+
+      /*конретная неделя*/
       var currentRow = $('<div>', {'class': 'row dates'});
 
       var counter = 0;
+
+      /*конкретный день*/
       var currentPosition=$('<div>', {'class': 'col'});
       $("#month-name").text(this.months[this.date.getMonth()]);
       for(var i =0; i< dates.length; i++){
         currentPosition=$('<div>', {'class': 'col'});
-        if(i%7==5 || i%7==6){
+
+        /*если текущий день - это выходной */
+        if(i%7==SATURDAY || i%7==SUNDAY){
           currentPosition.addClass('weekend');
         }
+
+        /*в начале и конце dates могут быть &nbsp, 
+        если текущая позиция - это дата(число): */
         if(Number.isInteger(dates[i]))
         {
+
+          /*если на текущее число  есть событие: */
           if (this.ifEvent(new Date(this.date.getFullYear(), this.date.getMonth(), dates[i]), events))
           {
             currentPosition.addClass('event');
+            dates[i] = '<a href = "#date_'+dates[i]+'">'+dates[i] + '</a>';
           }
         }
 
         currentPosition.html(dates[i]);
         currentRow.append(currentPosition);
-        if(i%7==6)
+
+        /*если текущий день - это воскресенье*/
+        if(i%7==SUNDAY)
         {
+          /*добавить строку недели*/
+
           this.calendar.append(currentRow);
           currentRow = $('<div>', {'class': 'row dates'});
         }
@@ -305,11 +327,11 @@ class Calendar
     }
 
     eventLiCreator(event){
-      var row="<li class='row'>";
+      var row="<li class='row' id='date_"+ event['date'].getDate() +"'>";
       row+="<div clas='col-2'><ul class='list-unstyled'><li class='grey-li'></li></ul></div>";
       row+="<div clas='col'>";
         row+="<ul class='list-unstyled'>";
-          row+="<li>"+event['date'].getDate()+" "
+          row+="<li >"+event['date'].getDate()+" "
                 +this.months[event['date'].getMonth()]+' '
                 +event['date'].getFullYear()+' '
                  +this.addZero(event['date'].getHours())+':'
@@ -352,9 +374,7 @@ class Calendar
 
 function Query(my_method, for_request, name_service, callback)
   {
-    //alert(JSON.stringify(for_request));
-    //alert(for_request.amount);
-
+    
     var token = '{{ csrf_token }}';
 
     var responce = $.ajax({
@@ -384,7 +404,7 @@ function Query(my_method, for_request, name_service, callback)
 
   function return_array(object){
 
-      //alert(object);
+      
       var events = $.parseJSON(object);
       var ar = new Array()
       for (var event in events) {
@@ -432,10 +452,10 @@ function getFirstLast(date_search){
       dataFromRequest.amount = 'one';
     }
 
-    //alert(JSON.stringify(dataFromRequest));
+    
 
      var ajax_info = "";
-     alert(JSON.stringify(dataFromRequest));
+    
      Query("POST", dataFromRequest, "CalendarList", function (info){
           ajax_info = info;
 
@@ -453,7 +473,7 @@ function getFirstLast(date_search){
 
 
     window.onload = function(){
-      //alert('ВНИМАНИЕ ПРИ ЗАПРОСАХ ИСПОЛЬЗУЮТСЯ ТЕСТОВЫЕ СНИЛСЫ !!!');
+      
         $('#pacient').append($("<option></option>", {value:0, text: "Расписание по всем пациентам"}));
 
         $('#task-div').mCustomScrollbar({theme: "dark"});
@@ -475,7 +495,7 @@ function getFirstLast(date_search){
 
 
       cal = new Calendar(current, $('#calendar'));
-      var events =  eventsFromService(cal.date); //<---
+      var events =  eventsFromService(cal.date); 
 
       cal.drawCalendar(events);
       cal.drawEvents(events);
@@ -532,6 +552,17 @@ function getFirstLast(date_search){
 
       $("#loader").fadeOut("slow", function() { });
 
+      /*При нажатии на дату с событие, прокрутить к событию*/
+      $(document).on("click","a[href^='#']",function(e){
+        var href=$(this).attr("href"),target=$('#task-div'); 
+        if(target.length){
+          e.preventDefault();
+          target.mCustomScrollbar("scrollTo",href);
+        }
+      });
+
+
+      /*Сделать высоту контейнера событий равной высоте контейнера календаря*/
 
       $("#task-div").css('height', $('.cal-container').css('height'));
 
