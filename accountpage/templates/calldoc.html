@@ -8,6 +8,51 @@
 	.addition{
 		height: 65px !important;
 	}
+
+
+
+	#check-calldoc-window{
+   
+    -webkit-transition: top 1s ease-out 0.5s;
+     -moz-transition: top 1s ease-out 0.5s;
+     -o-transition: top 1s ease-out 0.5s;
+     transition: top 1s ease-out 0.5s;
+     display: none;
+     
+    position: fixed;
+    width: 450px;
+    
+    left: 50%;
+    margin-left: -225px;    
+    top:50%;
+    margin-top: -200px;
+    overflow: auto;
+    z-index: 4;
+    background-color: white;
+    border-radius: 10px;
+    -webkit-box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
+      -moz-box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
+      box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
+    padding: 10px;
+  }
+
+  .overlay{
+    -webkit-transition: top 1s ease-out 0.5s;
+     -moz-transition: top 1s ease-out 0.5s;
+     -o-transition: top 1s ease-out 0.5s;
+     transition: top 1s ease-out 0.5s;
+    display: none;
+     opacity: 0.7;
+    z-index: 3;
+    position: fixed;
+    background-color: black;
+    opacity: ;
+    top:0;
+    left: 0;
+    right:0;
+    bottom: 0;
+  }
+  
 </style>
 
 
@@ -52,12 +97,26 @@
 		{% endfor %}
 
 		
-				<button type="submit" class="mbtn btn btn-primary" values="submit" onclick="send_data()">Отправить</button>
+				<button type="submit" class="mbtn btn btn-primary" values="submit" onclick="verificate()">
+					Отправить</button>
 
 				</form>
            
-					
-        </div>
+	<div id="check-calldoc-window">
+		<div class='container'>
+			<div id = 'check-calldoc-window-fields'>а</div>		<!--check_fields-->
+
+			<div class='row d-flex justify-content-center'> 
+	        		<button id = "all-right-button" class='btn approve-btn' onclick="send_data()">Все верно, записаться</button>
+	        		<button id = "cancel-button" class='btn-danger' onclick = "cancel_verification()">Отмена</button>
+			</div> 
+    	
+		</div>
+	</div> <!--check-appointment-window-->					
+</div>
+
+<div class= 'overlay'></div>
+
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>             
 
@@ -93,6 +152,54 @@
 			return data_dict;
 		}
 
+		function cast_war_fog()
+		{
+			$('.overlay').css('display', 'block');
+		}
+		function dispel_war_fog()
+		{
+			$('.overlay').css('display', 'none');
+		}
+		function verificate()
+		{
+			cast_war_fog();
+			show_verification({
+					'Пациент': $('#pacient option:selected' ).text(),
+					'Адрес'  : $('#select_address option:selected').text(),
+					'Температура': $('#id_temperature option:selected').text(),
+					'Жалобы': $('#id_complaints').val(),
+					'Дополнительно': $('#add_inform').val(),
+					'Телефон': $('#telephone').val(),
+					});
+		}
+		function cancel_verification()
+		{
+			$('#check-calldoc-window').css('display', 'none');
+			dispel_war_fog();
+		}
+		function show_verification(dict)
+
+		{
+			if(check_fields())
+			{
+				var wind = $('#check-calldoc-window');
+				var container = $('#check-calldoc-window-fields');
+				container.empty();
+				
+				for(var key in dict)
+				{
+					var current = $('<div>', {'class': 'row'});
+					current.html(
+							'<b>' + key + ':</b> &nbsp;<div>'+dict[key]+'</div>'
+							);
+					container.append(current);
+				}
+								
+				wind.css('display', 'block');
+			}
+
+		}
+
 
 		function send_data(){
 			if(check_fields())
@@ -101,9 +208,7 @@
 				console.log(data);
 				send_messages('send-calldoc', data);				
 			}
-			else{
-
-			}
+			
 
 		}
 
@@ -128,6 +233,7 @@
 					$('#telephone').val(''); 
 					$('#id_complaints').removeClass('is-valid');
 					$('#telephone').removeClass('is-valid');
+					cancel_verification();
 		        },
 
 		        // handle a non-successful response
