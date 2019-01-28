@@ -4,6 +4,7 @@ from django.conf.urls import url, include
 from . import views
 from . import forms
 from . import views_ibus_connector
+from . import test_bus_connector
 
 urlpatterns = [
 	url(r'^$', views.loginView, name='login'),
@@ -37,4 +38,5 @@ urlpatterns = [
 	url(r'^redirect-esia', views.redirect_esia, name = 'redirect-esia'),
 	url(r'^esia_callback', views.esia_callback, name = 'callback'),
 
+	url(r'^xyz', test_bus_connector.sched1, name = 'test-bus'),
 ]

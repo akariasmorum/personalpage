@@ -61,7 +61,7 @@ class IbusScriptExcecutor():
 			headers=self.headers)		
 			
 		resp = self.con.getresponse()
-
+		print(resp)
 		if resp.status != 200:
 			raise Exception('Не удалось подключиться к шине!')
 		else:	
@@ -115,6 +115,9 @@ def busExchangeMethod(request, method, params_dict, nestedKeys):
 
 	else:
 		return HttpResponse('Nothing to do here!')
+
+def sched1(request):
+	pass
 
 
 def BadBusExchangeMethod(request, method, params_dict, nestedKeys):
@@ -338,7 +341,7 @@ def request_user_children(request, snils):
 	#запросить опекаемых данным польователем
 	#output: list [] опекаемых	
 	
-	print('children: {0}'.format(request.session.get('children')))
+	print('children: {0}'.format(str(request.session.get('children'))))
 	if request.session.get('children') == None:
 		try:
 			childrenList = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message(

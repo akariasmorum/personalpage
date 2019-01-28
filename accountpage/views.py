@@ -17,7 +17,7 @@ from .views_ibus_connector import (get_ehr_PrescriptionDrugs, get_ehr_ListDocume
 	get_drugs_list,	send_call_doctor, get_district_doctor_info, get_dictrict_doctor_schedule, get_schedule_month,
 	busExchangeMethod, BadBusExchangeMethod, request_user_children, request_adress, request_user_adress, get_check_code	)
 from .auth_esia import redirect_esia, esia_callback
-
+import time
 
 logger = logging.getLogger('django')
 
@@ -103,7 +103,7 @@ def get_message(request):
 
 
 def send_message(request):
-
+	start_time = time.time()
 	'''
 	Обращение пациента
 	'''
@@ -111,7 +111,7 @@ def send_message(request):
 		message_form = MessageForm(request.POST)
 
 		if message_form.is_valid():
-			print('сработало!')
+			
 			message = message_form.save(commit=False)
 			message.sender = request.user
 			message.save()
@@ -131,6 +131,7 @@ def send_message(request):
 					},
 					['message'])
 			print(resp)
+			print("--- %s seconds ---" % (time.time() - start_time))
 			return resp
 		else:
 			print(str(message_form.errors))
