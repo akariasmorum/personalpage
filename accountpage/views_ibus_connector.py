@@ -333,41 +333,50 @@ def safe_calldoc_check(request, snils, kladr, house, room):
 	return false
 
 
-def request_user_children(snils):
+def request_user_children(request, snils):
+
 	#запросить опекаемых данным польователем
 	#output: list [] опекаемых	
-	try:
-		children = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message(
-			'PacientList',
-			{'snils':snils})
-		pacient_list_json = json.loads(children['output']['PacientList'])
+	
+	print('children: {0}'.format(request.session.get('children')))
+	if request.session.get('children') == None:
+		try:
+			childrenList = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message(
+				'PacientList',
+				{'snils':snils})
+			request.session['children'] = json.loads(childrenList['output']['PacientList'])
 
-		return pacient_list_json
-	except Exception as Ex:
-		return []
+			
+		except Exception as Ex:
+			print(str(Ex))
+	return request.session.get('children')
 
 
-def request_adress(snils):
+	
+
+
+def request_adress(request, snils):
 	#запросить адреса данного пациента
 	#output: list[ { адрес }, { адрес } ]
 	
-	adress = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message('AddressList',
-		 {'snils': snils})
+	if request.session.get('address') == None:
+		addressList = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message('AddressList',
+			{'snils': snils})
 	
-	adress_list_json = json.loads(adress['output']['AddressList'])
+		request.session['address'] = json.loads(addressList['output']['AddressList'])
 
-	return adress_list_json
+	return request.session.get('address')
 
 
-def request_user_adress(snils):
+def request_user_adress(request, snils):
 	#запрашивает опекаемых и их адреса, и упаковывает эту информацию в dict
 	#output: list [{пациент, адреса пациента:[]}, {пациент, адреса пациента:[]}]
 
-	pacients = request_user_children(snils)
+	pacients = request_user_children(request, snils)
 	
 	for pacient in pacients:
 		
-		adresses = request_adress(pacient['SNILS'])
+		adresses = request_adress(request, pacient['SNILS'])
 		pacient['adresses'] = adresses
 	
 	return pacients
