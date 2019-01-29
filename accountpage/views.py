@@ -63,10 +63,24 @@ def schedule(request):
 	                      context={'title': 'Расписание',
 						            'nbar': 'schedule',
 									'name': (request.user.surname + ' ' + request.user.name),
-								'pacients': request.session['pacients']
+									'pacients': request.session['pacients'],
+									'method_url': 'get-month-schedule'
 								  })
 
 ######################
+
+@login_required(login_url='/login')
+def schedule_test(request):
+	
+	return render(request, 'schedule.html',
+	                      context={'title': 'Расписание',
+						            'nbar': 'schedule',
+									'name': (request.user.surname + ' ' + request.user.name),
+									'pacients': request.session['pacients'],
+									'method_url': "xyz"
+								  })
+
+
 
 
 

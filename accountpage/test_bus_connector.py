@@ -1,6 +1,7 @@
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 import http.client as hc
 import json
+import time
 
 def sched1(request):
 	con = hc.HTTPConnection('10.130.4.219', '8000')
@@ -20,16 +21,19 @@ def sched1(request):
 		'name': 'CalendarList',
 		'params': {'request': parameter}
 		})		
-
+	start = time.time()
 	con.request(
 			'POST',
 			'', 
 			body=body,
 			headers=headers)		
-			
+	end = time.time()
+	print("TEST_POST_RESPONSE %s seconds ---" % (end - start))			
 	resp = con.getresponse()
+	
+	data = json.loads(resp.read().decode('utf-8'))	
+	print(data)
 
-	decoded_response = resp.read()
-
-	print('decoded_response: {0}'.format(decoded_response))
+	return JsonResponse(data['CalendarList'], safe=False)
+	
 		

@@ -1,10 +1,11 @@
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 import http.client as hc
 import json
 import traceback
 from .models import PatientUser
 from datetime import datetime
 import base64
+import time
 
 
 '''
@@ -28,12 +29,15 @@ class IbusScriptExcecutor():
 
 	def __init__(self, host, host_port, bus_adress, bus_port):
 		try:
+			start = time.time()
 			self.con = hc.HTTPConnection(bus_adress, bus_port)
 			self.headers = {
 			'Authorization': 'Basic cm9vdDpyb290',
 			'Host': host + ':' + host_port,
 			'Content-Type': 'application/json'
 			}
+			end = time.time()
+			print("IBUS_INIT %s seconds ---" % (end - start))
 		except Exception as connectionEx:
 			raise Exception('Не удалось подключиться к серверу! Попробуйте позже')
 	
@@ -46,7 +50,7 @@ class IbusScriptExcecutor():
 		output: 
 			js  - str / ответ сервера в формате json
 		'''	
-
+		
 		parameter = str(json.dumps(body_dic))
 
 		body = json.dumps({
@@ -54,22 +58,23 @@ class IbusScriptExcecutor():
 		'params': {'request': parameter}
 		})		
 
+
+		
 		self.con.request(
 			'POST',
 			'/api/executescript', 
 			body=body,
 			headers=self.headers)		
-			
+					
+		
 		resp = self.con.getresponse()
-		print(resp)
+		
 		if resp.status != 200:
 			raise Exception('Не удалось подключиться к шине!')
 		else:	
-			decoded_response = resp.read().decode()
-
-			print('decoded_response: {0}'.format(decoded_response))
+			decoded_response = resp.read().decode()			
 			js = json.loads(decoded_response)
-
+			
 			return js
 
 
@@ -94,8 +99,11 @@ def busExchangeMethod(request, method, params_dict, nestedKeys):
 
 	if request.method == 'POST':
 		try:
+			start = time.time()
 			responce = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message(method, params_dict)
-			print(responce)
+			end = time.time()
+			print("BUS_EXCHANGE_METHOD_RESPONSE %s seconds ---" % (end - start))
+
 		except Exception as Ex:
 			print(traceback.format_exc())
 			responce = str(Ex)
@@ -252,18 +260,15 @@ def get_schedule_month(request):
 	'''
 	запрос расписания на указанный месяц для указанного пациента
 	'''
-
-	print (request.POST)
-	return busExchangeMethod(
-		request,
-		'CalendarList',
-		{
+	
+	events = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message('CalendarList', {
 			"snils": request.POST.get('snils'),
 			"date_begin": request.POST.get('date_begin'),
 			"date_end": request.POST.get('date_end'),
 			"amount": request.POST.get('amount'),
-		},
-		['output', 'CalendarList'])
+		})
+	
+	return JsonResponse(json.loads(events['output']['CalendarList']), safe=False)
 
 
 def get_check_code(request, snils, code):
@@ -294,7 +299,7 @@ def BadBusExchangeMethod(request, method, params_dict, nestedKeys):
 
 		try:
 			responce = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message(method, params_dict)
-			print(responce)
+			
 		except Exception as Ex:
 			print(traceback.format_exc())
 			responce = str(Ex)
@@ -302,8 +307,7 @@ def BadBusExchangeMethod(request, method, params_dict, nestedKeys):
 		if len(nestedKeys) == 1:
 			return json.loads(responce[nestedKeys[0]])
 		elif len(nestedKeys) == 2:
-			#print (nestedKeys[0],nestedKeys[1])
-			#print ('info :',responce)
+			
 			return json.loads(responce[nestedKeys[0]][nestedKeys[1]])	
 
 
@@ -341,7 +345,7 @@ def request_user_children(request, snils):
 	#запросить опекаемых данным польователем
 	#output: list [] опекаемых	
 	
-	print('children: {0}'.format(str(request.session.get('children'))))
+	
 	if request.session.get('children') == None:
 		try:
 			childrenList = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message(

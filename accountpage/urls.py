@@ -39,4 +39,5 @@ urlpatterns = [
 	url(r'^esia_callback', views.esia_callback, name = 'callback'),
 
 	url(r'^xyz', test_bus_connector.sched1, name = 'test-bus'),
+	url(r'^qwerty', views.schedule_test, name='test-schedule'),
 ]

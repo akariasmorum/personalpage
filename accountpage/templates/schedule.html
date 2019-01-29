@@ -318,6 +318,8 @@ class Calendar
         var l = this.eventLiCreator(eventsList[row]);
         eList.append(l);
       }
+
+      console.log('Конец отрисовки: ' + new Date().getTime()); 
     }
 
     sameDay(d1, d2) {
@@ -380,7 +382,7 @@ function Query(my_method, for_request, name_service, callback)
     var responce = $.ajax({
         async:false,
         method:my_method,
-        url:"get-month-schedule",
+        url:'{{ method_url }}',
 
         headers: { "X-CSRFToken": token },
 
@@ -388,7 +390,8 @@ function Query(my_method, for_request, name_service, callback)
 
                 success: function(msg)
         {
-         callback(msg);
+          console.log('Начало отрисовки: ' + new Date().getTime());
+          callback(msg);
 
         },
         error: function(jqXHR, textStatus, errorThrown)
@@ -402,10 +405,10 @@ function Query(my_method, for_request, name_service, callback)
   }
 
 
-  function return_array(object){
+  function return_array(events){
 
       
-      var events = $.parseJSON(object);
+      /*var events = $.parseJSON(object);*/
       var ar = new Array()
       for (var event in events) {
           //var FIO = events[event].fam + " " + events[event].name + " " + events[event].oth;
@@ -460,6 +463,7 @@ function getFirstLast(date_search){
           ajax_info = info;
 
      });
+
      if(ajax_info == "error"){
         alert("Сервис временно недоступен.Приносим извенения за предоставленные неудобства.");
         return [];
@@ -495,7 +499,13 @@ function getFirstLast(date_search){
 
 
       cal = new Calendar(current, $('#calendar'));
+
+      var start = new Date().getTime();
+      
+
       var events =  eventsFromService(cal.date); 
+      var end = new Date().getTime();
+      console.log('Разница: ' + (end-start)/1000);
 
       cal.drawCalendar(events);
       cal.drawEvents(events);

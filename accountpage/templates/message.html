@@ -4,6 +4,54 @@
 		.hidden_fields{
 			display:none;
 		}
+
+			#check-window{
+	display: none;
+
+   	position: fixed;
+    top: 50%;
+    left: 50%;
+    width: auto;
+    min-width: 320px;
+    height: auto;
+    -webkit-transform: translate(-50%,-50%);
+    -moz-transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+    -o-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
+
+    z-index: 4;
+    background-color: white;
+    border-radius: 10px;
+    -webkit-box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
+      -moz-box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
+      box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
+    padding: 10px;
+  }
+
+  .overlay{
+    -webkit-transition: top 1s ease-out 0.5s;
+     -moz-transition: top 1s ease-out 0.5s;
+     -o-transition: top 1s ease-out 0.5s;
+     transition: top 1s ease-out 0.5s;
+    display: none;
+     opacity: 0.7;
+    z-index: 3;
+    position: fixed;
+    background-color: black;
+    opacity: ;
+    top:0;
+    left: 0;
+    right:0;
+    bottom: 0;
+  }
+  .x{
+  	font-weight: 400;
+    border-radius: 5px;
+    padding: .375rem .75rem;
+  }
+
+
 	</style>
 
 	<form id = "message-form" method = "POST" class = 'message-form'>
@@ -30,10 +78,25 @@
 		{% for hidden in form.hidden_fields %}
 			{{ hidden }}
 		{% endfor %}
-		<button type="submit" class="btn btn-primary" onclick ="form_submit()">Отправить</button>
+		
 	</form>
-	<!--<input type="button" class="mbtn btn btn-primary" values="my_buttom"
-			onclick="send_message()"	> -->
+	<button type="submit" class="btn btn-primary" onclick ="verificate()">Отправить</button>
+
+	<div id="check-window">
+		<div class='container'>
+			<div id = 'check-calldoc-window-fields'>а</div>		<!--check_fields-->
+
+			
+	        		<button id = "all-right-button" class='btn approve-btn float-left' onclick="form_submit()">Все верно, отправить</button>
+	        		<button id = "cancel-button" class='x btn-danger float-right' onclick = "cancel_verification()">Отмена</button>
+			
+    	
+		</div>
+	</div> <!--check-appointment-window-->	
+
+	<div class= 'overlay'></div>
+
+
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>			
 	<script type="text/javascript">
 
@@ -67,11 +130,84 @@
 		function form_submit(){
 
 				console.log("submitting form!");
-				if(check_form()){
+				if(check_fields()){
 					data = collect_data();
 					Query("send-message", data);
 				}
 			}
+
+		
+		function check_fields(){
+  			for(var element in elements_to_check)
+  			{
+  				if(document.getElementById(element).reportValidity()==false)
+  				{
+  					return false;
+  				}
+
+  				if(check_element_length_greater_than('#'+element)==false)
+  				{
+  					return false;
+  				}
+  			}
+  			return true;
+
+  		}
+
+
+  		function cast_war_fog()
+		{
+			$('.overlay').css('display', 'block');
+		}
+		function dispel_war_fog()
+		{
+			$('.overlay').css('display', 'none');
+		}
+
+
+
+		function verificate()
+		{
+			if(check_fields())
+			{
+				cast_war_fog();
+				show_verification({
+						'Пациент': $('#pacient option:selected' ).text(),
+						'Кому': $('#recipient').val(),
+						'Тема'  : $('#subject').val(),
+						'Сообщение': $('#message').val(),						
+						'Телефон': $('#phone').val(),
+						});
+			}
+		}
+
+
+		function cancel_verification()
+		{
+			$('#check-window').css('display', 'none');
+			dispel_war_fog();
+		}
+
+
+		function show_verification(dict)
+
+		{
+			var wind = $('#check-window');
+			var container = $('#check-calldoc-window-fields');
+			container.empty();
+			
+			for(var key in dict)
+			{
+				var current = $('<div>', {'class': 'row'});
+				current.html(
+						'<b>' + key + ':</b> &nbsp;<div>'+dict[key]+'</div>'
+						);
+				container.append(current);
+			}
+							
+			wind.css('display', 'block');		
+
+		}
 
 
 		function check_form(){
@@ -126,6 +262,7 @@
 	         	{
 	         		$('#'+element).val('');
 	         		$('#'+element).removeClass('is-valid');
+	         		cancel_verification();
 	         	}
 
 	        },
@@ -133,7 +270,7 @@
 	        {
 	          console.log(JSON.stringify(jqXHR));
 	          //error in msg
-	          callback("error");          
+	                   
 	        }
 	      
 	      }).responceText;    
@@ -146,11 +283,13 @@
 					{
 						$(element).removeClass('is-invalid');
 						$(element).addClass('is-valid');
+						return true;
 					}
 					else
 					{
 						$(element).removeClass('is-valid');
 						$(element).addClass('is-invalid');
+						return false;
 					}			
 		}	
 

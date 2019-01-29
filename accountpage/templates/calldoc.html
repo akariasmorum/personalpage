@@ -12,21 +12,20 @@
 
 
 	#check-calldoc-window{
-   
-    -webkit-transition: top 1s ease-out 0.5s;
-     -moz-transition: top 1s ease-out 0.5s;
-     -o-transition: top 1s ease-out 0.5s;
-     transition: top 1s ease-out 0.5s;
-     display: none;
-     
-    position: fixed;
-    width: 450px;
-    
+	display: none;
+
+   	position: fixed;
+    top: 50%;
     left: 50%;
-    margin-left: -225px;    
-    top:50%;
-    margin-top: -200px;
-    overflow: auto;
+    width: auto;
+    min-width: 320px;
+    height: auto;
+    -webkit-transform: translate(-50%,-50%);
+    -moz-transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+    -o-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
+
     z-index: 4;
     background-color: white;
     border-radius: 10px;
@@ -51,6 +50,11 @@
     left: 0;
     right:0;
     bottom: 0;
+  }
+  .x{
+  	font-weight: 400;
+    border-radius: 5px;
+    padding: .375rem .75rem;
   }
   
 </style>
@@ -106,10 +110,10 @@
 		<div class='container'>
 			<div id = 'check-calldoc-window-fields'>а</div>		<!--check_fields-->
 
-			<div class='row d-flex justify-content-center'> 
-	        		<button id = "all-right-button" class='btn approve-btn' onclick="send_data()">Все верно, записаться</button>
-	        		<button id = "cancel-button" class='btn-danger' onclick = "cancel_verification()">Отмена</button>
-			</div> 
+			
+	        		<button id = "all-right-button" class='btn approve-btn float-left' onclick="send_data()">Все верно, записаться</button>
+	        		<button id = "cancel-button" class='x btn-danger float-right' onclick = "cancel_verification()">Отмена</button>
+			
     	
 		</div>
 	</div> <!--check-appointment-window-->					
@@ -131,8 +135,20 @@
   		}
 
   		function check_fields(){
-  			var formElement = document.querySelector('#id_complaints');
-			return formElement.reportValidity();
+  			for(var element in elements_to_check)
+  			{
+  				if(document.getElementById(element).reportValidity()==false)
+  				{
+  					return false;
+  				}
+
+  				if(check_element_length_greater_than('#'+element)==false)
+  				{
+  					return false;
+  				}
+  			}
+  			return true;
+
   		}
 
 		function collect_data(){
@@ -162,15 +178,18 @@
 		}
 		function verificate()
 		{
-			cast_war_fog();
-			show_verification({
-					'Пациент': $('#pacient option:selected' ).text(),
-					'Адрес'  : $('#select_address option:selected').text(),
-					'Температура': $('#id_temperature option:selected').text(),
-					'Жалобы': $('#id_complaints').val(),
-					'Дополнительно': $('#add_inform').val(),
-					'Телефон': $('#telephone').val(),
-					});
+			if(check_fields())
+			{
+				cast_war_fog();
+				show_verification({
+						'Пациент': $('#pacient option:selected' ).text(),
+						'Адрес'  : $('#select_address option:selected').text(),
+						'Температура': $('#id_temperature option:selected').text(),
+						'Жалобы': $('#id_complaints').val(),
+						'Дополнительно': $('#add_inform').val(),
+						'Телефон': $('#telephone').val(),
+						});
+			}
 		}
 		function cancel_verification()
 		{
@@ -180,23 +199,20 @@
 		function show_verification(dict)
 
 		{
-			if(check_fields())
+			var wind = $('#check-calldoc-window');
+			var container = $('#check-calldoc-window-fields');
+			container.empty();
+			
+			for(var key in dict)
 			{
-				var wind = $('#check-calldoc-window');
-				var container = $('#check-calldoc-window-fields');
-				container.empty();
-				
-				for(var key in dict)
-				{
-					var current = $('<div>', {'class': 'row'});
-					current.html(
-							'<b>' + key + ':</b> &nbsp;<div>'+dict[key]+'</div>'
-							);
-					container.append(current);
-				}
-								
-				wind.css('display', 'block');
+				var current = $('<div>', {'class': 'row'});
+				current.html(
+						'<b>' + key + ':</b> &nbsp;<div>'+dict[key]+'</div>'
+						);
+				container.append(current);
 			}
+							
+			wind.css('display', 'block');		
 
 		}
 
@@ -268,11 +284,13 @@
 					{
 						$(element).removeClass('is-invalid');
 						$(element).addClass('is-valid');
+						return true;
 					}
 					else
 					{
 						$(element).removeClass('is-valid');
 						$(element).addClass('is-invalid');
+						return false;
 					}			
 		}	
 
