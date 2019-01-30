@@ -6,7 +6,7 @@
 		}
 
 			#check-window{
-	display: none;
+		display: none;
 
    	position: fixed;
     top: 50%;
@@ -28,6 +28,10 @@
       box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.46);
     padding: 10px;
   }
+	#check-window>.hdx
+	{
+		text-align: center;
+	}
 
   .overlay{
     -webkit-transition: top 1s ease-out 0.5s;
@@ -78,26 +82,29 @@
 		{% for hidden in form.hidden_fields %}
 			{{ hidden }}
 		{% endfor %}
-		
+
 	</form>
 	<button type="submit" class="btn btn-primary" onclick ="verificate()">Отправить</button>
 
 	<div id="check-window">
+		<div class="text-center">
+			 <h4>Отправка Обращения</h4>
+		</div>
 		<div class='container'>
 			<div id = 'check-calldoc-window-fields'>а</div>		<!--check_fields-->
 
-			
+
 	        		<button id = "all-right-button" class='btn approve-btn float-left' onclick="form_submit()">Все верно, отправить</button>
 	        		<button id = "cancel-button" class='x btn-danger float-right' onclick = "cancel_verification()">Отмена</button>
-			
-    	
+
+
 		</div>
-	</div> <!--check-appointment-window-->	
+	</div> <!--check-appointment-window-->
 
 	<div class= 'overlay'></div>
 
 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>			
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
 	<script type="text/javascript">
 
 
@@ -136,7 +143,7 @@
 				}
 			}
 
-		
+
 		function check_fields(){
   			for(var element in elements_to_check)
   			{
@@ -175,7 +182,7 @@
 						'Пациент': $('#pacient option:selected' ).text(),
 						'Кому': $('#recipient').val(),
 						'Тема'  : $('#subject').val(),
-						'Сообщение': $('#message').val(),						
+						'Сообщение': $('#message').val(),
 						'Телефон': $('#phone').val(),
 						});
 			}
@@ -195,7 +202,7 @@
 			var wind = $('#check-window');
 			var container = $('#check-calldoc-window-fields');
 			container.empty();
-			
+
 			for(var key in dict)
 			{
 				var current = $('<div>', {'class': 'row'});
@@ -204,8 +211,8 @@
 						);
 				container.append(current);
 			}
-							
-			wind.css('display', 'block');		
+
+			wind.css('display', 'block');
 
 		}
 
@@ -241,22 +248,22 @@
 	  	{
 	      // var for_request = {snils:"184-434-687 96",date_begin:"2017-08-10",
 	      //    date_end:"2017-10-10"     };
-	      
-	    
+
+
 
 	    var token = '{{ csrf_token }}';
-	    
+
 	    var responce = $.ajax({
 	        async:false,
 	        method:'POST',
-	        url: url,        
-	        
+	        url: url,
+
 	        headers: { "X-CSRFToken": token },
-	              
-	        data:for_request,       
-	      
+
+	        data:for_request,
+
 	                success: function(msg)
-	        {        
+	        {
 	         	alert(msg);
 	         	for(var element in elements_to_check)
 	         	{
@@ -270,10 +277,10 @@
 	        {
 	          console.log(JSON.stringify(jqXHR));
 	          //error in msg
-	                   
+
 	        }
-	      
-	      }).responceText;    
+
+	      }).responceText;
 	  }
 
 	function check_element_length_greater_than(element){
@@ -290,8 +297,8 @@
 						$(element).removeClass('is-valid');
 						$(element).addClass('is-invalid');
 						return false;
-					}			
-		}	
+					}
+		}
 
 
 
@@ -300,13 +307,13 @@
 		var elements_to_check = {
 			'recipient': 4 ,
 			'subject': 4,
-			'message': 10,	
-			'phone': 16,			
+			'message': 10,
+			'phone': 16,
 		}
 
 		function check_validity(){
-			
-			
+
+
 		}
 
 		window.onload = function(){
@@ -316,7 +323,7 @@
 			{
 
 				$('#'+key).bind('keyup', function() {
-					check_element_length_greater_than(this);					
+					check_element_length_greater_than(this);
 				});
 
 			}

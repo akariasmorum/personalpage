@@ -13,7 +13,7 @@
 
 	#check-calldoc-window{
 	display: none;
-
+	
    	position: fixed;
     top: 50%;
     left: 50%;
@@ -56,7 +56,7 @@
     border-radius: 5px;
     padding: .375rem .75rem;
   }
-  
+
 </style>
 
 
@@ -64,68 +64,71 @@
 
 	<form method = "POST" class = 'call-doc'>
 
-		
+
         <div class='form-group row'><h2 class ='col'>Вызов врача на дом</h2></div>
 
         <div id="email" class="hidden_fields">{{ my_email }}</div>
 		<div id="phone" class="hidden_fields">{{ my_phone }}</div>
 
 
-        
+
 		<!--<div class="form-group row">
             <div class="col-sm-2 col-form-label">
             Выберите пациента:</div>
-           
-		<div class="col"> 
-            	<select class = "form-control" id="select_pacient" onchange="choose_pacient()">		
+
+		<div class="col">
+            	<select class = "form-control" id="select_pacient" onchange="choose_pacient()">
 				</select>
 			</div>
 
-			
+
 		</div> -->
 
 		{% csrf_token %}
-		{% for field in form.visible_fields %}	
+		{% for field in form.visible_fields %}
 		 <!-- убрать одну d in hiddden что скрыть поля  -->
-		    {% if field.name  in hidden %} 
+		    {% if field.name  in hidden %}
 		    	<div class="hidden_fields">
 		    	{{ field.label_tag }}{{ field }}
-		    	</div>		    	
+		    	</div>
 		    {% else %}
 		    <div class="form-group row">
 		        {{ field.errors }}
-		        <div class="col-sm-2 col-form-label">{{ field.label_tag }}</div> 
+		        <div class="col-sm-2 col-form-label">{{ field.label_tag }}</div>
 		        <div class="col"> {{ field }} </div>
 		    </div>
 		    {% endif %}
 		{% endfor %}
 
-		
+
 				<button type="submit" class="mbtn btn btn-primary" values="submit" onclick="verificate()">
 					Отправить</button>
 
 				</form>
-           
+
 	<div id="check-calldoc-window">
+		<div class="text-center">
+			 <h4>Вызов врача на дом</h4>
+		</div>
 		<div class='container'>
 			<div id = 'check-calldoc-window-fields'>а</div>		<!--check_fields-->
 
-			
-	        		<button id = "all-right-button" class='btn approve-btn float-left' onclick="send_data()">Все верно, записаться</button>
+
+	        		<button id = "all-right-button" class='btn approve-btn float-left' onclick="send_data()">Все верно</button>
 	        		<button id = "cancel-button" class='x btn-danger float-right' onclick = "cancel_verification()">Отмена</button>
-			
-    	
+
+
 		</div>
-	</div> <!--check-appointment-window-->					
+	</div> <!--check-appointment-window-->
 </div>
 
 <div class= 'overlay'></div>
 
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>             
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
 
 		<script type="text/javascript">
-		
+
 
 		function generate_id(str) {
   			return str.replace(/[xy]/g, function(c) {
@@ -202,7 +205,7 @@
 			var wind = $('#check-calldoc-window');
 			var container = $('#check-calldoc-window-fields');
 			container.empty();
-			
+
 			for(var key in dict)
 			{
 				var current = $('<div>', {'class': 'row'});
@@ -211,8 +214,8 @@
 						);
 				container.append(current);
 			}
-							
-			wind.css('display', 'block');		
+
+			wind.css('display', 'block');
 
 		}
 
@@ -222,9 +225,9 @@
 			{
 				var data = collect_data();
 				console.log(data);
-				send_messages('send-calldoc', data);				
+				send_messages('send-calldoc', data);
 			}
-			
+
 
 		}
 
@@ -242,11 +245,11 @@
 
 		        // handle a successful response
 		        success : function(msg) {
-		        	
+
 		        	alert(msg);
 		        	$('#id_complaints').val('');
 					$('#add_inform').val('');
-					$('#telephone').val(''); 
+					$('#telephone').val('');
 					$('#id_complaints').removeClass('is-valid');
 					$('#telephone').removeClass('is-valid');
 					cancel_verification();
@@ -256,7 +259,7 @@
 		        error : function(xhr,errmsg,err) {
 		        	console.log(JSON.stringify(xhr));
 		            alert("Ошибка");
-		            
+
 		        }
 		    });
 		}
@@ -291,15 +294,15 @@
 						$(element).removeClass('is-valid');
 						$(element).addClass('is-invalid');
 						return false;
-					}			
-		}	
+					}
+		}
 
 
 
 
 		var elements_to_check = {
-			'id_complaints': 4 ,				
-			'telephone': 16,			
+			'id_complaints': 4 ,
+			'telephone': 16,
 		}
 
 
@@ -325,9 +328,9 @@
 		var currentUser=0;
 		var currentAdress=0;
 		window.onload = function(){
-			$("#telephone").mask("+0(000)000-00-00", {placeholder: "+7(___)___-__-__"});							
+			$("#telephone").mask("+0(000)000-00-00", {placeholder: "+7(___)___-__-__"});
 			assign_patients(pacients);
-			adressFacade();	
+			adressFacade();
 			$( "#pacient" ).change(function() {
 			   adressFacade();
 			});
@@ -339,15 +342,15 @@
 			{
 
 				$('#'+key).bind('keyup', function() {
-					check_element_length_greater_than(this);					
+					check_element_length_greater_than(this);
 				});
 
 			}
 
 		}
-		
-		
-				
+
+
+
 	</script>
 
 
