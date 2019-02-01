@@ -1,3 +1,4 @@
+from django.shortcuts import render, redirect
 from datetime import datetime
 #from OpenSSL import crypto
 from urllib.parse import urlencode
@@ -10,7 +11,10 @@ import pytz
 import json
 import requests
 from django.conf import settings
-
+from .models import PatientUser
+from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponseRedirect, HttpResponse
+from .views_ibus_connector import is_user_accepted_permissions
 
 class Auth_esia:
 
@@ -209,11 +213,16 @@ def esia_callback(request):
 		patient = PatientUser.objects.get(snils = snils)
 
 
+
 		if patient is None:
 			return HttpResponce('<h2>Пользователь с таким СНИЛС не зарегистрирован в системе</h2>')
 		else:
-			login(request, patient)
-			return redirect('/main')
+			if is_user_accepted_permissions(snils):
+
+				login(request, patient)
+				return redirect('/main')
+			else:
+				return HttpResponse('<h2>Пользователь с таким СНИЛС не давал согласие на обработку персональных данных!</h2>')	
 
 	elif 'access_token' in request.GET:
 

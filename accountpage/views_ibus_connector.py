@@ -73,9 +73,21 @@ class IbusScriptExcecutor():
 			raise Exception('Не удалось подключиться к шине!')
 		else:	
 			decoded_response = resp.read().decode()			
+			print('bad_post: {0}'.format(decoded_response))
 			js = json.loads(decoded_response)
 			
 			return js
+
+def is_user_accepted_permissions(snils):
+	a = BadBusExchangeMethod(None, 'RegistrationCheck', {'snils': snils}, ['output', 'RegistrationCheck'])
+	
+	print('xj; {0}'.format(a))
+
+	if len(a)>0:
+		return True
+	else:
+		return False	
+
 
 
 def busExchangeMethod(request, method, params_dict, nestedKeys):
@@ -132,10 +144,13 @@ def BadBusExchangeMethod(request, method, params_dict, nestedKeys):
 
 		try:
 			responce = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message(method, params_dict)
-			
+			print('bad: {0}'.format(responce))
 		except Exception as Ex:
 			
 			responce = str(Ex)
+
+		if 'ErrorsType:' in responce['output']:
+			return responce['output']['ErrorsType:']
 
 		if len(nestedKeys) == 1:
 			return json.loads(responce[nestedKeys[0]])
