@@ -187,7 +187,7 @@ def ehr(request):
 		 context={'title': 'Электронная медицинская карта', 'nbar': 'ehr',
 		           'name': (request.user.surname + ' ' + request.user.name),
 		           'docs': [],#get_ehr_ListDocuments(request) ,
-		           'drug_records': get_ehr_PrescriptionDrugs(request),
+		           'drug_records': [],
 		           'pacients':request.session['pacients']
 		         })
 ###---end|ЭМК---####
