@@ -57,35 +57,36 @@
 
 
 	</style>
+	<div class='container'>
+		<form id = "message-form" method = "POST" class = 'message-form'>
+			<div class='form-group row'><h2 class='col'>Обращение</h2></div>
 
-	<form id = "message-form" method = "POST" class = 'message-form'>
-		<div class='form-group row'><h2 class='col'>Обращение</h2></div>
+			<div id="email" class="hidden_fields">{{ my_email }}</div>
 
-		<div id="email" class="hidden_fields">{{ my_email }}</div>
+			{% csrf_token %}
+			{% for field in form.visible_fields %}
+			 <!-- убрать одну d in hiddden что скрыть поля  -->
+			    {% if field.name  in hidden %}
+			    	<div class="hidden_fields">
+			    	{{ field.label_tag }}{{ field }}
+			    	</div>
+			    {% else %}
+			    <div class="form-group row">
+			        {{ field.errors }}
+			        <div class="col-sm-2 col-form-label">{{ field.label_tag }}</div>
+			        <div class="col"> {{ field }} </div>
+			    </div>
+			    {% endif %}
+			{% endfor %}
 
-		{% csrf_token %}
-		{% for field in form.visible_fields %}
-		 <!-- убрать одну d in hiddden что скрыть поля  -->
-		    {% if field.name  in hidden %}
-		    	<div class="hidden_fields">
-		    	{{ field.label_tag }}{{ field }}
-		    	</div>
-		    {% else %}
-		    <div class="form-group row">
-		        {{ field.errors }}
-		        <div class="col-sm-2 col-form-label">{{ field.label_tag }}</div>
-		        <div class="col"> {{ field }} </div>
-		    </div>
-		    {% endif %}
-		{% endfor %}
+			{% for hidden in form.hidden_fields %}
+				{{ hidden }}
+			{% endfor %}
 
-		{% for hidden in form.hidden_fields %}
-			{{ hidden }}
-		{% endfor %}
+		</form>
 
-	</form>
-	<button type="submit" class="btn btn-primary" onclick ="verificate()">Отправить</button>
-
+		<button type="submit" class="btn btn-primary" onclick ="verificate()">Отправить</button>
+	</div>	
 	<div id="check-window">
 		<div class="text-center">
 			 <h4>Отправка Обращения</h4>
