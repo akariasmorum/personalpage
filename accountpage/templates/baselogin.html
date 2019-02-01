@@ -12,7 +12,10 @@
     <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
         {% load static %}
     
-    <title>Hello, world!</title>
+    <title>{% if title %}
+      {{ title }}
+      {% else %} Регистрация в личном кабинете {% endif %}</title>
+    }
     <style type="text/css">
     
     

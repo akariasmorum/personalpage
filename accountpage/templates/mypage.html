@@ -68,9 +68,14 @@
      					show_data("У данного пациента нет участкового врача");
 					}
 					else {
-							show_data("Врач: " + therapist_info[0].Vrach + "</br>" +
+						string = "Врач: " + therapist_info[0].Vrach + "</br>" +
 							          " Организация: " + therapist_info[0].name_org + "</br>" +
-												" Участок: #" + therapist_info[0].UCH);
+												" Участок: #" + therapist_info[0].UCH;
+							
+						if('chtml' in therapist_info[0]){
+							string += therapist_info[0].chtml;
+						}
+							show_data(string);
 					}
 
 					//alert(JSON.stringify(therapist_info));

@@ -50,7 +50,7 @@ def loginView(request):
 	else:
 		form = LoginForm()
 
-	return render(request, 'login.html', context = {'title':'Аутентификация', 'form': form})
+	return render(request, 'login.html', context = {'title':'Вход в личный кабинет', 'form': form})
 
 #########################
 
@@ -104,7 +104,7 @@ def get_message(request):
 
 	form = MessageForm()
 	return render(request, 'message.html',
-			   context={'title': 'Расписание', 'nbar': 'message',
+			   context={'title': 'Обращение пациента', 'nbar': 'message',
 						 'form': form,
 						 'name': (request.user.surname + ' ' + request.user.name),
 					 'my_email': 'email@email.ru',
