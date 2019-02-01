@@ -2,12 +2,33 @@
 {% block context %}
 
 <style type="text/css">
+	 #loader{
+      position: absolute;
+      top:0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 999;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #fff;
+    }
+    .loading-gif{
+      display: inline-block;
+      height: 300px;
+      width: 300px;
+
+    }
+
 	.h4.collapsed:before{
      	content:"+"
 	}
 	.h4:before{
      	content:"-";
 	}
+
 	.doc-separator{
 		border-top: 2px solid rgba(225,225,0,1)
 	}
@@ -25,6 +46,8 @@
 </style>
 <div class='main-area'>
     <div class = 'container'>
+    {% load static %}
+    <div id='loader'><img class='loading-gif align-self-center' src='{% static 'loading.gif' %}'></div>
 			<h2>Электронная медицинская карта</h2>
 			<!-- БЛОК Список документов-->
 			<a class='h4 collapsed'  href="#doc-list" data-toggle="collapse">
@@ -60,8 +83,16 @@ function open_new(e){
 };
 
 window.onload = function(){
-	load_data();
+	fadeIn_Process_fadeout();
 };
+
+function fadeIn_Process_fadeout(){
+	$('#loader').fadeIn("slow", function(){
+		load_data();
+		$("#loader").fadeOut("slow", function() { });
+
+	});
+}
 
 function Query_NS(my_method, for_request, name_service, url_serv, callback){
     var token = '{{ csrf_token }}';
@@ -110,11 +141,87 @@ function request_data(service, url_serv)
 	 }
 };
 
+function categorize_docs(docs){
+	categories = {};
+	for(var element in docs){
+
+		/*Если такой группы еще нет в categories*/
+		if(!(docs[element].nameGroup in categories)){
+
+			/*Если nameGroup пустой, то объявить категорию как "прочее"*/
+			if(docs[element].nameGroup == undefined){
+				categories['Прочее'] = [];	
+			}
+			/*Иначе по названию группы*/
+			else{
+				categories[docs[element].nameGroup] = [];
+			}
+		}
+
+		if (docs[element].nameGroup == undefined){
+				categories['Прочее'].push(docs[element]);	
+		}
+
+		else{
+			categories[docs[element].nameGroup].push(docs[element]);
+		}
+	}
+	return categories;
+}
+
+function add_categorized_docs(categorized_doc){
+	var doc_ul = $('#doc-list');
+	if(Object.keys(categorized_doc).length == 0){
+		doc_ul.append('<li> Список документов пуст</li>');
+	}
+	else{
+		for(var key in categorized_doc){
+			var current_category_a = $('<a>', {'class': 'h4 collapsed', 'data-toggle': 'collapse',
+												 'href': '#doc-'+key} );
+			current_category_a.append(key);
+
+			doc_ul.append(current_category_a);
+
+			var current_category_ul = $('<ul>', {'class': 'collapse','id': 'doc-'+key });
+				
+					for(var doc in categorized_doc[key]){
+						var current_doc = categorized_doc[key][doc];
+						var current_doc_element = '<li class= "list-unstyled">' + 
+							'<div><i class="fas fa-file"></i>'            +
+							' Название документа:' +  current_doc.namedoc    +
+							' Дата:' +  current_doc.datedoc                  +
+							' <div id = "main-data"> '               +
+							' ФИО:' + current_doc.FAM + ' ' + current_doc.NAME + ' ' + current_doc.OTH  +
+							' Пол:' + current_doc.sex + ' ' + ' Дата рождения:' +  current_doc.dater +
+							' СНИЛС:' + current_doc.SNILS + ' </div>';
+							if ( current_doc.chtml != undefined )
+			 				{
+				 				current_doc_element +=  ' <a class="doc-button h5 collapsed" ' +
+				                    ' href="#doc-li-'+ key + '-' + doc + '" data-toggle="collapse">' +
+														' Документ		</a><a class="h5" href="#doc-li-'+ key + '-' + doc + '"' +
+	         									' onclick = "open_new(this);">Открыть в новом окне</a> ' +
+														' <div class = "doc-li collapse" id = "doc-li-'+ key + '-' + doc + '">' +
+														  current_doc.chtml + '</font></font></body></div></div></br>';
+							}
+							current_doc_element+='</li>';
+							current_category_ul.append(current_doc_element);
+						}
+			doc_ul.append(current_category_ul);
+			
+			doc_ul.append('<br>');		
+
+		}
+	}
+}
+
 function load_data(){
 	var docs = request_data('EHMK.ListDocuments','get-docs-list');
 	var drug_records = request_data('EHMK.PrescriptionDrugs','get-drugs-list');
 
-	add_docs(docs);
+
+	var docs_cats = categorize_docs(docs);
+	add_categorized_docs(docs_cats);
+	//add_docs(docs);
 	add_drug(drug_records);
 };
 
@@ -206,7 +313,7 @@ function clear_ul(){
 function update(){
 	setTimeout(function todo(){
 		clear_ul();
-		load_data();
+		fadeIn_Process_fadeout();
 	});
 };
 </script>
