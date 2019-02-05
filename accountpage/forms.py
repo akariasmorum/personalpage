@@ -12,7 +12,7 @@ from .views_ibus_connector import get_check_code
 class LoginForm(forms.Form):
 	username = forms.CharField(label='Введите Ваш СНИЛС', widget = forms.TextInput(attrs={'class': 'form-control','id':'id_username', 'placeholder': 'Введите Ваш СНИЛС'}), max_length=14)
 	password = forms.CharField(label='Введите Ваш пароль', widget = forms.PasswordInput(attrs={'class': 'form-control' , 'placeholder': 'Введите пароль'}))
-
+	
 	def clean(self):
 		cleaned_data = super(LoginForm, self).clean()
 		username = self.cleaned_data['username']
@@ -34,8 +34,8 @@ class MessageForm(ModelForm):
 	date      = forms.DateTimeField(  widget = forms.HiddenInput(attrs={'id':'date_doc'   }), label='Дата')
 	id_doc_site = forms.CharField(    widget = forms.HiddenInput(attrs={'id':'id_doc_site'}), label='ID вставки',  max_length=50)
 	
-	recipient   = forms.CharField(    widget = forms.TextInput(attrs={'class': 'form-control','id':'recipient'  }), label='Кому обращение', max_length=20)
-	subject     = forms.CharField(    widget = forms.TextInput(attrs={'class': 'form-control','id':'subject'    }), label='Тема сообщения', max_length=50)
+	recipient   = forms.CharField(    widget = forms.TextInput(attrs={'class': 'form-control','id':'recipient'  }), label='Кому обращение', max_length=100)
+	subject     = forms.CharField(    widget = forms.TextInput(attrs={'class': 'form-control','id':'subject'    }), label='Тема сообщения', max_length=100)
 	message     = forms.CharField(    widget = forms.Textarea (attrs={'class': 'form-control','id':'message'    }), label='Сообщение',      max_length=500, required = True)
 	phone 		= forms.CharField(	  widget = forms.TextInput(attrs={'class': 'form-control','id':'phone'	}), label='Номер телефона', max_length=16, required = True)
 	

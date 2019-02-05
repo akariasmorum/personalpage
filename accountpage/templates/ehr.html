@@ -52,7 +52,7 @@
 			<!-- БЛОК Список документов-->
 			<a class='h4 collapsed'  href="#doc-list" data-toggle="collapse">
 				<i class="fas fa-folder"></i>
-				Список Документов
+				Документы
 				</a>
 			<ul id="doc-list" class="collapse">
 
@@ -61,7 +61,7 @@
 			<br>
 			<a class='h4 collapsed' href="#prescribe-list" data-toggle="collapse">
 			  <i class="fas fa-folder"></i>
-			  Назначение лекарственных препаратов
+			  Назначения и рекомендации
 			</a>
 			<ul id='prescribe-list' class="collapse">
 
@@ -187,18 +187,19 @@ function add_categorized_docs(categorized_doc){
 					for(var doc in categorized_doc[key]){
 						var current_doc = categorized_doc[key][doc];
 						var current_doc_element = '<li class= "list-unstyled">' + 
-							'<div><i class="fas fa-file"></i>'            +
-							' Название документа:' +  current_doc.namedoc    +
-							' Дата:' +  current_doc.datedoc                  +
-							' <div id = "main-data"> '               +
-							' ФИО:' + current_doc.FAM + ' ' + current_doc.NAME + ' ' + current_doc.OTH  +
-							' Пол:' + current_doc.sex + ' ' + ' Дата рождения:' +  current_doc.dater +
-							' СНИЛС:' + current_doc.SNILS + ' </div>';
+													'<div><i class="fas fa-file"></i>'            +
+														current_doc.datedoc                  +
+														' ' +  current_doc.namedoc    +
+							
+							' '               +
+							'(' + current_doc.FAM + ' ' + current_doc.NAME + ' ' + current_doc.OTH  + ')' + '<br>'
+							
+							+ ' ';
 							if ( current_doc.chtml != undefined )
 			 				{
-				 				current_doc_element +=  ' <a class="doc-button h5 collapsed" ' +
+				 				current_doc_element +=  ' <a class="doc-button h6 collapsed" ' +
 				                    ' href="#doc-li-'+ key + '-' + doc + '" data-toggle="collapse">' +
-														' Документ		</a><a class="h5" href="#doc-li-'+ key + '-' + doc + '"' +
+														' Открыть в текущем окне		</a><a class="h6" href="#doc-li-'+ key + '-' + doc + '"' +
 	         									' onclick = "open_new(this);">Открыть в новом окне</a> ' +
 														' <div class = "doc-li collapse" id = "doc-li-'+ key + '-' + doc + '">' +
 														  current_doc.chtml + '</font></font></body></div></div></br>';
@@ -279,16 +280,18 @@ function add_drug(drug_records){
 
 			 newLi.innerHTML +='<a class="h5 collapsed" href="#prescribe-li-' + i + '"' +
 			                   'data-toggle="collapse"><i class="fas fa-file"></i>' +
-	       				 				 ' Врач:' +  drug_records[i].dol +
-												 ' Дата назначения:' + drug_records[i].datedoc +
-												 ' Препарат:' + drug_records[i].name + '</a>' +
+			                   			 		drug_records[i].datedoc +
+	       				 				 ' ' +  drug_records[i].dol +
+												 
+												 ' ' + drug_records[i].vid + ': ' + drug_records[i].name + '</a>' +
 												 '<div id = "prescribe-li-' + i + '" class="collapse">' + '<br>' +
-												 'Доп.название:' + drug_records[i].lat_name + '<br>' +
+												 drug_records[i].chtml +
+												 /*'Доп.название:' + drug_records[i].lat_name + '<br>' +
 									       'Метод введения:' +  drug_records[i].MetodVvedenia + '<br>' +
 									       'Приём:' + drug_records[i].priem + '<br>' +
 									       'Красность приёма:' + drug_records[i].kratnost + '<br>' +
 									       'Дозировка:' + drug_records[i].doze + '<br>' +
-									       'Время применения:' + drug_records[i].kolday + '<br>' +
+									       'Время применения:' + drug_records[i].kolday + '<br>' +*/
 									       '</div></br></br>';
 
 				main_ul.appendChild(newLi);

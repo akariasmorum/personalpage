@@ -149,6 +149,7 @@ def BadBusExchangeMethod(request, method, params_dict, nestedKeys):
 			
 			responce = str(Ex)
 
+		print(responce['output'])	
 		if 'ErrorsType:' in responce['output']:
 			return responce['output']['ErrorsType:']
 
@@ -301,7 +302,7 @@ def get_check_code(request, snils, code):
 			return False
 	'''
 
-	params_dict = {'snils': snils, 'code': code}
+	params_dict = {'snils': snils, 'search_code': code}
 	method = 'RegistrationCheck'
 	answer = BadBusExchangeMethod(request, method, params_dict, ['output', method])
 	if len(answer) == 0:
@@ -309,21 +310,6 @@ def get_check_code(request, snils, code):
 	else:
 		return True
 
-
-def BadBusExchangeMethod(request, method, params_dict, nestedKeys):
-
-		try:
-			responce = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message(method, params_dict)
-			
-		except Exception as Ex:
-			print(traceback.format_exc())
-			responce = str(Ex)
-
-		if len(nestedKeys) == 1:
-			return json.loads(responce[nestedKeys[0]])
-		elif len(nestedKeys) == 2:
-			
-			return json.loads(responce[nestedKeys[0]][nestedKeys[1]])	
 
 
 #возвращает true, если у текущего пользователя есть опекаемый с таким снилс у и этого опекаемого есть указанный адрес

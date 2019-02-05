@@ -3,6 +3,7 @@ class Modify(object):
         self.get_response = get_response
 
     def __call__(self, request):
+        
         if not request.session.get('pacients'):
             if str(request.user) != 'AnonymousUser':
                 from .views_ibus_connector import request_user_children
