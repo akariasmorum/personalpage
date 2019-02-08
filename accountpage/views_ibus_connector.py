@@ -366,14 +366,10 @@ def request_user_children(request, snils):
 def request_adress(request, snils):
 	#запросить адреса данного пациента
 	#output: list[ { адрес }, { адрес } ]
-	
-	if request.session.get('address') == None:
-		addressList = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message('AddressList',
-			{'snils': snils})
-	
-		request.session['address'] = json.loads(addressList['output']['AddressList'])
+	addressList = IbusScriptExcecutor(*DEVELOPING_INIT_ARGUMENTS).post_message('AddressList',
+			{'snils': snils})		
 
-	return request.session.get('address')
+	return json.loads(addressList['output']['AddressList'])	
 
 
 def request_user_adress(request, snils):
@@ -382,10 +378,17 @@ def request_user_adress(request, snils):
 
 	pacients = request_user_children(request, snils)
 	
+	if request.session.get('address') == None:
+		request.session['address'] = {}
+
+		for pacient in pacients:
+			
+			adresses = request_adress(request, pacient['SNILS'])
+			request.session['address'][pacient['SNILS']] = adresses
+
 	for pacient in pacients:
-		
-		adresses = request_adress(request, pacient['SNILS'])
-		pacient['adresses'] = adresses
+		pacient['adresses'] = request.session.get('address').get(pacient['SNILS'])		
 	
+	print(pacients)
 	return pacients
 

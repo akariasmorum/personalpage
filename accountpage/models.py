@@ -61,7 +61,8 @@ class Patient(models.Model):
 	patronimic = models.CharField('Отчество опекаемого', max_length=80)
 	snils = models.CharField('СНИЛС опекаемого', max_length=14)
 	date_born = models.DateField('Дата Рождения')
-	trustee = models.ForeignKey(PatientUser, models.CASCADE)
+	trustee = models.ForeignKey(PatientUser,  models.SET_NULL, blank=True,
+    null=True)
 
 	def __str__(self):
 		return "{0} {1}".format(self.surname, self.name)
@@ -74,13 +75,15 @@ class Patient(models.Model):
 class CallDoc(models.Model):	
 	date = models.DateTimeField('Время вызова', auto_now_add=True)
 	patient = models.ForeignKey(Patient, models.CASCADE)
-	trustee = models.ForeignKey(PatientUser, models.CASCADE)
+	trustee = models.ForeignKey(PatientUser,  models.SET_NULL, blank=True,
+    null=True)
 	temperature = models.CharField('Температура', max_length=4)
 	complaints = models.CharField('Жалобы', max_length=1000)
 	telephone = models.CharField('Номер телефона', max_length = 16)
 
 class CallDoctor(models.Model):
-	trustee     = models.ForeignKey   (PatientUser, models.CASCADE)
+	trustee     = models.ForeignKey   (PatientUser, models.SET_NULL, blank=True,
+    null=True)
 	patient     = models.CharField    ('СНИЛС'          , max_length= 14)
 
 	id_doc_site = models.CharField    ('ID сайта'       , max_length=50  )
@@ -96,7 +99,8 @@ class CallDoctor(models.Model):
 
 
 class Message(models.Model):	 
-	sender      = models.ForeignKey   (PatientUser, models.CASCADE)
+	sender      = models.ForeignKey   (PatientUser, models.SET_NULL, blank=True,
+    null=True)
 	date        = models.DateTimeField('Дата обращения' )#, auto_now_add=True)
 	id_doc_site = models.CharField    ('ID сайта'       , max_length=50)
 	recipient   = models.CharField    ('Кому обращение' , max_length=100)

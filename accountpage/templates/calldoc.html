@@ -325,6 +325,10 @@
 			   assign_adresses(currentUser);
 		}
 
+		function update(){
+			adressFacade();
+		}
+
 		var pacients = {{ pacients|safe }};
 		var currentUser=0;
 		var currentAdress=0;
