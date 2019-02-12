@@ -81,7 +81,7 @@ class IbusScriptExcecutor():
 def is_user_accepted_permissions(snils):
 	a = BadBusExchangeMethod(None, 'RegistrationCheck', {'snils': snils}, ['output', 'RegistrationCheck'])
 	
-	print('xj; {0}'.format(a))
+	print('auth-esia: requested snils= {0}'.format(a))
 
 	if len(a)>0:
 		return True
@@ -305,10 +305,8 @@ def get_check_code(request, snils, code):
 	params_dict = {'snils': snils, 'search_code': code}
 	method = 'RegistrationCheck'
 	answer = BadBusExchangeMethod(request, method, params_dict, ['output', method])
-	if len(answer) == 0:
-		return False
-	else:
-		return True
+	print('ответ: {0}, len: {1}'.format(answer, len(answer)))
+	return answer[0]['PasswordReg']
 
 
 

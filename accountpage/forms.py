@@ -34,10 +34,10 @@ class MessageForm(ModelForm):
 	date      = forms.DateTimeField(  widget = forms.HiddenInput(attrs={'id':'date_doc'   }), label='Дата')
 	id_doc_site = forms.CharField(    widget = forms.HiddenInput(attrs={'id':'id_doc_site'}), label='ID вставки',  max_length=50)
 	
-	recipient   = forms.CharField(    widget = forms.TextInput(attrs={'class': 'form-control','id':'recipient'  }), label='Кому обращение', max_length=100)
-	subject     = forms.CharField(    widget = forms.TextInput(attrs={'class': 'form-control','id':'subject'    }), label='Тема сообщения', max_length=100)
-	message     = forms.CharField(    widget = forms.Textarea (attrs={'class': 'form-control','id':'message'    }), label='Сообщение',      max_length=500, required = True)
-	phone 		= forms.CharField(	  widget = forms.TextInput(attrs={'class': 'form-control','id':'phone'	}), label='Номер телефона', max_length=16, required = True)
+	recipient   = forms.CharField(    widget = forms.TextInput(attrs={'class': 'form-control','id':'recipient'  }), label='Кому обращение', max_length=100, min_length = 4)
+	subject     = forms.CharField(    widget = forms.TextInput(attrs={'class': 'form-control','id':'subject'    }), label='Тема сообщения', max_length=100, min_length = 4)
+	message     = forms.CharField(    widget = forms.Textarea (attrs={'class': 'form-control','id':'message'    }), label='Сообщение',      max_length=500, required = True, min_length = 10)
+	phone 		= forms.CharField(	  widget = forms.TextInput(attrs={'class': 'form-control','id':'phone'	}), label='Номер телефона', max_length=16, required = True, min_length = 16)
 	
 	
 
@@ -72,10 +72,10 @@ class CallDoctorForm(forms.Form):
 	#patient      = forms.CharField    (widget = forms.Select   (attrs={'class': 'form-control','id':'pacient'   }),label='Пациент')
 	adress       = forms.CharField    (widget = forms.Select   (attrs={'class': 'form-control', 'id': 'select_address'}), label='Адрес пациента')
 	temperature  = forms.ChoiceField  (widget = forms.Select   (attrs={'class': 'form-control'}),label='Температура', choices = ((str(x*0.1)[:4], str(x*0.1)[:4]) for x in range(360, 401)))
-	complaints   = forms.CharField    (widget = forms.Textarea (attrs={'class': 'form-control'}),label='Жалобы', max_length=1000, required = True)
+	complaints   = forms.CharField    (widget = forms.Textarea (attrs={'class': 'form-control'}),label='Жалобы', max_length=1000, min_length = 4, required = True)
 
 	add_inform   = forms.CharField    (widget = forms.Textarea (attrs={'class': 'form-control addition','id':'add_inform'}),label='Дополнительная информация', max_length=1000, required = False)
-	telephone 	 = forms.CharField 	  (widget = forms.TextInput(attrs={'class': 'form-control', 'id': 'telephone'}), label = 'Номер телефона', max_length = 16, required = True)
+	telephone 	 = forms.CharField 	  (widget = forms.TextInput(attrs={'class': 'form-control', 'id': 'telephone'}), label = 'Номер телефона', max_length = 16, min_length = 16,  required = True)
 	#kladr 		 = forms.CharField	  (widget = forms.TextInput(attrs={'class': 'form-control d-none', 'id': 'kladr'}))
 	#home 		 = forms.CharField	  (widget = forms.TextInput(attrs={'class': 'form-control d-none', 'id': 'kladr'}))
 	#kv  		 = forms.CharField	  (widget = forms.TextInput(attrs={'class': 'form-control d-none', 'id': 'kladr'}))
@@ -152,12 +152,24 @@ class SignUpForm(UserCreationForm):
 			return snils
 
 	def clean_regcode(self):
-		reg = self.cleaned_data.get('regcode')
 
-		if get_check_code(None, self.cleaned_data.get('snils'), reg):
-			return reg
-		else:
-			self.add_error('regcode', 'Не правильный регистрационный код!')	
+		reg = self.cleaned_data.get('regcode')
+		print('Запрашиваю регистрационный код: {0} {1}'.format(reg, self.cleaned_data.get('snils')))
+
+		check_code = None
+
+		try:
+			check_code = get_check_code(None, self.cleaned_data.get('snils'), reg)
+			if check_code == None:
+				self.add_error('regcode', 'Вы не давали согласие')			
+
+			elif reg != check_code:
+				self.add_error('regcode', 'Не правильный регистрационный код!')	
+		except Exception as Check_code_ex:
+			print(Check_code_ex)
+			self.add_error('regcode', 'Ошибка проверки регистрационного кода, проверьте правильноcть указанного СНИЛС')
+
+		
 
 			
 

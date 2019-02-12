@@ -2,6 +2,7 @@
 {% block context %}
 
 <style type="text/css">
+	
 	.hidden_fields{
 		display:none;
 	}
@@ -57,10 +58,32 @@
     padding: .375rem .75rem;
   }
 
+  #loader{
+      position: absolute;
+      top:0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 999;
+      text-align: center;
+      display: flex;      
+      align-items: center;
+      justify-content: center;
+      background-color: #fff;
+    }
+    .loading-gif{
+      display: inline-block;
+      height: 300px;
+      width: 300px;
+
+    }
+
 </style>
 
-
+{% load static %}
+<div id='loader'><img class='loading-gif align-self-center' src='{% static 'loading.gif' %}'/></div>
 <div class='main-area'>
+
 	<div class='container'>
 	<form method = "POST" class = 'call-doc'>
 
@@ -138,18 +161,37 @@
  					 });
   		}
 
+
+
+  		function check_element(html_element){
+  			if(html_element.validity.valueMissing){
+  				html_element.setCustomValidity("Пожалуйста, заполните это поле");  					
+		  	}	  				
+		  				
+			else if(html_element.validity.tooShort){
+			  	html_element.setCustomValidity("Мало символов");	  					
+			}
+			  		
+			else{
+			  	html_element.setCustomValidity("");	
+			}
+  		}
   		function check_fields(){
   			for(var element in elements_to_check)
   			{
-  				if(document.getElementById(element).reportValidity()==false)
-  				{
-  					return false;
-  				}
+  				let html_element = document.getElementById(element); 
+  				
+  				check_element(html_element);
 
-  				if(check_element_length_greater_than('#'+element)==false)
+  				html_element.addEventListener("input", function (event) 
   				{
-  					return false;
-  				}
+  					check_element(html_element);				  	
+				});  				
+
+				if (html_element.reportValidity() == false){
+					return false;
+				}
+  				
   			}
   			return true;
 
@@ -224,9 +266,15 @@
 		function send_data(){
 			if(check_fields())
 			{
-				var data = collect_data();
-				console.log(data);
-				send_messages('send-calldoc', data);
+				dispel_war_fog();
+				$('#loader').fadeIn("slow", function(){
+					var data = collect_data();
+					console.log(data);
+
+					send_messages('send-calldoc', data);		
+
+				});
+				
 			}
 
 
@@ -246,8 +294,13 @@
 
 		        // handle a successful response
 		        success : function(msg) {
-
-		        	alert(msg);
+		        	if(msg == 'Сценарий выполнен'){
+		        		alert('Вызов на дом зарегистрирован');
+		        	}
+		        	else{
+		        		alert(msg);
+		        	}
+		        	$("#loader").fadeOut("slow", function() { });		        	
 		        	$('#id_complaints').val('');
 					$('#add_inform').val('');
 					$('#telephone').val('');
@@ -258,6 +311,7 @@
 
 		        // handle a non-successful response
 		        error : function(xhr,errmsg,err) {
+		        	$("#loader").fadeOut("slow", function() { });
 		        	console.log(JSON.stringify(xhr));
 		            alert("Ошибка");
 
@@ -333,6 +387,8 @@
 		var currentUser=0;
 		var currentAdress=0;
 		window.onload = function(){
+			
+			$("#loader").fadeOut("slow", function() { });
 			$("#telephone").mask("+0(000)000-00-00", {placeholder: "+7(___)___-__-__"});
 			assign_patients(pacients);
 			adressFacade();

@@ -55,8 +55,31 @@
     padding: .375rem .75rem;
   }
 
+  #loader{
+      position: absolute;
+      top:0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 999;
+      text-align: center;
+      display: flex;      
+      align-items: center;
+      justify-content: center;
+      background-color: #fff;
+    }
+    .loading-gif{
+      display: inline-block;
+      height: 300px;
+      width: 300px;
+
+    }
+
 
 	</style>
+{% load static %}
+<div id='loader'><img class='loading-gif align-self-center' src='{% static 'loading.gif' %}'/></div>
+
 	<div class='container'>
 		<form id = "message-form" method = "POST" class = 'message-form'>
 			<div class='form-group row'><h2 class='col'>Обращение</h2></div>
@@ -138,26 +161,48 @@
 		function form_submit(){
 
 				console.log("submitting form!");
-				if(check_fields()){
-					data = collect_data();
-					Query("send-message", data);
+				if(check_fields())
+				{
+					dispel_war_fog();
+					$('#loader').fadeIn("slow", function(){
+						data = collect_data();
+						Query("send-message", data);
+					});	
 				}
 			}
 
-
+		function check_element(html_element){
+  			if(html_element.validity.valueMissing){
+  				html_element.setCustomValidity("Пожалуйста, заполните это поле");  					
+		  	}	  				
+		  				
+			else if(html_element.validity.tooShort){
+			  	html_element.setCustomValidity("Мало символов");	  					
+			}
+			  		
+			else{
+			  	html_element.setCustomValidity("");	
+			}
+  		}
+  			
 		function check_fields(){
   			for(var element in elements_to_check)
   			{
-  				if(document.getElementById(element).reportValidity()==false)
-  				{
-  					return false;
-  				}
+  				let html_element = document.getElementById(element); 
+  				
+  				check_element(html_element);
 
-  				if(check_element_length_greater_than('#'+element)==false)
+  				html_element.addEventListener("input", function (event) 
   				{
-  					return false;
-  				}
+  					check_element(html_element);				  	
+				});  				
+
+				if (html_element.reportValidity() == false){
+					return false;
+				}
+  				
   			}
+  			return true;
   			return true;
 
   		}
@@ -180,12 +225,12 @@
 			{
 				cast_war_fog();
 				show_verification({
-						'Пациент': $('#pacient option:selected' ).text(),
-						'Кому': $('#recipient').val(),
-						'Тема'  : $('#subject').val(),
-						'Сообщение': $('#message').val(),
-						'Телефон': $('#phone').val(),
-						});
+					'Пациент': $('#pacient option:selected' ).text(),
+					'Кому': $('#recipient').val(),
+					'Тема'  : $('#subject').val(),
+					'Сообщение': $('#message').val(),
+					'Телефон': $('#phone').val(),
+					});
 			}
 		}
 
@@ -247,11 +292,7 @@
 
 		function Query(url, for_request)
 	  	{
-	      // var for_request = {snils:"184-434-687 96",date_begin:"2017-08-10",
-	      //    date_end:"2017-10-10"     };
-
-
-
+	      
 	    var token = '{{ csrf_token }}';
 
 	    var responce = $.ajax({
@@ -263,9 +304,16 @@
 
 	        data:for_request,
 
-	                success: function(msg)
+	        success: function(msg)
 	        {
-	         	alert(msg);
+	        	$("#loader").fadeOut("slow", function() { });
+	         	if(msg == 'Сценарий выполнен'){
+		        	alert('Вызов на дом зарегистрирован');
+		        }
+		        else{
+		        	alert(msg);
+		        }
+
 	         	for(var element in elements_to_check)
 	         	{
 	         		$('#'+element).val('');
@@ -277,8 +325,6 @@
 	        error: function(jqXHR, textStatus, errorThrown)
 	        {
 	          console.log(JSON.stringify(jqXHR));
-	          //error in msg
-
 	        }
 
 	      }).responceText;
@@ -318,6 +364,7 @@
 		}
 
 		window.onload = function(){
+			$("#loader").fadeOut("slow", function() { });
 			$("#phone").mask("+0(000)000-00-00", {placeholder: "+7(___)___-__-__"});
 
 			for(var key in elements_to_check)
