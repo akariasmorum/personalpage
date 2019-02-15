@@ -1,123 +1,476 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title>Модели в Django</title>
-</head>
-<body class="container">
-    <!--{{answer}}-->
+{% extends "base.html" %}
+{% block context %}
+	<style type="text/css">
+		
+		p{
+			margin-bottom: 0px;
+		}
 
-    {% for an in answer %}
-    {{an.id}}  {{an.complaints}} {{an.patient}}
-    </br>
+		
+		.pick-contror{
+			text-align: center;
+			font-size: 20px;
+			color: white;
+			margin:0px 5px;
+		}
+		.event-li span{
+			flex: 0 0 15%;
+    		max-width: 15%;
+		}
 
-    {% endfor %}
+		.picker-slice{
+			cursor: pointer;
+		}
+
+		#events-container{			
+			margin: 10px 0px ;
+		}
+
+		.head-picker{
+			background: #9869b2;  /* fallback for old browsers */
+			background: -webkit-linear-gradient(to bottom, #B06AB3, #9869b2);  /* Chrome 10-25, Safari 5.1-6 */
+			background: linear-gradient(to bottom, #B06AB3, #9869b2); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+		}
+
+		.components-sched{
+			background-color: white;
+			padding: 10px;
+			border-radius: 4px;
+
+			-webkit-box-shadow: 0px 0px 52px -16px rgba(0,0,0,0.75);
+			-moz-box-shadow: 0px 0px 52px -16px rgba(0,0,0,0.75);
+			box-shadow: 0px 0px 52px -16px rgba(0,0,0,0.75);
+		}
+
+		.fa-envelope-square_color{
+			background: #FF416C;  /* fallback for old browsers */
+			background: -webkit-linear-gradient(to bottom, #FF4B2B, #FF416C);  /* Chrome 10-25, Safari 5.1-6 */
+			background: linear-gradient(to bottom, #FF4B2B, #FF416C); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+		}
+
+		.fa-user-md_color{
+			background: #FDC830;  /* fallback for old browsers */
+			background: -webkit-linear-gradient(to left, #F37335, #FDC830);  /* Chrome 10-25, Safari 5.1-6 */
+			background: linear-gradient(to left, #F37335, #FDC830); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+		}
+
+		.fa-thermometer_color{
+			background: #00B4DB;  /* fallback for old browsers */
+			background: -webkit-linear-gradient(to left, #0083B0, #00B4DB);  /* Chrome 10-25, Safari 5.1-6 */
+			background: linear-gradient(to left, #0083B0, #00B4DB); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+		}
+
+		.fa-feather_color{
+			background: #bdc3c7;  /* fallback for old browsers */
+			background: -webkit-linear-gradient(to right, #2c3e50, #bdc3c7);  /* Chrome 10-25, Safari 5.1-6 */
+			background: linear-gradient(to right, #2c3e50, #bdc3c7); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+		}
+
+		.fa-syringe_color{
+			background: #ADD100;  /* fallback for old browsers */
+			background: -webkit-linear-gradient(to right, #7B920A, #ADD100);  /* Chrome 10-25, Safari 5.1-6 */
+			background: linear-gradient(to right, #7B920A, #ADD100); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */	
+		}
+
+		.types-icon{
+			margin: 5px;
+		}
+
+		.wh{
+			color: white;
+			margin-right: 0px;
+		}
+
+		.message-color{
+			background: #FF416C;  /* fallback for old browsers */
+			background: -webkit-linear-gradient(to bottom, #FF4B2B, #FF416C);  /* Chrome 10-25, Safari 5.1-6 */
+			background: linear-gradient(to bottom, #FF4B2B, #FF416C); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+		}
+
+		.icon-back{
+			cursor: pointer;
+			width: 35px;
+			height: 35px;
+			border-radius: 50%;	
+			-webkit-box-shadow: 4px 4px 9px -4px rgba(0,0,0,1);
+			-moz-box-shadow: 4px 4px 9px -4px rgba(0,0,0,1);
+			box-shadow: 4px 4px 9px -4px rgba(0,0,0,1);
+		}
+
+		.deactivated{
+			background: #000000 !important;  /* fallback for old browsers */ 
+			background: -webkit-linear-gradient(to right, #434343, #000000) !important;  /* Chrome 10-25, Safari 5.1-6 */
+			background: linear-gradient(to right, #434343, #000000) !important; /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+		}
+
+		hr{
+			border-top: 2px solid rgba(0,0,0,.1);
+		}
+
+		@media(max-height: 576px){
+			.event-li span{
+			flex: 0 0 15%;
+    		max-width: 15%;
+		}
+
+		}
+	</style>
+	<div class='main-area'>
+		<div class='container'>
+			<div class='row components-sched head-picker'>
+				<div id = 'month-picker' class='col picker'>
+					<div class='row'>
+						<div id='prev-month' class = 'pick-contror picker-slice'> < </div>
+						<div id='current-month' class= 'pick-contror month'>  </div> 
+						<div id='next-month' class = 'pick-contror picker-slice'> > </div>
+						<div id='current-year' class= 'pick-contror month'>  </div> 
+					</div>	
+				</div>				
+
+				
+			</div>
+			<div id='events-container' class='components-sched'>
+				<div class = 'head-cont'>
+					Фильтр событий: 
+					<span id='types-container'>
+
+					</span>
+				</div>	
+				<div id='events'>
+					
+				</div>	
+			</div>
+
+		</div>	
+	</div>	
+	<script type="text/javascript">
+		String.prototype.formatUnicorn = String.prototype.formatUnicorn ||
+			function () {
+			    "use strict";
+			    var str = this.toString();
+			    if (arguments.length) {
+			        var t = typeof arguments[0];
+			        var key;
+			        var args = ("string" === t || "number" === t) ?
+			            Array.prototype.slice.call(arguments)
+			            : arguments[0];
+
+			        for (key in args) {
+			            str = str.replace(new RegExp("\\{" + key + "\\}", "gi"), args[key]);
+			        }
+			    }
+
+			    return str;
+		};
 
 
-</body>
-</html>
+		var IBUS_URL = 'ibus.dgkb.lan/Api/ExecuteScript/';
+		var EVENTS = $('#events');
+		var ACTION_ICON = {
+			'Обращение в МО': 'fa-envelope-square',
+			'Запись на прием': 'fa-user-md',
+			'Вызов на дом' : 'fa-thermometer',
+			'Вакцинация': 'fa-syringe', 
+			'Другое': 'fa-feather',
+		}
 
-<h2>Электронная медицинская карта</h2>
-<!-- БЛОК Список документов-->
-<a class='h4 collapsed'  href="#doc-list" data-toggle="collapse">
-  <i class="fas fa-folder"></i>
-  Список Документов
-</a>
+		var CLASS_LIST=[
+				'fa-envelope-square',
+				'fa-user-md',
+				'fa-thermometer',
+				'fa-syringe',
+				'fa-feather',
+			]
 
-{% if docs|length != 0 %}
-<ul id="doc-list" class="collapse">
-<!--
-Нужно уточнить занчение следуюших полей у ЕН
-<div>???:{{ doc.kratnostDayDayChet }}</div></br>
-<div>???:{{ doc.edizm }}</div></br>
-<div>???:{{ doc.name_otkaz }}</div></br>
-<div>???:{{ doc.cito }}</div></br>
-<div>???:{{ doc.komplex }}</div></br>
-<div>???:{{ doc.kratnostDayKoef }}</div></br>
-<div>???:{{ doc.kratnostKoef }}</div></br>
-<div>???:{{ doc.kratnostDayDayNeChet }}</div></br>
--->
-  {% for doc in docs %}
-  <li class='list-unstyled'><i class="fas fa-file"></i>
+		var FOGGED = false;	
+		var TYPES_CONTAINER = $('#types-container');
 
-      Название документа:{{ doc.namedoc }}
-      Дата:{{ doc.datedoc }}
+		var APPEARED_TYPES = {
+			'Обращение в МО': false,
+			'Запись на прием': false,
+			'Вызов на дом' : false,
+			'Вакцинация': false,
+			'Другое': false,
+		};
+
+		var CLICKED_TYPES = {
+			'fa-envelope-square' : true,
+			'fa-user-md': true,
+			'fa-thermometer': true,
+			'fa-feather': true,
+			'fa-syringe': true,
+		}
+		var CURRENT_DATE = new Date();
+		var CURRENT_YEAR_CONTAINER = $('#current-year');
+		var CURRENT_MONTH_CONTAINER = $('#current-month');
+		var MONTH_DICT = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
 
 
-    <div id = 'main-data'>
-      ФИО:{{ doc.FAM }} {{ doc.NAME }} {{ doc.OTH }}
-      Пол:{{ doc.sex }} Дата рождения:{{ doc.dater }} СНИЛС: {{ doc.SNILS }}
+		function renew_appeared_types(){
+			APPEARED_TYPES = {
+				'Обращение в МО': false,
+				'Запись на прием': false,
+				'Вызов на дом' : false,
+				'Вакцинация': false,
+				'Другое': false,
+			}
+		}
 
-    </div>
-    </a>
+		function drawEvents(events){
+			
+			console.log(events);
+			$(EVENTS).empty();
+			renew_appeared_types();
 
-    <div>
-      {% if doc.chtml|length != 0 %}
-        <a class='doc-button h5 collapsed' href="#doc-li-{{forloop.counter}}" data-toggle="collapse">
-        Документ
-        </a>
-        <a class='h5' href="#doc-li-{{forloop.counter}}" onclick = 'open_new(this);'>Открыть в новом окне</a>
-      <div class = 'doc-li collapse' id = 'doc-li-{{forloop.counter}}'>
+			if(events===undefined || events.length ==0){
+				let template = "<div class = 'event-li row'>За этот месяц нет данных для отображения</div>";
+				$(EVENTS).append(template);
+			}
 
-        {% autoescape off %}
-          {{ doc.chtml }}
-      {% endautoescape %}
-        </font></font></body>
-      </div>
-      {% endif%}
-    </div>
+			for(var event in events)
+			{	
 
-  </li></br>
-  {% endfor %}
-</ul>
+				let event_action = events[event].PACIENTACTIONID;
+				if (event_action in APPEARED_TYPES){
+					if(APPEARED_TYPES[event_action]== false){
+						APPEARED_TYPES[event_action] = true;
+					}
+				}
+				else{
+					APPEARED_TYPES['Другое'] = true;
+				}
+				var template = '<div class = "event-li row {0}">' +
+						'<span class ="d-flex justify-content-center align-items-center" >'+ 
+							'<div class="icon-back {1} d-flex justify-content-center align-items-center">'+
+								'<i class="fas {2} wh"></i>'+
+							'</div>	'+
+						'</span>'+
 
-{% else %}
-  <p> Список пуст </p>
-{% endif%}
+						'<div class="datetime-cont col-3  d-flex justify-content-center align-items-center">'+
+							'<div>'+
+								'<div id="date-li-1"  >{4}</div>'+								
+							'</div>'+	
+						'</div>'+
 
-<!--Конец Списка документов-->
+						'<div class="col-6 justify-content-start d-flex align-items-center">'+
+							'<p>'+
+							'{3}'+
+							'</p>'+
+						'</div>'+						
+					'</div>'+
+					'<div class = "{0}_hr">' +
+						'<hr>'+
+					'</div>';
+					
+					
 
-<!-- БЛОК Назначение -->
-<br>
-<a class='h4 collapsed' href="#prescribe-list" data-toggle="collapse">
-  <i class="fas fa-folder"></i>
-  Назначение лекарственных препаратов
-</a>
+				
+				let event_type = '';	
+				if(event_action in ACTION_ICON){
+					event_type = ACTION_ICON[event_action];
+				}
+				else{
+					event_type = ACTION_ICON['Другое']	
+				}
 
-   {% if drug_records|length != 0 %}
-<ul id='prescribe-list' class="collapse">
-  {% for record in drug_records %}
-  <li  class='list-unstyled'>
+				let splitted = events[event].datedoc.split(' ');
+				let date = splitted[0];
+				let time = splitted[1];
+				template = template.formatUnicorn(
+					event_type+'_display',
+					event_type+"_color",
+					event_type,
+					events[event].NRU_NAME,
+					events[event].datedoc);
 
-    <a class='h5 collapsed' href="#prescribe-li-{{forloop.counter}}" data-toggle="collapse"><i class="fas fa-file"></i>
-      Врач:{{ record.dol }}
-      Дата назначения:{{ record.datedoc }}
-      Препарат:{{ record.name }}
-    </a>
+				$(EVENTS).append(template);
+			}
+			add_types_icon();
+		}
 
-    <div id = 'prescribe-li-{{ forloop.counter }}' class='collapse'>
-    <br>
-      Доп.название:{{ record.lat_name }}<br>
-      Метод введения:{{ record.MetodVvedenia }}<br>
-      Приём:{{ record.priem }}<br>
-      Красность приёма:{{ record.kratnost }}<br>
-      Дозировка:{{ record.doze }}<br>
-      Время применения:{{ record.kolday }}<br>
-    </div>
-<!--
-Нужно уточнить занчение следуюших полей у ЕН
-<div>???:{{ record.kratnostDayDayChet }}</div></br>
-<div>???:{{ record.edizm }}</div></br>
-<div>???:{{ record.name_otkaz }}</div></br>
-<div>???:{{ record.cito }}</div></br>
-<div>???:{{ record.komplex }}</div></br>
-<div>???:{{ record.kratnostDayKoef }}</div></br>
-<div>???:{{ record.kratnostKoef }}</div></br>
-<div>???:{{ record.kratnostDayDayNeChet }}</div></br>
--->
-  </li></br></br>
-  {% endfor %}
-</ul>
-{% else %}
-  <p> Список пуст </p>
-{% endif%}
+
+		function add_types_icon(){
+			TYPES_CONTAINER.empty();
+			for(var key in APPEARED_TYPES)
+			{
+				if(APPEARED_TYPES[key]==true)
+				{
+					let type_template = '<div id ="{0}" title = "Убрать &lsquo;{1}&rsquo; " class="types-icon icon-back {2} d-inline-flex justify-content-center align-items-center">'+
+											'<i class="fas {3} wh"></i>'+
+										'</span>	';
+										
+					
+					let type_icon = ACTION_ICON[key];
+					template = type_template.formatUnicorn(type_icon, key, type_icon+'_color', type_icon);
+					TYPES_CONTAINER.append(template);
+				}
+			}
+			
+
+		}
+
+
+		function get_color_class(element){
+			
+			for(var c in CLASS_LIST){
+				if( $(element).hasClass(CLASS_LIST[c]+'_color') ){
+					return CLASS_LIST[c];
+				}
+			}
+		}
+
+
+		function request(method, url, headers, data, timeout, suc_function){
+				var responce = $.ajax({
+			        async: true,
+			        method:method,
+			        url:url,
+			        headers: headers,
+			        data:data,
+			        timeout: timeout,
+			        success: function(msg)
+			        {
+			          suc_function(msg);
+			        },
+			        error: function(jqXHR, textStatus, errorThrown)
+			        {
+			          console.log(JSON.stringify(jqXHR));
+			        }
+			      });
+			}
+
+
+		function cast_war_fog_on_rest_rows(clicked_row){
+			for(var cl in CLASS_LIST){
+				if(CLASS_LIST[cl] != clicked_row){
+					$('.'+CLASS_LIST[cl]+'_display').css('display', 'none');
+				}
+			}
+		}
+
+
+		function dispel_war_fog_for_all(){
+			for(var cl in CLASS_LIST){
+				$('.'+CLASS_LIST[cl]+'_display').css('display', 'flex');
+			}
+
+			for(var cl in CLASS_LIST){
+				$('.'+CLASS_LIST[cl]+'_display').css('display', 'flex');
+			}
+		}
+
+
+		$(document).on("click", ".types-icon", function() { 
+			let cl = get_color_class($(this));
+
+			if (CLICKED_TYPES[cl] == true){
+				$('.'+cl+'_display').css('display', 'none');
+				$('.'+cl+'_display_hr').css('display', 'none');				
+				CLICKED_TYPES[cl] = false;
+				$('#'+cl).addClass('deactivated');
+			}
+
+			else{
+				$('.'+cl+'_display').css('display', 'flex');
+				$('.'+cl+'_display_hr').css('display', 'block');					
+				CLICKED_TYPES[cl] = true;
+				$('#'+cl).removeClass('deactivated');
+			}
+		 });
+
+
+		function get_last_day(date){
+			let new_date = new Date(date.getFullYear(), date.getMonth()+1, 0);
+			return new_date.getDate();
+		}
+
+
+		function set_curent_date(){
+			let month = CURRENT_DATE.getMonth();
+			$(CURRENT_MONTH_CONTAINER).html(MONTH_DICT[month]);
+			$(CURRENT_YEAR_CONTAINER).html(CURRENT_DATE.getFullYear());
+		}
+
+
+		function load_previous_month(){
+			return load_month(-1);
+		}
+
+
+		function load_next_month(){
+			return load_month(1);
+		}
+
+
+		function add_zero(month){
+			if(month<10){
+				return '0'+month;
+			}
+			else{
+				return month;
+			}
+		}
+
+
+		function load_month(next_or_prev){
+			CURRENT_DATE = new Date(CURRENT_DATE.getFullYear(), CURRENT_DATE.getMonth()+next_or_prev, 1);
+			let current_month = CURRENT_DATE.getMonth(); 
+			let current_year = CURRENT_DATE.getFullYear();
+				
+				
+			//month +1 нужен для перевода из месяцев js(0-11) в естественное представление номера месяца (1-12)
+			let date_begin = "{0}-{1}-01".formatUnicorn(current_year, add_zero(current_month+1));
+			let date_end = "{0}-{1}-{2}".formatUnicorn(current_year, add_zero(current_month+1), get_last_day(new Date(current_year, current_month+1, 0)));
+			let snils = $('#pacient').val();
+			request('POST',
+				 	'xyz',
+				 	{"X-CSRFToken": "{{ csrf_token }}"},
+				 	{"snils": $('#pacient').val(), "date_begin": date_begin, "date_end": date_end, "amount": "one"},
+				 	null,
+				 	drawEvents);				
+
+			set_curent_date();
+		}
+
+		
+		var func_dict={
+			'prev-month': load_previous_month,
+			'next-month': load_next_month,
+		}
+
+
+		$(document).on("click", ".picker-slice", function(){
+			func_dict[$(this).attr('id')]();
+		});
+
+		function update()
+		{
+			load_month(0);
+		}
+		
+
+
+		window.onload = function(){
+			set_curent_date();			
+
+			let current_year = CURRENT_DATE.getFullYear();
+			let current_month = CURRENT_DATE.getMonth();
+			let date_begin = "{0}-{1}-01".formatUnicorn(current_year, add_zero(current_month+1));
+			let date_end = "{0}-{1}-{2}".formatUnicorn(current_year, add_zero(current_month+1), get_last_day(new Date(current_year, current_month+1, 0)));
+
+
+			request('POST',
+				 	'xyz',
+				 	{"X-CSRFToken": "{{ csrf_token }}"},
+				 	{"snils": $('#snils').text(), "date_begin": date_begin, "date_end": date_end, "amount": "one"},
+				 	null,
+				 	drawEvents);			
+			}
+
+
+	</script>
+{% endblock %}

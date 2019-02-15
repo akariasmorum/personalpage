@@ -145,7 +145,8 @@ LOGGING = {
 }
 
 
-AUTH_ESIA_ADDRESS = 'https://esia-portal1.test.gosuslugi.ru/'
+#AUTH_ESIA_ADDRESS = 'https://esia-portal1.test.gosuslugi.ru/'
+AUTH_ESIA_ADDRESS = 'https://esia.gosuslugi.ru/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/

@@ -68,13 +68,13 @@
   #timepicker li:hover{
     cursor: pointer;
     background: -moz-linear-gradient(left, rgba(157,80,187,1) 0%, rgba(110,72,170,1) 100%);
-      background: -webkit-gradient(left top, right top, color-stop(0%, rgba(157,80,187,1)), color-stop(100%, rgba(110,72,170,1)));
-      background: -webkit-linear-gradient(left, rgba(157,80,187,1) 0%, rgba(110,72,170,1) 100%);
-      background: -o-linear-gradient(left, rgba(157,80,187,1) 0%, rgba(110,72,170,1) 100%);
-      background: -ms-linear-gradient(left, rgba(157,80,187,1) 0%, rgba(110,72,170,1) 100%);
-      background: linear-gradient(to right, rgba(157,80,187,1) 0%, rgba(110,72,170,1) 100%);
-      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9d50bb', endColorstr='#6e48aa', GradientType=1 );
-      border-radius: 5px;
+    background: -webkit-gradient(left top, right top, color-stop(0%, rgba(157,80,187,1)), color-stop(100%, rgba(110,72,170,1)));
+    background: -webkit-linear-gradient(left, rgba(157,80,187,1) 0%, rgba(110,72,170,1) 100%);
+    background: -o-linear-gradient(left, rgba(157,80,187,1) 0%, rgba(110,72,170,1) 100%);
+    background: -ms-linear-gradient(left, rgba(157,80,187,1) 0%, rgba(110,72,170,1) 100%);
+    background: linear-gradient(to right, rgba(157,80,187,1) 0%, rgba(110,72,170,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9d50bb', endColorstr='#6e48aa', GradientType=1 );
+    border-radius: 5px;
 
   }
   
@@ -185,6 +185,26 @@
     bottom: 0;
   }
 
+  #loader{
+      position: absolute;
+      top:0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 999;
+      text-align: center;
+      display: flex;      
+      align-items: center;
+      justify-content: center;
+      background-color: #fff;
+    }
+    .loading-gif{
+      display: inline-block;
+      height: 300px;
+      width: 300px;
+
+    }
+
   @media(max-width: 576px){
     .main-area>.container{
       padding-left: 0px;
@@ -211,6 +231,9 @@
   }
 
 </style>
+
+{% load static %}
+<div id='loader'><img class='loading-gif align-self-center' src='{% static 'loading.gif' %}'/></div>
 
 	<div class='main-area'>
             <div class = 'container'>
@@ -267,7 +290,7 @@
 
     <script type="text/javascript">
 
-    class Calendar
+  class Calendar
   {
 
     constructor(date, calendar){
@@ -301,7 +324,7 @@
         start.push(i);
       }
 
-      while (start.length % 7 !=0)
+      while (start.length % 7 != 0)
       {
         start.push('&nbsp');
       }
@@ -444,7 +467,7 @@
 
         data:for_request,
 
-                success: function(msg, status, xhr)
+        success: function(msg, status, xhr)
         {        	
         		callback(msg);       	
         },
@@ -525,23 +548,6 @@ var clicked_object = {'date': null};
       			li += 			'</div>'; 
       			li += 		'</li>';	
 
-
-
-            	   /*<table> \
-                              <tr class= "date-line"> \
-                                <td rowspan="2" class="timepicker-date">'+date.getDate()+'</td> \
-                                <td >'+cal.months[date.getMonth()]+'</td> \
-                                <td class="timepicker-date" rowspan="2"><i class="fas fa-clock"></i></td> \
-                                <td class="timepicker-date" rowspan="2">'+time[i].priem_time+'</td> \
-                              </tr> \
-                              <tr class="date-line"> \
-                                <td >'+weekday[date.getDay()]+'</td> \
-                                 \
-                              </tr> \
-                            </table> \
-                          </li>';*/
-
-
             $(time_list).append(li);
   		} //for
     } // else
@@ -549,16 +555,23 @@ var clicked_object = {'date': null};
   } //assign_time
 
   	function date_click(e){
-  		$('#time-list').empty();
-        	change_clicked('date', e.target, 'choosen-date');
 
-          var times = get_times(cal.date.getFullYear(), cal.date.getMonth(), $(e.target).text());
-          var date = new Date(cal.date.getFullYear(), cal.date.getMonth(), $(e.target).text());
-          assign_time(times, date);
+      $("#loader").fadeIn("slow", function() { 
+        $('#time-list').empty();
+        change_clicked('date', e.target, 'choosen-date');
+
+        var times = get_times(cal.date.getFullYear(), cal.date.getMonth(), $(e.target).text());
+        var date = new Date(cal.date.getFullYear(), cal.date.getMonth(), $(e.target).text());
+        assign_time(times, date);
+
+        $("#loader").fadeOut("slow", function() { });
+
+      });
+  		
 
   	}
     	window.onload = function(){
-
+        $("#loader").fadeOut("slow", function() { });
     	  var current = new Date();
 	      current.setHours(0,0,0,0)
 

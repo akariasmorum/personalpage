@@ -11,11 +11,12 @@ def sched1(request):
 			'Content-Type': 'application/json'
 			}
 	parameter = str(json.dumps({
-			"snils": "032-545-797 39",
-			"date_begin": "2019-01-01",
-			"date_end": "2019-01-31",
+			"snils": request.POST.get('snils'),
+			"date_begin": request.POST.get('date_begin'),
+			"date_end": request.POST.get('date_end'),
 			"amount": "one",
 		}))
+	print(parameter)
 
 	body = json.dumps({
 		'name': 'CalendarList',

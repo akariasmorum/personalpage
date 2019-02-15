@@ -15,8 +15,7 @@ urlpatterns = [
 	url(r'^call', views.calldoc, name='call-doc'),
 	url(r'^ehr', views.ehr, name='ehr'),
 	url(r'^appointment', views.app, name='appointment'),
-	url(r'^schedule', views.schedule, name='schedule'),
-	#url(r'^calendar', views.calendar, name='calendar'),
+	url(r'^schedule', views.schedule, name='schedule'),	
 	url(r'^message', views.get_message, name='message'),
 	url(r'^mypage', views.mypage, name = 'my-page'),
 	url(r'^send-message', views.send_message, name='send-message'),
@@ -40,4 +39,7 @@ urlpatterns = [
 
 	url(r'^xyz', test_bus_connector.sched1, name = 'test-bus'),
 	url(r'^qwerty', views.schedule_test, name='test-schedule'),
+	url(r'^stest', views.stest, name='stest'),
+
+
 ]

@@ -213,7 +213,7 @@ def therapist(request):
 	return render(request, 'schedule_therapist.html',
 	              context={'title': 'Расписание участкового врача',
 	                        'nbar': 'therapist',
-	                    'pacients': request.session['pacients']})
+	                    	'pacients': request.session['pacients']})
 ###################################
 
 @login_required(login_url='/login')
@@ -228,7 +228,14 @@ def main(request):
 
 ###################################	
 
-
+@login_required(login_url='/login')
+def stest(request):
+	return render(request, 'test.html',
+	              context={'title': 'Расписание участкового врача',
+	                        'nbar': 'therapist', 
+	                        'pacients': request.session['pacients']
+	                        })
+	                    
 
 def user_logout(request):
 	'''
