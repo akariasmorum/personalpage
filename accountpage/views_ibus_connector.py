@@ -79,6 +79,7 @@ class IbusScriptExcecutor():
 			return js
 
 def is_user_accepted_permissions(snils):
+	'''
 	a = BadBusExchangeMethod(None, 'RegistrationCheck', {'snils': snils}, ['output', 'RegistrationCheck'])
 	
 	print('auth-esia: requested snils= {0}'.format(a))
@@ -87,7 +88,8 @@ def is_user_accepted_permissions(snils):
 		return True
 	else:
 		return False	
-
+	'''
+	return True
 
 
 def busExchangeMethod(request, method, params_dict, nestedKeys):

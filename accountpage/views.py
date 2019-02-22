@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 import traceback
 
@@ -11,6 +12,7 @@ import json
 import logging
 from .auth_esia import Auth_esia
 from .forms import SignUpForm, CallDocForm, Patient, AddChildForm, MessageForm, LoginForm, CallDoctorForm
+from .models import PatientUser
 
 import base64
 from .views_ibus_connector import (get_ehr_PrescriptionDrugs, get_ehr_ListDocuments, get_docs_list,
@@ -20,6 +22,44 @@ from .auth_esia import redirect_esia, esia_callback
 import time
 
 logger = logging.getLogger('django')
+
+
+def signUpView(request):
+	if request.method == 'POST':
+		form = SignUpForm(request.POST)
+		
+		snils = request.POST.get('snils')
+		patient = None
+
+		try:
+			patient = PatientUser.objects.get(snils = snils)
+		except Exception:
+			pass
+
+		if patient!=None: 
+			if patient.has_unusable_password():
+				patient.name = request.POST.get('name')
+				patient.surname = request.POST.get('surname')					
+				patient.telephone = request.POST.get('telephone')
+				patient.password = make_password(request.POST.get('password1'))
+				patient.save()
+				return redirect('/login')
+			else:
+				form.add_error('snils', 'Пользователь с таким СНИЛС уже существует!')
+
+		else:
+			if form.is_valid():
+				user = form.save()		
+			else:
+				print(form.errors)
+
+
+	else:
+		form = SignUpForm()
+
+	return 	render(request, 'signup.html', context = {'title':'Регистрация в личном кабинете', 'form': form})		
+
+
 
 
 class SignUp(generic.CreateView):

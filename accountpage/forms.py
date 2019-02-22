@@ -144,18 +144,36 @@ class SignUpForm(UserCreationForm):
 
 	def clean_snils(self):
 		snils = self.cleaned_data.get("snils")
+		patient = None
+		try:
+			patient = PatientUser.objects.get(snils=snils)
+		except Exception:
+			pass
 
-		if PatientUser.objects.filter(snils=snils).exists():
-			#Если такой СНИЛС уже есть, то вывести ошибку
-			self.add_error('snils', 'Пользователь с таким СНИЛС уже существует!')
+		if patient!=None:
+			x = patient.has_unusable_password()
+			
+			if x==True:
+				return snils				
+			else:
+				self.add_error('snils', 'Пользователь с таким СНИЛС уже существует!')
+				
 		else:
 			return snils
+
+	def save(self, commit=True):
+		# Save the provided password in hashed format
+		user = super().save(commit=False)
+		user.set_password(self.cleaned_data["password1"])
+		if commit:
+			user.save()
+		return user		
 
 	def clean_regcode(self):
 
 		reg = self.cleaned_data.get('regcode')
 		print('Запрашиваю регистрационный код: {0} {1}'.format(reg, self.cleaned_data.get('snils')))
-
+		'''
 		check_code = None
 
 		try:
@@ -167,10 +185,7 @@ class SignUpForm(UserCreationForm):
 				self.add_error('regcode', 'Не правильный регистрационный код!')	
 		except Exception as Check_code_ex:
 			print(Check_code_ex)
-			self.add_error('regcode', 'Ошибка проверки регистрационного кода, проверьте правильноcть указанного СНИЛС')
-
-		
-
+			self.add_error('regcode', 'Ошибка проверки регистрационного кода, проверьте правильноcть указанного СНИЛС')'''
 			
 
 class AddChildForm(ModelForm):

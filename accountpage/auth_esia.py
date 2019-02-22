@@ -27,7 +27,7 @@ class Auth_esia:
 
 	def get_scope(self):
 		#return "https://esia-portal1.test.gosulsugi.ru/rs/sbjs"
-		return 'snils'
+		return 'snils fullname'
 
 	def get_timestamp(self):
 		return datetime.now(pytz.timezone('Asia/Yekaterinburg')).strftime('%Y.%m.%d %H:%M:%S %z').strip()
@@ -166,13 +166,44 @@ class Auth_esia:
 	def request_user_snils(self, access_token, oid):
 		req = self._request_user_data('rs/prns', access_token, oid)
 		data = json.loads(req)
+		print('request-esia: {0}'.format(data))
 		return data['snils']
+
+	def request_user_snils_name_surname(self, access_token, oid):
+		req = self._request_user_data('rs/prns', access_token, oid)
+		data = json.loads(req)
+		print('request-esia: {0}'.format(data))
+		return data['snils'], data['firstName'], data['lastName']
+
 
 def redirect_esia(request):
 	auth = Auth_esia()
 	url = auth.generate_uri()
 
 	return redirect(url)
+
+def get_or_create_patient(snils, name, surname):
+	patient = None
+	try:
+		patient = PatientUser.objects.get(snils = snils)
+	except Exception as GetPatientEx:
+		pass
+
+	if patient == None:
+		try:
+			print('get_or_create_snils')
+			print(snils)
+			patient = PatientUser(snils=str(snils), name=name, surname=surname, telephone = '88005553535')
+			patient.set_unusable_password()
+			patient.save()			
+
+		except Exception as e:
+			print(e)
+			raise e	
+	print("get_or_create")
+	print(patient)
+	return patient		
+
 
 def esia_callback(request):
 	if 'code' in request.GET:
@@ -197,7 +228,7 @@ def esia_callback(request):
 
 		#base64 кодируется 4мя символами и бывает, что в конце блока не достает
 		#знаков =, поэтому дополняем строку знаками =, пока длина строки не
-		#будет равна 4
+		#будет кратна 4
 		encoded_data += '=' * (-len(encoded_data) % 4)
 
 
@@ -206,23 +237,21 @@ def esia_callback(request):
 		oid = str(decoded_json['urn:esia:sbj_id'])
 
 		#запрос снилса пациента по указанному OID
-		snils = auth.request_user_snils(access_token, oid)
-		print ('snils {0}'.format(snils))
+		snils, name, surname = auth.request_user_snils_name_surname(access_token, oid)
 
+		print ('snils {0} name {1} surname {2}'.format(snils, name, surname))
+
+		try:
+			patient = get_or_create_patient(snils, name, surname)
+		except Exception:
+			raise Exception('Не удалось создать пользователя')
 		#Получаем пациента по возвращенному с ЕСИА СНИЛСу
-		patient = PatientUser.objects.get(snils = snils)
-
-
-
-		if patient is None:
-			return HttpResponce('<h2>Пользователь с таким СНИЛС не зарегистрирован в системе</h2>')
+		
+		if is_user_accepted_permissions(snils):
+			login(request, patient)
+			return redirect('/main')
 		else:
-			if is_user_accepted_permissions(snils):
-
-				login(request, patient)
-				return redirect('/main')
-			else:
-				return HttpResponse('<h2>Пользователь с таким СНИЛС не давал согласие на обработку персональных данных!</h2>')	
+			return HttpResponse('<h2>Пользователь с таким СНИЛС не давал согласие на обработку персональных данных!</h2>')	
 
 	elif 'access_token' in request.GET:
 
