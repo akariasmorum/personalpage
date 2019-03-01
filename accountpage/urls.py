@@ -42,5 +42,7 @@ urlpatterns = [
 	url(r'^qwerty', views.schedule_test, name='test-schedule'),
 	url(r'^stest', views.stest, name='stest'),
 
+	url(r'^xa', test_bus_connector.test),
+
 
 ]
