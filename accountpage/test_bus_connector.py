@@ -40,7 +40,7 @@ def test_bus_executor(parameters: dict, method: str):
 		
 	resp = con.getresponse()
 	data = json.loads(resp.read().decode('utf-8'))	
-	print('data: ', data)
+	print('data: ', data[method])
 	if resp.status != 200:
 		raise Exception('Сервер вернул код с ошибкой: {0}'.format(data))
 
@@ -48,13 +48,13 @@ def test_bus_executor(parameters: dict, method: str):
 
 
 
-def sched1(request, snils, date_begin, date_end, amount):
+def sched1(request):
 	try:
 		dic = {
-			"snils": snils,
-			"date_begin": date_begin,
-			"date_end": date_end,
-			"amount": amount,
+			"snils": request.POST.get('snils'),
+			"date_begin": request.POST.get('date_begin'),
+			"date_end": request.POST.get('date_end'),
+			"amount": request.POST.get('amount'),
 		}
 		data = test_bus_executor(dic, 'CalendarList')
 

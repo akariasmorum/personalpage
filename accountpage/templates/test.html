@@ -221,7 +221,7 @@
 		}
 
 		function drawEvents(events){
-			
+			events = JSON.parse(events);
 			console.log(events);
 			$(EVENTS).empty();
 			renew_appeared_types();
@@ -277,6 +277,8 @@
 					event_type = ACTION_ICON['Другое']	
 				}
 
+				let eve= events[event];
+				let da = eve.datedoc;
 				let splitted = events[event].datedoc.split(' ');
 				let date = splitted[0];
 				let time = splitted[1];
